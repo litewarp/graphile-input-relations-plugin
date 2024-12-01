@@ -8,8 +8,8 @@
     "npm:eslint-plugin-graphile-export@^0.0.2-beta.5": "0.0.2-beta.5_eslint@8.57.1",
     "npm:eslint@^9.16.0": "9.16.0",
     "npm:graphql@16.1.0-experimental-stream-defer.6": "16.1.0-experimental-stream-defer.6",
-    "npm:postgraphile@^5.0.0-beta.33": "5.0.0-beta.33_@dataplan+json@0.0.1-beta.25__grafast@0.1.1-beta.16___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphql@16.9.0__tamedevil@0.0.0-beta.7_@dataplan+pg@0.0.1-beta.27__@dataplan+json@0.0.1-beta.25___grafast@0.1.1-beta.16____graphql@16.9.0____tamedevil@0.0.0-beta.7___graphql@16.9.0___tamedevil@0.0.0-beta.7__grafast@0.1.1-beta.16___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__pg@8.13.1__pg-sql2@5.0.0-beta.6__graphql@16.9.0__tamedevil@0.0.0-beta.7_grafast@0.1.1-beta.16__graphql@16.9.0__tamedevil@0.0.0-beta.7_grafserv@0.1.1-beta.18__grafast@0.1.1-beta.16___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__graphql@16.9.0__ws@8.18.0__tamedevil@0.0.0-beta.7_graphile-build@5.0.0-beta.28__grafast@0.1.1-beta.16___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__graphql@16.9.0__tamedevil@0.0.0-beta.7_graphile-build-pg@5.0.0-beta.32__@dataplan+pg@0.0.1-beta.27___@dataplan+json@0.0.1-beta.25____grafast@0.1.1-beta.16_____graphql@16.9.0_____tamedevil@0.0.0-beta.7____graphql@16.9.0____tamedevil@0.0.0-beta.7___grafast@0.1.1-beta.16____graphql@16.9.0____tamedevil@0.0.0-beta.7___graphile-config@0.0.1-beta.11___pg@8.13.1___pg-sql2@5.0.0-beta.6___graphql@16.9.0___tamedevil@0.0.0-beta.7__grafast@0.1.1-beta.16___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphile-build@5.0.0-beta.28___grafast@0.1.1-beta.16____graphql@16.9.0____tamedevil@0.0.0-beta.7___graphile-config@0.0.1-beta.11___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__graphql@16.9.0__pg@8.13.1__pg-sql2@5.0.0-beta.6__tamedevil@0.0.0-beta.7__@dataplan+json@0.0.1-beta.25___grafast@0.1.1-beta.16____graphql@16.9.0____tamedevil@0.0.0-beta.7___graphql@16.9.0___tamedevil@0.0.0-beta.7_graphile-config@0.0.1-beta.11_graphql@16.9.0_pg@8.13.1_pg-sql2@5.0.0-beta.6_tamedevil@0.0.0-beta.7_ws@8.18.0",
-    "npm:typescript-eslint@^8.16.0": "8.16.0_eslint@9.16.0_@typescript-eslint+parser@8.16.0__eslint@9.16.0",
+    "npm:postgraphile@^5.0.0-beta.33": "5.0.0-beta.33_@dataplan+json@0.0.1-beta.25__grafast@0.1.1-beta.16___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_@dataplan+pg@0.0.1-beta.27__@dataplan+json@0.0.1-beta.25___grafast@0.1.1-beta.16____graphql@16.1.0-experimental-stream-defer.6____tamedevil@0.0.0-beta.7___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__grafast@0.1.1-beta.16___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__pg@8.13.1__pg-sql2@5.0.0-beta.6__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_grafast@0.1.1-beta.16__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_grafserv@0.1.1-beta.18__grafast@0.1.1-beta.16___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__graphql@16.1.0-experimental-stream-defer.6__ws@8.18.0__tamedevil@0.0.0-beta.7_graphile-build@5.0.0-beta.28__grafast@0.1.1-beta.16___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_graphile-build-pg@5.0.0-beta.32__@dataplan+pg@0.0.1-beta.27___@dataplan+json@0.0.1-beta.25____grafast@0.1.1-beta.16_____graphql@16.1.0-experimental-stream-defer.6_____tamedevil@0.0.0-beta.7____graphql@16.1.0-experimental-stream-defer.6____tamedevil@0.0.0-beta.7___grafast@0.1.1-beta.16____graphql@16.1.0-experimental-stream-defer.6____tamedevil@0.0.0-beta.7___graphile-config@0.0.1-beta.11___pg@8.13.1___pg-sql2@5.0.0-beta.6___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__grafast@0.1.1-beta.16___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphile-build@5.0.0-beta.28___grafast@0.1.1-beta.16____graphql@16.1.0-experimental-stream-defer.6____tamedevil@0.0.0-beta.7___graphile-config@0.0.1-beta.11___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__graphql@16.1.0-experimental-stream-defer.6__pg@8.13.1__pg-sql2@5.0.0-beta.6__tamedevil@0.0.0-beta.7__@dataplan+json@0.0.1-beta.25___grafast@0.1.1-beta.16____graphql@16.1.0-experimental-stream-defer.6____tamedevil@0.0.0-beta.7___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7_graphile-config@0.0.1-beta.11_graphql@16.1.0-experimental-stream-defer.6_pg@8.13.1_pg-sql2@5.0.0-beta.6_tamedevil@0.0.0-beta.7_ws@8.18.0",
+    "npm:typescript-eslint@^8.16.0": "8.16.0_eslint@9.16.0_@typescript-eslint+parser@8.16.0__eslint@9.16.0__typescript@5.7.2_typescript@5.7.2",
     "npm:typescript@^5.7.2": "5.7.2"
   },
   "jsr": {
@@ -24,7 +24,7 @@
     }
   },
   "npm": {
-    "@dataplan/json@0.0.1-beta.25_grafast@0.1.1-beta.16__graphql@16.9.0__tamedevil@0.0.0-beta.7_graphql@16.9.0_tamedevil@0.0.0-beta.7": {
+    "@dataplan/json@0.0.1-beta.25_grafast@0.1.1-beta.16__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_graphql@16.1.0-experimental-stream-defer.6_tamedevil@0.0.0-beta.7": {
       "integrity": "sha512-GJQZM7ycWFHTWmGafLkL5SyVpe4IQQA7GubnlxzXbY/E311wHbGH03ONaJLga9I9qVWjyuRKFvzq3QSZyYSOPw==",
       "dependencies": [
         "chalk",
@@ -32,7 +32,7 @@
         "tslib"
       ]
     },
-    "@dataplan/pg@0.0.1-beta.27_@dataplan+json@0.0.1-beta.25__grafast@0.1.1-beta.16___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphql@16.9.0__tamedevil@0.0.0-beta.7_grafast@0.1.1-beta.16__graphql@16.9.0__tamedevil@0.0.0-beta.7_graphile-config@0.0.1-beta.11_pg@8.13.1_pg-sql2@5.0.0-beta.6_graphql@16.9.0_tamedevil@0.0.0-beta.7": {
+    "@dataplan/pg@0.0.1-beta.27_@dataplan+json@0.0.1-beta.25__grafast@0.1.1-beta.16___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_grafast@0.1.1-beta.16__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_graphile-config@0.0.1-beta.11_pg@8.13.1_pg-sql2@5.0.0-beta.6_graphql@16.1.0-experimental-stream-defer.6_tamedevil@0.0.0-beta.7": {
       "integrity": "sha512-41+M2hZRJdb0cKS1Ma8ik2OhVLf1LF+fMXMTas0Ajx9wHboerrM2J8U6Q3P6bR5r8BrVFMqOqYrTWySX//JDzA==",
       "dependencies": [
         "@dataplan/json",
@@ -227,7 +227,7 @@
     "@types/semver@7.5.8": {
       "integrity": "sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ=="
     },
-    "@typescript-eslint/eslint-plugin@8.16.0_@typescript-eslint+parser@8.16.0__eslint@9.16.0_eslint@9.16.0": {
+    "@typescript-eslint/eslint-plugin@8.16.0_@typescript-eslint+parser@8.16.0__eslint@9.16.0__typescript@5.7.2_eslint@9.16.0_typescript@5.7.2": {
       "integrity": "sha512-5YTHKV8MYlyMI6BaEG7crQ9BhSc8RxzshOReKwZwRWN0+XvvTOm+L/UYLCYxFpfwYuAAqhxiq4yae0CMFwbL7Q==",
       "dependencies": [
         "@eslint-community/regexpp",
@@ -243,7 +243,7 @@
         "ts-api-utils"
       ]
     },
-    "@typescript-eslint/parser@8.16.0_eslint@9.16.0": {
+    "@typescript-eslint/parser@8.16.0_eslint@9.16.0_typescript@5.7.2": {
       "integrity": "sha512-D7DbgGFtsqIPIFMPJwCad9Gfi/hC0PWErRRHFnaCWoEDYi5tQUDiJCTmGUbBiLzjqAck4KcXt9Ayj0CNlIrF+w==",
       "dependencies": [
         "@typescript-eslint/scope-manager",
@@ -261,7 +261,7 @@
         "@typescript-eslint/visitor-keys"
       ]
     },
-    "@typescript-eslint/type-utils@8.16.0_eslint@9.16.0": {
+    "@typescript-eslint/type-utils@8.16.0_eslint@9.16.0_typescript@5.7.2": {
       "integrity": "sha512-IqZHGG+g1XCWX9NyqnI/0CX5LL8/18awQqmkZSl2ynn8F76j579dByc0jhfVSnSnhf7zv76mKBQv9HQFKvDCgg==",
       "dependencies": [
         "@typescript-eslint/typescript-estree",
@@ -274,7 +274,7 @@
     "@typescript-eslint/types@8.16.0": {
       "integrity": "sha512-NzrHj6thBAOSE4d9bsuRNMvk+BvaQvmY4dDglgkgGC0EW/tB3Kelnp3tAKH87GEwzoxgeQn9fNGRyFJM/xd+GQ=="
     },
-    "@typescript-eslint/typescript-estree@8.16.0": {
+    "@typescript-eslint/typescript-estree@8.16.0_typescript@5.7.2": {
       "integrity": "sha512-E2+9IzzXMc1iaBy9zmo+UYvluE3TW7bCGWSF41hVWUE01o8nzr1rvOQYSxelxr6StUvRcTMe633eY8mXASMaNw==",
       "dependencies": [
         "@typescript-eslint/types",
@@ -287,7 +287,7 @@
         "ts-api-utils"
       ]
     },
-    "@typescript-eslint/utils@8.16.0_eslint@9.16.0": {
+    "@typescript-eslint/utils@8.16.0_eslint@9.16.0_typescript@5.7.2": {
       "integrity": "sha512-C1zRy/mOL8Pj157GiX4kaw7iyRLKfJXBR3L82hk5kS/GyHcOFmy4YUq/zfZti72I9wnuQtA/+xzft4wCC8PJdA==",
       "dependencies": [
         "@eslint-community/eslint-utils@4.4.1_eslint@9.16.0",
@@ -688,7 +688,7 @@
     "globals@14.0.0": {
       "integrity": "sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ=="
     },
-    "grafast@0.1.1-beta.16_graphql@16.9.0_tamedevil@0.0.0-beta.7": {
+    "grafast@0.1.1-beta.16_graphql@16.1.0-experimental-stream-defer.6_tamedevil@0.0.0-beta.7": {
       "integrity": "sha512-ULtlT0X5TDqAeKSlx4O/WIWQ5FQpZzMGyZ26TA/AjeD51gUn2eaOE5d2qDKhHu7i3zt1dhpnFt9y5UBFG2YOUw==",
       "dependencies": [
         "@graphile/lru",
@@ -696,13 +696,13 @@
         "debug",
         "eventemitter3@5.0.1",
         "graphile-config",
-        "graphql@16.9.0",
+        "graphql@16.1.0-experimental-stream-defer.6",
         "iterall",
         "tamedevil",
         "tslib"
       ]
     },
-    "grafserv@0.1.1-beta.18_grafast@0.1.1-beta.16__graphql@16.9.0__tamedevil@0.0.0-beta.7_graphile-config@0.0.1-beta.11_graphql@16.9.0_ws@8.18.0_tamedevil@0.0.0-beta.7": {
+    "grafserv@0.1.1-beta.18_grafast@0.1.1-beta.16__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_graphile-config@0.0.1-beta.11_graphql@16.1.0-experimental-stream-defer.6_ws@8.18.0_tamedevil@0.0.0-beta.7": {
       "integrity": "sha512-+VtxdQBetcf8h2f7AfVMSvXaHophTHDKkpcP8k8jtyR4Ly5Wjz9oRhqYEyKCJcuMxVMK2akLh2YM491ttEpnfQ==",
       "dependencies": [
         "@graphile/lru",
@@ -710,7 +710,7 @@
         "eventemitter3@5.0.1",
         "grafast",
         "graphile-config",
-        "graphql@16.9.0",
+        "graphql@16.1.0-experimental-stream-defer.6",
         "graphql-ws",
         "ruru",
         "tslib",
@@ -720,7 +720,7 @@
     "graphemer@1.4.0": {
       "integrity": "sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag=="
     },
-    "graphile-build-pg@5.0.0-beta.32_@dataplan+pg@0.0.1-beta.27__@dataplan+json@0.0.1-beta.25___grafast@0.1.1-beta.16____graphql@16.9.0____tamedevil@0.0.0-beta.7___graphql@16.9.0___tamedevil@0.0.0-beta.7__grafast@0.1.1-beta.16___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__pg@8.13.1__pg-sql2@5.0.0-beta.6__graphql@16.9.0__tamedevil@0.0.0-beta.7_grafast@0.1.1-beta.16__graphql@16.9.0__tamedevil@0.0.0-beta.7_graphile-build@5.0.0-beta.28__grafast@0.1.1-beta.16___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__graphql@16.9.0__tamedevil@0.0.0-beta.7_graphile-config@0.0.1-beta.11_graphql@16.9.0_pg@8.13.1_pg-sql2@5.0.0-beta.6_tamedevil@0.0.0-beta.7_@dataplan+json@0.0.1-beta.25__grafast@0.1.1-beta.16___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphql@16.9.0__tamedevil@0.0.0-beta.7": {
+    "graphile-build-pg@5.0.0-beta.32_@dataplan+pg@0.0.1-beta.27__@dataplan+json@0.0.1-beta.25___grafast@0.1.1-beta.16____graphql@16.1.0-experimental-stream-defer.6____tamedevil@0.0.0-beta.7___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__grafast@0.1.1-beta.16___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__pg@8.13.1__pg-sql2@5.0.0-beta.6__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_grafast@0.1.1-beta.16__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_graphile-build@5.0.0-beta.28__grafast@0.1.1-beta.16___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_graphile-config@0.0.1-beta.11_graphql@16.1.0-experimental-stream-defer.6_pg@8.13.1_pg-sql2@5.0.0-beta.6_tamedevil@0.0.0-beta.7_@dataplan+json@0.0.1-beta.25__grafast@0.1.1-beta.16___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7": {
       "integrity": "sha512-eN58GbZKs4Yh7BxLzMeoeduMw+42bZJp9qiTO2DY8PH+KmTDiMVO3v/bykhn4VTTED2cUCVocwcHQXct3RDy6Q==",
       "dependencies": [
         "@dataplan/pg",
@@ -729,7 +729,7 @@
         "grafast",
         "graphile-build",
         "graphile-config",
-        "graphql@16.9.0",
+        "graphql@16.1.0-experimental-stream-defer.6",
         "jsonwebtoken",
         "pg",
         "pg-introspection",
@@ -738,7 +738,7 @@
         "tslib"
       ]
     },
-    "graphile-build@5.0.0-beta.28_grafast@0.1.1-beta.16__graphql@16.9.0__tamedevil@0.0.0-beta.7_graphile-config@0.0.1-beta.11_graphql@16.9.0_tamedevil@0.0.0-beta.7": {
+    "graphile-build@5.0.0-beta.28_grafast@0.1.1-beta.16__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_graphile-config@0.0.1-beta.11_graphql@16.1.0-experimental-stream-defer.6_tamedevil@0.0.0-beta.7": {
       "integrity": "sha512-bYWyb6NwTtrUtsBKZtGXPHtCfATUIYpN7QcxJgY70p5oxY5GcFmcgDiszWIw6tjzW8YwgLcOM8RPu41azkPDqw==",
       "dependencies": [
         "@types/node@20.17.9",
@@ -748,7 +748,7 @@
         "debug",
         "grafast",
         "graphile-config",
-        "graphql@16.9.0",
+        "graphql@16.1.0-experimental-stream-defer.6",
         "lodash",
         "pluralize",
         "semver",
@@ -770,7 +770,7 @@
         "yargs"
       ]
     },
-    "graphile-utils@5.0.0-beta.32_@dataplan+pg@0.0.1-beta.27__@dataplan+json@0.0.1-beta.25___grafast@0.1.1-beta.16____graphql@16.9.0____tamedevil@0.0.0-beta.7___graphql@16.9.0___tamedevil@0.0.0-beta.7__grafast@0.1.1-beta.16___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__pg@8.13.1__pg-sql2@5.0.0-beta.6__graphql@16.9.0__tamedevil@0.0.0-beta.7_grafast@0.1.1-beta.16__graphql@16.9.0__tamedevil@0.0.0-beta.7_graphile-build@5.0.0-beta.28__grafast@0.1.1-beta.16___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__graphql@16.9.0__tamedevil@0.0.0-beta.7_graphile-build-pg@5.0.0-beta.32__@dataplan+pg@0.0.1-beta.27___@dataplan+json@0.0.1-beta.25____grafast@0.1.1-beta.16_____graphql@16.9.0_____tamedevil@0.0.0-beta.7____graphql@16.9.0____tamedevil@0.0.0-beta.7___grafast@0.1.1-beta.16____graphql@16.9.0____tamedevil@0.0.0-beta.7___graphile-config@0.0.1-beta.11___pg@8.13.1___pg-sql2@5.0.0-beta.6___graphql@16.9.0___tamedevil@0.0.0-beta.7__grafast@0.1.1-beta.16___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphile-build@5.0.0-beta.28___grafast@0.1.1-beta.16____graphql@16.9.0____tamedevil@0.0.0-beta.7___graphile-config@0.0.1-beta.11___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__graphql@16.9.0__pg@8.13.1__pg-sql2@5.0.0-beta.6__tamedevil@0.0.0-beta.7__@dataplan+json@0.0.1-beta.25___grafast@0.1.1-beta.16____graphql@16.9.0____tamedevil@0.0.0-beta.7___graphql@16.9.0___tamedevil@0.0.0-beta.7_graphile-config@0.0.1-beta.11_graphql@16.9.0_tamedevil@0.0.0-beta.7_@dataplan+json@0.0.1-beta.25__grafast@0.1.1-beta.16___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphql@16.9.0__tamedevil@0.0.0-beta.7_pg@8.13.1_pg-sql2@5.0.0-beta.6": {
+    "graphile-utils@5.0.0-beta.32_@dataplan+pg@0.0.1-beta.27__@dataplan+json@0.0.1-beta.25___grafast@0.1.1-beta.16____graphql@16.1.0-experimental-stream-defer.6____tamedevil@0.0.0-beta.7___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__grafast@0.1.1-beta.16___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__pg@8.13.1__pg-sql2@5.0.0-beta.6__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_grafast@0.1.1-beta.16__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_graphile-build@5.0.0-beta.28__grafast@0.1.1-beta.16___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_graphile-build-pg@5.0.0-beta.32__@dataplan+pg@0.0.1-beta.27___@dataplan+json@0.0.1-beta.25____grafast@0.1.1-beta.16_____graphql@16.1.0-experimental-stream-defer.6_____tamedevil@0.0.0-beta.7____graphql@16.1.0-experimental-stream-defer.6____tamedevil@0.0.0-beta.7___grafast@0.1.1-beta.16____graphql@16.1.0-experimental-stream-defer.6____tamedevil@0.0.0-beta.7___graphile-config@0.0.1-beta.11___pg@8.13.1___pg-sql2@5.0.0-beta.6___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__grafast@0.1.1-beta.16___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphile-build@5.0.0-beta.28___grafast@0.1.1-beta.16____graphql@16.1.0-experimental-stream-defer.6____tamedevil@0.0.0-beta.7___graphile-config@0.0.1-beta.11___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__graphql@16.1.0-experimental-stream-defer.6__pg@8.13.1__pg-sql2@5.0.0-beta.6__tamedevil@0.0.0-beta.7__@dataplan+json@0.0.1-beta.25___grafast@0.1.1-beta.16____graphql@16.1.0-experimental-stream-defer.6____tamedevil@0.0.0-beta.7___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7_graphile-config@0.0.1-beta.11_graphql@16.1.0-experimental-stream-defer.6_tamedevil@0.0.0-beta.7_@dataplan+json@0.0.1-beta.25__grafast@0.1.1-beta.16___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_pg@8.13.1_pg-sql2@5.0.0-beta.6": {
       "integrity": "sha512-US4SK2cdT/BlbPUZK5KAUisIcKSstppip4v6lNvBBPAbH6yLa0uWH51Ga1dCI0pVqcrbMpUrPEOl0YnVc/PmzA==",
       "dependencies": [
         "@dataplan/pg",
@@ -779,7 +779,7 @@
         "graphile-build",
         "graphile-build-pg",
         "graphile-config",
-        "graphql@16.9.0",
+        "graphql@16.1.0-experimental-stream-defer.6",
         "json5",
         "tamedevil",
         "tslib"
@@ -1106,7 +1106,7 @@
     "pluralize@7.0.0": {
       "integrity": "sha512-ARhBOdzS3e41FbkW/XWrTEtukqqLoK5+Z/4UeDaLuSW+39JPeFgs4gCGqsrJHVZX0fUrx//4OF0K1CUGwlIFow=="
     },
-    "postgraphile@5.0.0-beta.33_@dataplan+json@0.0.1-beta.25__grafast@0.1.1-beta.16___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphql@16.9.0__tamedevil@0.0.0-beta.7_@dataplan+pg@0.0.1-beta.27__@dataplan+json@0.0.1-beta.25___grafast@0.1.1-beta.16____graphql@16.9.0____tamedevil@0.0.0-beta.7___graphql@16.9.0___tamedevil@0.0.0-beta.7__grafast@0.1.1-beta.16___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__pg@8.13.1__pg-sql2@5.0.0-beta.6__graphql@16.9.0__tamedevil@0.0.0-beta.7_grafast@0.1.1-beta.16__graphql@16.9.0__tamedevil@0.0.0-beta.7_grafserv@0.1.1-beta.18__grafast@0.1.1-beta.16___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__graphql@16.9.0__ws@8.18.0__tamedevil@0.0.0-beta.7_graphile-build@5.0.0-beta.28__grafast@0.1.1-beta.16___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__graphql@16.9.0__tamedevil@0.0.0-beta.7_graphile-build-pg@5.0.0-beta.32__@dataplan+pg@0.0.1-beta.27___@dataplan+json@0.0.1-beta.25____grafast@0.1.1-beta.16_____graphql@16.9.0_____tamedevil@0.0.0-beta.7____graphql@16.9.0____tamedevil@0.0.0-beta.7___grafast@0.1.1-beta.16____graphql@16.9.0____tamedevil@0.0.0-beta.7___graphile-config@0.0.1-beta.11___pg@8.13.1___pg-sql2@5.0.0-beta.6___graphql@16.9.0___tamedevil@0.0.0-beta.7__grafast@0.1.1-beta.16___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphile-build@5.0.0-beta.28___grafast@0.1.1-beta.16____graphql@16.9.0____tamedevil@0.0.0-beta.7___graphile-config@0.0.1-beta.11___graphql@16.9.0___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__graphql@16.9.0__pg@8.13.1__pg-sql2@5.0.0-beta.6__tamedevil@0.0.0-beta.7__@dataplan+json@0.0.1-beta.25___grafast@0.1.1-beta.16____graphql@16.9.0____tamedevil@0.0.0-beta.7___graphql@16.9.0___tamedevil@0.0.0-beta.7_graphile-config@0.0.1-beta.11_graphql@16.9.0_pg@8.13.1_pg-sql2@5.0.0-beta.6_tamedevil@0.0.0-beta.7_ws@8.18.0": {
+    "postgraphile@5.0.0-beta.33_@dataplan+json@0.0.1-beta.25__grafast@0.1.1-beta.16___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_@dataplan+pg@0.0.1-beta.27__@dataplan+json@0.0.1-beta.25___grafast@0.1.1-beta.16____graphql@16.1.0-experimental-stream-defer.6____tamedevil@0.0.0-beta.7___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__grafast@0.1.1-beta.16___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__pg@8.13.1__pg-sql2@5.0.0-beta.6__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_grafast@0.1.1-beta.16__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_grafserv@0.1.1-beta.18__grafast@0.1.1-beta.16___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__graphql@16.1.0-experimental-stream-defer.6__ws@8.18.0__tamedevil@0.0.0-beta.7_graphile-build@5.0.0-beta.28__grafast@0.1.1-beta.16___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__graphql@16.1.0-experimental-stream-defer.6__tamedevil@0.0.0-beta.7_graphile-build-pg@5.0.0-beta.32__@dataplan+pg@0.0.1-beta.27___@dataplan+json@0.0.1-beta.25____grafast@0.1.1-beta.16_____graphql@16.1.0-experimental-stream-defer.6_____tamedevil@0.0.0-beta.7____graphql@16.1.0-experimental-stream-defer.6____tamedevil@0.0.0-beta.7___grafast@0.1.1-beta.16____graphql@16.1.0-experimental-stream-defer.6____tamedevil@0.0.0-beta.7___graphile-config@0.0.1-beta.11___pg@8.13.1___pg-sql2@5.0.0-beta.6___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__grafast@0.1.1-beta.16___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphile-build@5.0.0-beta.28___grafast@0.1.1-beta.16____graphql@16.1.0-experimental-stream-defer.6____tamedevil@0.0.0-beta.7___graphile-config@0.0.1-beta.11___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7__graphile-config@0.0.1-beta.11__graphql@16.1.0-experimental-stream-defer.6__pg@8.13.1__pg-sql2@5.0.0-beta.6__tamedevil@0.0.0-beta.7__@dataplan+json@0.0.1-beta.25___grafast@0.1.1-beta.16____graphql@16.1.0-experimental-stream-defer.6____tamedevil@0.0.0-beta.7___graphql@16.1.0-experimental-stream-defer.6___tamedevil@0.0.0-beta.7_graphile-config@0.0.1-beta.11_graphql@16.1.0-experimental-stream-defer.6_pg@8.13.1_pg-sql2@5.0.0-beta.6_tamedevil@0.0.0-beta.7_ws@8.18.0": {
       "integrity": "sha512-Fvu5VuxCEd3DFslgQhjIdgeVCrq3pa6alV/sVapYibUy4LvAUIVZyC7cX5HvFQtoqqM3aCsZxlWav+J+HXpG8w==",
       "dependencies": [
         "@dataplan/json",
@@ -1121,7 +1121,7 @@
         "graphile-build-pg",
         "graphile-config",
         "graphile-utils",
-        "graphql@16.9.0",
+        "graphql@16.1.0-experimental-stream-defer.6",
         "iterall",
         "jsonwebtoken",
         "pg",
@@ -1197,12 +1197,12 @@
         "queue-microtask"
       ]
     },
-    "ruru@2.0.0-beta.16_graphile-config@0.0.1-beta.11_graphql@16.9.0": {
+    "ruru@2.0.0-beta.16_graphile-config@0.0.1-beta.11_graphql@16.1.0-experimental-stream-defer.6": {
       "integrity": "sha512-gKCTLhfRLdr+HBgDr1TH6YgiYXepOkpB+585lK5dDZWdxWtj7K1Lh0QzwQTjUncF6zoRaKPJ8HoGrVFeQrPiJA==",
       "dependencies": [
         "@emotion/is-prop-valid",
         "graphile-config",
-        "graphql@16.9.0",
+        "graphql@16.1.0-experimental-stream-defer.6",
         "http-proxy",
         "tslib",
         "yargs"
@@ -1283,7 +1283,7 @@
     "type-fest@0.20.2": {
       "integrity": "sha512-Ne+eE4r0/iWnpAxD852z3A+N0Bt5RN//NjJwRd2VFHEmrywxf5vsZlh4R6lixl6B+wz/8d+maTSAkN1FIkI3LQ=="
     },
-    "typescript-eslint@8.16.0_eslint@9.16.0_@typescript-eslint+parser@8.16.0__eslint@9.16.0": {
+    "typescript-eslint@8.16.0_eslint@9.16.0_@typescript-eslint+parser@8.16.0__eslint@9.16.0__typescript@5.7.2_typescript@5.7.2": {
       "integrity": "sha512-wDkVmlY6O2do4V+lZd0GtRfbtXbeD0q9WygwXXSJnC1xorE8eqyC2L1tJimqpSeFrOzRlYtWnUp/uzgHQOgfBQ==",
       "dependencies": [
         "@typescript-eslint/eslint-plugin",

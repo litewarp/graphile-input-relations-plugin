@@ -1,0 +1,7 @@
+{
+  "deno.enable": true,
+  "deno.future": true,
+  "deno.lint": false,
+  "editor.defaultFormatter": "denoland.vscode-deno",
+  "eslint.useFlatConfig": true
+}

@@ -12,5 +12,10 @@
     "postgraphile": "npm:postgraphile@^5.0.0-beta.33",
     "typescript": "npm:typescript@^5.7.2",
     "typescript-eslint": "npm:typescript-eslint@^8.16.0"
-  }
+  },
+  "compilerOptions": {
+    "strict": true,
+    "types": ["node", "jest"]
+  },
+  "nodeModulesDir": "auto"
 }
