@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json.schemastore.org/package",
+  "name": "@litewarp/grafast-nested-mutations-plugin",
+  "version": "0.0.2",
+  "description": "Nested mutations plugin for PostGraphile v5 (aka Grafast)",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "import": "./dist/index.js",
+    "require": "./dist/index.cjs",
+    "types": "./dist/index.d.ts"
+  },
+  "scripts": {
+    "build": "tsup",
+    "lint": "eslint src/**/*.ts",
+    "test": "env-cmd scripts/test --watch",
+    "test:debug": "NODE_OPTIONS='--inspect-brk' dotenv --  jest --runInBand --watch .",
+    "typecheck": "tsc --noEmit --watch"
+  },
+  "devDependencies": {
+    "@dataplan/json": "0.0.1-beta.25",
+    "@dataplan/pg": "0.0.1-beta.27",
+    "@eslint/compat": "^1.2.3",
+    "@eslint/eslintrc": "^3.2.0",
+    "@grafserv/persisted": "0.0.0-beta.28",
+    "@graphile/simplify-inflection": "8.0.0-beta.5",
+    "@repo/typescript-config": "workspace:*",
+    "@swc/core": "^1.4.0",
+    "@swc/jest": "^0.2.36",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.16",
+    "@types/pg": "^8.11.0",
+    "dotenv-cli": "^7.4.4",
+    "env-cmd": "^10.1.0",
+    "eslint": "^9.15.0",
+    "eslint-plugin-graphile-export": "0.0.2-beta.4",
+    "graphile-build": "5.0.0-beta.28",
+    "graphile-build-pg": "5.0.0-beta.32",
+    "graphile-config": "0.0.1-beta.11",
+    "graphile-export": "^0.0.2-beta.21",
+    "graphql": "16.1.0-experimental-stream-defer.6",
+    "jest": "^29.7.0",
+    "jest-junit": "^16.0.0",
+    "module-from-string": "^3.3.0",
+    "pg": "^8.11.3",
+    "postgraphile": "5.0.0-beta.33",
+    "tsup": "^8.0.1",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.15.0",
+    "util": "^0.12.5"
+  },
+  "peerDependencies": {
+    "postgraphile": "5.0.0-beta.33"
+  },
+  "graphql": {
+    "schema": "./tmp/schema.graphql",
+    "documents": "./tests/**/*.graphql"
+  }
+}

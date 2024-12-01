@@ -1,0 +1,17 @@
+mutation forwardUpdateByNodeId {
+  updateChildById(
+    input: {
+      id: "WyJDaGlsZCIsMV0"
+      patch: {
+        parentByDadParentId: {
+          updateByNodeId: {id: "WyJQYXJlbnQiLDFd", patch: {parentName: "Sally Ride"}}
+        }
+      }
+    }
+  ) {
+    child {
+      id
+      name
+    }
+  }
+}

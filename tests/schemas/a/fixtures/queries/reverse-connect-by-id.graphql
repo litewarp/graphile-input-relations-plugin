@@ -1,0 +1,25 @@
+# test connectByNodeId of a related table that does contains the foreign keys for the relationship
+# i.e., the foreign key is on the child table
+mutation AddChildAndConnectToParentByNodeId {
+  createParent(
+    input: {
+      parent: {
+        parentName: "Daddy-O"
+        childrenByDadParentId: {connectById: [{id: "WyJDaGlsZCIsMl0=="}]}
+      }
+    }
+  ) {
+    parent {
+      id
+      parentName
+      childrenByDadParentId {
+        edges {
+          node {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+}

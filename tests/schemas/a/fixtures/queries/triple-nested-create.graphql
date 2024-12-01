@@ -1,0 +1,46 @@
+mutation TripleNestedRelationship {
+  createChild(
+    input: {
+      child: {
+        name: "Hugo Black"
+        parentByMomParentId: {
+          create: {
+            parentName: "Sandra Day O'Connor"
+            childrenByMomParentId: {
+              create: [
+                {name: "John Roberts", studentsByStudentId: {create: [{schoolId: 2}]}}
+              ]
+            }
+          }
+        }
+      }
+    }
+  ) {
+    child {
+      id
+      name
+      momParent {
+        id
+        parentName
+        childrenByMomParentId {
+          totalCount
+          nodes {
+            id
+            name
+            studentsByStudentId {
+              totalCount
+              nodes {
+                id
+                school {
+                  id
+                }
+                schoolId
+                studentId
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+mutation AddParentFromChildWithOtherChildren {
+  createChild(
+    input: {
+      child: {
+        name: "Sandra Day"
+        parentByDadParentId: {
+          create: {
+            parentName: "John Q. Washington"
+            childrenByDadParentId: {
+              create: [{name: "George Washington"}, {name: "Martha Washington"}]
+            }
+          }
+        }
+      }
+    }
+  ) {
+    child {
+      id
+      name
+      dadParent {
+        id
+        parentName
+        childrenByDadParentId {
+          totalCount
+          nodes {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+}

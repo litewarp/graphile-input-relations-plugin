@@ -1,0 +1,32 @@
+mutation TripleNestedConnectById {
+  createChild(
+    input: {
+      child: {
+        name: "Sonia Sotomayor"
+        parentByDadParentId: {connectById: {id: "WyJQYXJlbnQiLDJd=="}}
+        studentsByStudentId: {
+          create: [{schoolBySchoolId: {connectById: {id: "WyJTY2hvb2wiLDJd"}}}]
+        }
+      }
+    }
+  ) {
+    child {
+      id
+      name
+      dadParent {
+        id
+        parentName
+      }
+      studentsByStudentId {
+        totalCount
+        nodes {
+          id
+          school {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+}

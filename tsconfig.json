@@ -1,0 +1,15 @@
+{
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "moduleResolution": "NodeNext",
+    "noEmit": true,
+    "strict": true,
+    "target": "ES2022",
+    "allowSyntheticDefaultImports": true,
+    "inlineSourceMap": true,
+    "types": ["node", "jest"]
+  },
+  "include": ["src/**/*", "*.config.ts", "*.config.js", "tests/**/*", "jest.config.cjs"],
+  "exclude": ["node_modules", "dist", "_archived/**/*"]
+}

@@ -1,0 +1,40 @@
+# test creation of a related table containing the foreign keys for the relationship
+mutation {
+  createParent(
+    input: {
+      parent: {
+        parentName: "test f1"
+        childrenByMomParentId: {
+          create: [{name: "child 2 of test f1"}, {name: "child 3 of test f1"}]
+        }
+        childrenByDadParentId: {create: [{name: "child 1 of test f1"}]}
+      }
+    }
+  ) {
+    parent {
+      id
+      parentName
+      childrenByMomParentId {
+        nodes {
+          id
+          name
+          momParent {
+            id
+          }
+        }
+      }
+      childrenByDadParentId {
+        nodes {
+          id
+          momParent {
+            id
+          }
+          dadParent {
+            id
+          }
+          name
+        }
+      }
+    }
+  }
+}
