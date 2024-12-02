@@ -1,15 +1,15 @@
 import {
   type PgInsertSingleStep,
-  pgUpdateSingle,
   type PgUpdateSingleStep,
-} from "@dataplan/pg";
+  pgUpdateSingle,
+} from 'postgraphile/@dataplan/pg';
 import {
+  type InputObjectFieldApplyPlanResolver,
   __InputListStep,
   __InputObjectStep,
-  type InputObjectFieldApplyPlanResolver,
   specFromNodeId,
-} from "postgraphile/grafast";
-import type { PgRelationInputData } from "../relationships.ts";
+} from 'postgraphile/grafast';
+import type {PgRelationInputData} from '../relationships.ts';
 
 export function getNestedConnectByIdPlanResolver<
   TFieldStep extends PgInsertSingleStep | PgUpdateSingleStep =
@@ -17,20 +17,20 @@ export function getNestedConnectByIdPlanResolver<
     | PgUpdateSingleStep,
 >(
   build: GraphileBuild.Build,
-  relationship: PgRelationInputData,
+  relationship: PgRelationInputData
 ): InputObjectFieldApplyPlanResolver<TFieldStep> {
-  const { inflection } = build;
+  const {inflection} = build;
 
-  const { remoteResource, localAttributes, remoteAttributes } = relationship;
+  const {remoteResource, localAttributes, remoteAttributes} = relationship;
 
   const resolver: InputObjectFieldApplyPlanResolver<TFieldStep> = (
     $object,
     args,
-    _info,
+    _info
   ) => {
     const $rawArgs = args.getRaw();
-    const nodeIdHandler = build.getNodeIdHandler &&
-      // @ts-expect-error deno package resolution
+    const nodeIdHandler =
+      build.getNodeIdHandler &&
       build.getNodeIdHandler(inflection.tableType(remoteResource.codec));
     if (!nodeIdHandler) {
       throw new Error(`No nodeIdHandler found for ${remoteResource.name}`);
@@ -40,7 +40,7 @@ export function getNestedConnectByIdPlanResolver<
       // set it and return
       const spec = specFromNodeId(
         nodeIdHandler,
-        $rawArgs.get(inflection.nodeIdFieldName()),
+        $rawArgs.get(inflection.nodeIdFieldName())
       );
 
       Object.keys(spec).forEach((key) => {
@@ -77,7 +77,7 @@ export function getNestedConnectByIdPlanResolver<
 
         const spec = specFromNodeId(
           nodeIdHandler,
-          $rawArg.get(inflection.nodeIdFieldName()),
+          $rawArg.get(inflection.nodeIdFieldName())
         );
         const $item = pgUpdateSingle(remoteResource, spec, attrs);
 

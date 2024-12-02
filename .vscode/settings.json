@@ -1,17 +1,12 @@
 {
-  "deno.enable": true,
-  "deno.future": true,
-  "deno.lint": false,
-  "deno.suggest.imports.autoDiscover": true,
-  "editor.defaultFormatter": "denoland.vscode-deno",
   "eslint.useFlatConfig": true,
   "eslint.options": {
     "overrideConfigFile": "./eslint.config.mjs"
   },
+  "editor.defaultFormatter": "biomejs.biome",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "always",
-    "source.addMissingImports.ts": "always",
-    "source.organizeImports": "always",
-    "source.removeUnusedImports": "always"
+    "quickfix.biome": "explicit",
+    "source.organizeImports.biome": "explicit",
+    "source.fixAll.eslint": "explicit"
   }
 }

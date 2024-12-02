@@ -8,10 +8,13 @@
     "noUncheckedIndexedAccess": true,
     "skipLibCheck": true,
     "strict": true,
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
     "allowImportingTsExtensions": true,
     "noEmit": true,
-    "inlineSourceMap": true
+    "inlineSourceMap": true,
+    "allowJs": true
   },
-  "include": ["src/**/*", "tests/**/*", "*.config.mjs"],
+  "include": ["src/**/*", "tests/**/*", "graphql.config.ts", "eslint.config.mjs"],
   "exclude": ["node_modules", "dist", "_archived/**/*"]
 }
