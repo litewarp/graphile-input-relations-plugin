@@ -1,15 +1,17 @@
 {
-  "extends": "@repo/typescript-config/base.json",
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "allowImportingTsExtensions": true,
-    "moduleResolution": "NodeNext",
-    "noEmit": true,
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "incremental": false,
+    "noUncheckedIndexedAccess": true,
+    "skipLibCheck": true,
     "strict": true,
-    "target": "ES2022",
-    "allowSyntheticDefaultImports": true,
-    "inlineSourceMap": true,
-    "types": ["node", "jest"]
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "inlineSourceMap": true
   },
-  "include": ["src/**/*", "*.config.ts", "*.config.js", "tests/**/*", "jest.config.cjs"],
+  "include": ["src/**/*", "tests/**/*", "*.config.mjs"],
   "exclude": ["node_modules", "dist", "_archived/**/*"]
 }

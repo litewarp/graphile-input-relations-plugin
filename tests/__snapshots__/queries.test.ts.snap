@@ -1,162 +1,162 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+export const snapshot = {};
 
-exports[`a query=forward-connect-by-id.graphql 1`] = `
-{
-  "data": {
-    "createChild": {
-      "child": {
-        "dadParent": {
-          "id": "WyJQYXJlbnQiLDJd",
-          "parentName": "dad",
+snapshot[`global > a > query=forward-connect-by-id.graphql 1`] = `
+[Object: null prototype] {
+  data: [Object: null prototype] {
+    createChild: [Object: null prototype] {
+      child: [Object: null prototype] {
+        dadParent: [Object: null prototype] {
+          id: "WyJQYXJlbnQiLDJd",
+          parentName: "dad",
         },
-        "id": "WyJDaGlsZCIsM10=",
-        "name": "My baby",
+        id: "WyJDaGlsZCIsM10=",
+        name: "My baby",
       },
     },
   },
 }
 `;
 
-exports[`a query=forward-create.graphql 1`] = `
-{
-  "data": {
-    "createChild": {
-      "child": {
-        "dadParent": {
-          "id": "WyJQYXJlbnQiLDNd",
-          "parentName": "Jimmy Constraint",
+snapshot[`global > a > query=forward-create.graphql 1`] = `
+[Object: null prototype] {
+  data: [Object: null prototype] {
+    createChild: [Object: null prototype] {
+      child: [Object: null prototype] {
+        dadParent: [Object: null prototype] {
+          id: "WyJQYXJlbnQiLDNd",
+          parentName: "Jimmy Constraint",
         },
-        "id": "WyJDaGlsZCIsM10=",
-        "momParent": null,
-        "name": "Johnny Q. Constraint",
+        id: "WyJDaGlsZCIsM10=",
+        momParent: null,
+        name: "Johnny Q. Constraint",
       },
     },
   },
 }
 `;
 
-exports[`a query=mixed-multi-level-insert.graphql 1`] = `
-{
-  "data": {
-    "createChild": {
-      "child": {
-        "dadParent": {
-          "childrenByDadParentId": {
-            "nodes": [
-              {
-                "id": "WyJDaGlsZCIsM10=",
-                "name": "Sandra Day",
+snapshot[`global > a > query=mixed-multi-level-insert.graphql 1`] = `
+[Object: null prototype] {
+  data: [Object: null prototype] {
+    createChild: [Object: null prototype] {
+      child: [Object: null prototype] {
+        dadParent: [Object: null prototype] {
+          childrenByDadParentId: [Object: null prototype] {
+            nodes: [
+              [Object: null prototype] {
+                id: "WyJDaGlsZCIsM10=",
+                name: "Sandra Day",
               },
-              {
-                "id": "WyJDaGlsZCIsNF0=",
-                "name": "George Washington",
+              [Object: null prototype] {
+                id: "WyJDaGlsZCIsNF0=",
+                name: "George Washington",
               },
-              {
-                "id": "WyJDaGlsZCIsNV0=",
-                "name": "Martha Washington",
+              [Object: null prototype] {
+                id: "WyJDaGlsZCIsNV0=",
+                name: "Martha Washington",
               },
             ],
-            "totalCount": 3,
+            totalCount: 3,
           },
-          "id": "WyJQYXJlbnQiLDNd",
-          "parentName": "John Q. Washington",
+          id: "WyJQYXJlbnQiLDNd",
+          parentName: "John Q. Washington",
         },
-        "id": "WyJDaGlsZCIsM10=",
-        "name": "Sandra Day",
+        id: "WyJDaGlsZCIsM10=",
+        name: "Sandra Day",
       },
     },
   },
 }
 `;
 
-exports[`a query=reverse-connect-by-id.graphql 1`] = `
-{
-  "data": {
-    "createParent": {
-      "parent": {
-        "childrenByDadParentId": {
-          "edges": [
-            {
-              "node": {
-                "id": "WyJDaGlsZCIsMl0=",
-                "name": "child 2",
+snapshot[`global > a > query=reverse-connect-by-id.graphql 1`] = `
+[Object: null prototype] {
+  data: [Object: null prototype] {
+    createParent: [Object: null prototype] {
+      parent: [Object: null prototype] {
+        childrenByDadParentId: [Object: null prototype] {
+          edges: [
+            [Object: null prototype] {
+              node: [Object: null prototype] {
+                id: "WyJDaGlsZCIsMl0=",
+                name: "child 2",
               },
             },
           ],
         },
-        "id": "WyJQYXJlbnQiLDNd",
-        "parentName": "Daddy-O",
+        id: "WyJQYXJlbnQiLDNd",
+        parentName: "Daddy-O",
       },
     },
   },
 }
 `;
 
-exports[`a query=reverse-create.graphql 1`] = `
-{
-  "data": {
-    "createParent": {
-      "parent": {
-        "childrenByDadParentId": {
-          "nodes": [
-            {
-              "dadParent": {
-                "id": "WyJQYXJlbnQiLDNd",
+snapshot[`global > a > query=reverse-create.graphql 1`] = `
+[Object: null prototype] {
+  data: [Object: null prototype] {
+    createParent: [Object: null prototype] {
+      parent: [Object: null prototype] {
+        childrenByDadParentId: [Object: null prototype] {
+          nodes: [
+            [Object: null prototype] {
+              dadParent: [Object: null prototype] {
+                id: "WyJQYXJlbnQiLDNd",
               },
-              "id": "WyJDaGlsZCIsM10=",
-              "momParent": null,
-              "name": "child 1 of test f1",
+              id: "WyJDaGlsZCIsM10=",
+              momParent: null,
+              name: "child 1 of test f1",
             },
           ],
         },
-        "childrenByMomParentId": {
-          "nodes": [
-            {
-              "id": "WyJDaGlsZCIsNF0=",
-              "momParent": {
-                "id": "WyJQYXJlbnQiLDNd",
+        childrenByMomParentId: [Object: null prototype] {
+          nodes: [
+            [Object: null prototype] {
+              id: "WyJDaGlsZCIsNF0=",
+              momParent: [Object: null prototype] {
+                id: "WyJQYXJlbnQiLDNd",
               },
-              "name": "child 2 of test f1",
+              name: "child 2 of test f1",
             },
-            {
-              "id": "WyJDaGlsZCIsNV0=",
-              "momParent": {
-                "id": "WyJQYXJlbnQiLDNd",
+            [Object: null prototype] {
+              id: "WyJDaGlsZCIsNV0=",
+              momParent: [Object: null prototype] {
+                id: "WyJQYXJlbnQiLDNd",
               },
-              "name": "child 3 of test f1",
+              name: "child 3 of test f1",
             },
           ],
         },
-        "id": "WyJQYXJlbnQiLDNd",
-        "parentName": "test f1",
+        id: "WyJQYXJlbnQiLDNd",
+        parentName: "test f1",
       },
     },
   },
 }
 `;
 
-exports[`a query=triple-nested-connect-by-id.graphql 1`] = `
-{
-  "data": {
-    "createChild": {
-      "child": {
-        "dadParent": {
-          "id": "WyJQYXJlbnQiLDJd",
-          "parentName": "dad",
+snapshot[`global > a > query=triple-nested-connect-by-id.graphql 1`] = `
+[Object: null prototype] {
+  data: [Object: null prototype] {
+    createChild: [Object: null prototype] {
+      child: [Object: null prototype] {
+        dadParent: [Object: null prototype] {
+          id: "WyJQYXJlbnQiLDJd",
+          parentName: "dad",
         },
-        "id": "WyJDaGlsZCIsM10=",
-        "name": "Sonia Sotomayor",
-        "studentsByStudentId": {
-          "nodes": [
-            {
-              "id": "WyJTdHVkZW50IiwyLDNd",
-              "school": {
-                "id": "WyJTY2hvb2wiLDJd",
-                "name": "pine",
+        id: "WyJDaGlsZCIsM10=",
+        name: "Sonia Sotomayor",
+        studentsByStudentId: [Object: null prototype] {
+          nodes: [
+            [Object: null prototype] {
+              id: "WyJTdHVkZW50IiwyLDNd",
+              school: [Object: null prototype] {
+                id: "WyJTY2hvb2wiLDJd",
+                name: "pine",
               },
             },
           ],
-          "totalCount": 1,
+          totalCount: 1,
         },
       },
     },
@@ -164,47 +164,47 @@ exports[`a query=triple-nested-connect-by-id.graphql 1`] = `
 }
 `;
 
-exports[`a query=triple-nested-create.graphql 1`] = `
-{
-  "data": {
-    "createChild": {
-      "child": {
-        "id": "WyJDaGlsZCIsM10=",
-        "momParent": {
-          "childrenByMomParentId": {
-            "nodes": [
-              {
-                "id": "WyJDaGlsZCIsM10=",
-                "name": "Hugo Black",
-                "studentsByStudentId": {
-                  "nodes": [],
-                  "totalCount": 0,
+snapshot[`global > a > query=triple-nested-create.graphql 1`] = `
+[Object: null prototype] {
+  data: [Object: null prototype] {
+    createChild: [Object: null prototype] {
+      child: [Object: null prototype] {
+        id: "WyJDaGlsZCIsM10=",
+        momParent: [Object: null prototype] {
+          childrenByMomParentId: [Object: null prototype] {
+            nodes: [
+              [Object: null prototype] {
+                id: "WyJDaGlsZCIsM10=",
+                name: "Hugo Black",
+                studentsByStudentId: [Object: null prototype] {
+                  nodes: [],
+                  totalCount: 0,
                 },
               },
-              {
-                "id": "WyJDaGlsZCIsNF0=",
-                "name": "John Roberts",
-                "studentsByStudentId": {
-                  "nodes": [
-                    {
-                      "id": "WyJTdHVkZW50IiwyLDRd",
-                      "school": {
-                        "id": "WyJTY2hvb2wiLDJd",
+              [Object: null prototype] {
+                id: "WyJDaGlsZCIsNF0=",
+                name: "John Roberts",
+                studentsByStudentId: [Object: null prototype] {
+                  nodes: [
+                    [Object: null prototype] {
+                      id: "WyJTdHVkZW50IiwyLDRd",
+                      school: [Object: null prototype] {
+                        id: "WyJTY2hvb2wiLDJd",
                       },
-                      "schoolId": 2,
-                      "studentId": 4,
+                      schoolId: 2,
+                      studentId: 4,
                     },
                   ],
-                  "totalCount": 1,
+                  totalCount: 1,
                 },
               },
             ],
-            "totalCount": 2,
+            totalCount: 2,
           },
-          "id": "WyJQYXJlbnQiLDNd",
-          "parentName": "Sandra Day O'Connor",
+          id: "WyJQYXJlbnQiLDNd",
+          parentName: "Sandra Day O'Connor",
         },
-        "name": "Hugo Black",
+        name: "Hugo Black",
       },
     },
   },

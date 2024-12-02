@@ -1,14 +1,14 @@
 import {
+  pgInsertSingle,
   type PgInsertSingleStep,
   type PgUpdateSingleStep,
-  pgInsertSingle,
-} from '@dataplan/pg';
+} from "@dataplan/pg";
 import {
-  type InputObjectFieldApplyPlanResolver,
   __InputListStep,
   __InputObjectStep,
-} from 'postgraphile/grafast';
-import type {PgRelationInputData} from '../relationships.ts';
+  type InputObjectFieldApplyPlanResolver,
+} from "postgraphile/grafast";
+import type { PgRelationInputData } from "../relationships.ts";
 
 export function getNestedCreatePlanResolver<
   TFieldStep extends PgInsertSingleStep | PgUpdateSingleStep =
@@ -16,38 +16,43 @@ export function getNestedCreatePlanResolver<
     | PgUpdateSingleStep,
 >(
   build: GraphileBuild.Build,
-  relation: PgRelationInputData
+  relation: PgRelationInputData,
 ): InputObjectFieldApplyPlanResolver<TFieldStep> {
   const {
-    behavior: {pgCodecAttributeMatches},
+    behavior: { pgCodecAttributeMatches },
     inflection,
   } = build;
 
-  const {remoteResource, localAttributes, remoteAttributes} = relation;
+  const { remoteResource, localAttributes, remoteAttributes } = relation;
 
   const primaryUnique = remoteResource.uniques.find((u) => u.isPrimary);
 
-  const relFieldNames = (build.pgRelationshipInputTypes[remoteResource.name] ?? []).map(
-    (r) => r.fieldName
-  );
+  const relFieldNames =
+    (build.pgRelationshipInputTypes[remoteResource.name] ?? []).map(
+      (r) => r.fieldName,
+    );
 
   const prepareAttrs = ($object: __InputObjectStep) => {
     return Object.keys(remoteResource.codec.attributes).reduce((memo, name) => {
       const isInsertable = pgCodecAttributeMatches(
+        // @ts-expect-error deno package resolution
         [remoteResource.codec, name],
-        'attribute:insert'
+        "attribute:insert",
       );
 
       if (!isInsertable) return memo;
 
-      const isPrimaryAttribute = primaryUnique?.attributes.some((a) => a === name);
+      const isPrimaryAttribute = primaryUnique?.attributes.some((a) =>
+        a === name
+      );
       const inflectedName = inflection.attribute({
         attributeName: name,
+        // @ts-expect-error deno package resolution
         codec: remoteResource.codec,
       });
 
       if (isPrimaryAttribute) {
-        if (inflectedName === 'rowId') {
+        if (inflectedName === "rowId") {
           return memo;
         }
         // WARNING!! We have to eval the argument here
@@ -69,7 +74,7 @@ export function getNestedCreatePlanResolver<
   const resolver: InputObjectFieldApplyPlanResolver<TFieldStep> = (
     $object,
     args,
-    _info
+    _info,
   ) => {
     const $rawArgs = args.getRaw();
 
@@ -96,7 +101,7 @@ export function getNestedCreatePlanResolver<
         const attrs = remoteAttributes.reduce((memo, remote, idx) => {
           const local = localAttributes[idx];
           if (remote && local) {
-            return {...memo, [remote.name]: $object.get(local.name)};
+            return { ...memo, [remote.name]: $object.get(local.name) };
           }
           return memo;
         }, prepareAttrs($rawArg));
