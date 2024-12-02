@@ -1,28 +1,10 @@
-import type {
-  PgCodecRelation,
-  PgCodecWithAttributes,
-  PgRegistry,
-  PgResource,
-  PgResourceUnique,
-} from '@dataplan/pg';
+import type {PgResource} from '@dataplan/pg';
 import type {} from 'graphile-build-pg';
+import type {PgTableResource} from '../interfaces.ts';
 
 export function isPgTableResource(r: PgResource): r is PgTableResource {
   return Boolean(r.codec.attributes) && !r.parameters;
 }
-
-export interface PgCodecRelationWithName
-  extends PgCodecRelation<PgCodecWithAttributes, PgTableResource> {
-  name: string;
-  resource: string;
-}
-export type PgTableResource = PgResource<
-  string,
-  PgCodecWithAttributes,
-  PgResourceUnique[],
-  undefined,
-  PgRegistry
->;
 
 export const isNestedMutableResource = (
   build: GraphileBuild.Build,

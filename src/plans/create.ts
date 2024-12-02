@@ -10,6 +10,7 @@ import {
   __InputObjectStep,
 } from 'grafast';
 import type {PgRelationInputData} from '../relationships.ts';
+import {rebuildObject} from '../utils/object.ts';
 
 export function getNestedCreatePlanResolver<
   TFieldStep extends PgInsertSingleStep | PgUpdateSingleStep =
@@ -32,15 +33,16 @@ export function getNestedCreatePlanResolver<
     (r) => r.fieldName
   );
 
-  const prepareAttrs = ($object: __InputObjectStep) => {
-    return Object.keys(remoteResource.codec.attributes).reduce(
-      (memo, name) => {
+  const prepareAttrs = ($object: __InputObjectStep): Record<string, ExecutableStep> => {
+    return rebuildObject({
+      obj: remoteResource.codec.attributes,
+      filter: ([name, _]) => {
         const isInsertable = pgCodecAttributeMatches(
           [remoteResource.codec, name],
           'attribute:insert'
         );
 
-        if (!isInsertable) return memo;
+        if (!isInsertable) return false;
 
         const isPrimaryAttribute = primaryUnique?.attributes.some((a) => a === name);
         const inflectedName = inflection.attribute({
@@ -50,7 +52,7 @@ export function getNestedCreatePlanResolver<
 
         if (isPrimaryAttribute) {
           if (inflectedName === 'rowId') {
-            return memo;
+            return false;
           }
           // WARNING!! We have to eval the argument here
           // and omit the value if it's not present
@@ -58,16 +60,20 @@ export function getNestedCreatePlanResolver<
           // because of the attribute check on PgInsertSingleStep
           // and PgUpdateSingleStep
           if (!$object.evalHas(inflectedName)) {
-            return memo;
+            return false;
           }
         }
-        return {
-          ...memo,
-          [name]: $object.get(inflectedName),
-        };
+        return true;
       },
-      Object.create(null) as Record<string, ExecutableStep>
-    );
+      map: ([name, _]) => {
+        return [
+          name,
+          $object.get(
+            inflection.attribute({attributeName: name, codec: remoteResource.codec})
+          ),
+        ];
+      },
+    });
   };
 
   const resolver: InputObjectFieldApplyPlanResolver<TFieldStep> = (
@@ -87,7 +93,9 @@ export function getNestedCreatePlanResolver<
           $object.set(local.name, $item.get(remote.name));
         }
       });
-      relFieldNames.forEach((field) => args.apply($item, [field]));
+      for (const field of relFieldNames) {
+        args.apply($item, [field]);
+      }
     } else if ($rawArgs instanceof __InputListStep) {
       const length = $rawArgs.evalLength() ?? 0;
       for (let i = 0; i < length; i++) {
@@ -97,16 +105,19 @@ export function getNestedCreatePlanResolver<
           console.warn(`Unexpected args type: ${$rawArg.constructor.name}`);
           continue;
         }
-        const attrs = remoteAttributes.reduce((memo, remote, idx) => {
+        const attrs = prepareAttrs($rawArg);
+
+        for (const [idx, remote] of remoteAttributes.entries()) {
           const local = localAttributes[idx];
-          if (remote && local) {
-            return {...memo, [remote.name]: $object.get(local.name)};
-          }
-          return memo;
-        }, prepareAttrs($rawArg));
+          if (!remote || !local) continue;
+
+          attrs[remote.name] = $object.get(local.name);
+        }
 
         const $item = pgInsertSingle(remoteResource, attrs);
-        relFieldNames.forEach((field) => args.apply($item, [i, field]));
+        for (const field of relFieldNames) {
+          args.apply($item, [i, field]);
+        }
       }
     } else {
       console.warn(`Unexpected args type: ${$rawArgs.constructor.name}`);

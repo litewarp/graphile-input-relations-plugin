@@ -43,10 +43,9 @@ export function getNestedConnectByIdPlanResolver<
         nodeIdHandler,
         $rawArgs.get(inflection.nodeIdFieldName())
       ) as Record<string, ExecutableStep>;
-
+      // biome-ignore lint/complexity/noForEach: This is a simple loop
       Object.keys(spec).forEach((key) => {
         const remoteAttrIdx = remoteAttributes.map((a) => a.name).indexOf(key);
-
         const local = localAttributes[remoteAttrIdx];
         if (local) {
           $object.set(local.name, spec[key]);
@@ -67,15 +66,12 @@ export function getNestedConnectByIdPlanResolver<
           console.warn(`Unexpected args type: ${$rawArg.constructor.name}`);
           continue;
         }
-        const attrs = remoteAttributes.reduce((memo, remote, idx) => {
+        const attrs: Record<string, ExecutableStep> = {};
+        for (const [idx, remote] of remoteAttributes.entries()) {
           const local = localAttributes[idx];
-          if (!local || !remote) return memo;
-          return {
-            ...memo,
-            [remote.name]: $object.get(local.name),
-          };
-        }, {});
-
+          if (!local || !remote) continue;
+          attrs[remote.name] = $object.get(local.name);
+        }
         const spec = specFromNodeId(
           nodeIdHandler,
           $rawArg.get(inflection.nodeIdFieldName())

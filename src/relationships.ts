@@ -4,7 +4,8 @@ import type {
   PgCodecWithAttributes,
 } from '@dataplan/pg';
 import type {GraphileBuild} from 'graphile-build';
-import {type PgTableResource, isNestedMutableResource} from './helpers.ts';
+import type {PgTableResource} from './interfaces.ts';
+import {isNestedMutableResource} from './utils/resource.ts';
 
 export interface PgCodecAttributeWithName extends PgCodecAttribute {
   name: string;
@@ -53,12 +54,8 @@ export const getRelationships = (
       isReferencee: isReferencee,
       remoteResource: remoteResource,
     };
+    relationship.fieldName = build.inflection.relationInputField(relationship);
 
-    return [
-      ...memo,
-      {
-        ...relationship,
-        fieldName: build.inflection.relationInputField(relationship),
-      },
-    ];
+    memo.push(relationship);
+    return memo;
   }, [] as PgRelationInputData[]);
