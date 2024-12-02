@@ -4,8 +4,8 @@ import type {
   PgRegistry,
   PgResource,
   PgResourceUnique,
-} from 'postgraphile/@dataplan/pg';
-import type {} from 'postgraphile/graphile-build-pg';
+} from '@dataplan/pg';
+import type {} from 'graphile-build-pg';
 
 export function isPgTableResource(r: PgResource): r is PgTableResource {
   return Boolean(r.codec.attributes) && !r.parameters;

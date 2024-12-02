@@ -1,6 +1,6 @@
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {fixupConfigRules} from '@eslint/compat';
+import {fixupConfigRules, includeIgnoreFile} from '@eslint/compat';
 import {FlatCompat} from '@eslint/eslintrc';
 import tseslint from 'typescript-eslint';
 
@@ -13,8 +13,10 @@ const compat = new FlatCompat({
 });
 
 export default tseslint.config(
-  tseslint.configs.base,
+  includeIgnoreFile(path.resolve(__dirname, '.gitignore')),
   ...fixupConfigRules(compat.extends('plugin:graphile-export/recommended')),
+  ...fixupConfigRules(compat.extends('biome')),
+  tseslint.configs.recommendedTypeCheckedOnly,
   {
     languageOptions: {
       parserOptions: {
@@ -37,5 +39,8 @@ export default tseslint.config(
         },
       ],
     },
+  },
+  {
+    files: ['src/**/*.ts', 'tests/*.ts'],
   }
 );

@@ -16,7 +16,7 @@ export async function withPgPool<T>(cb: (pool: pg.Pool) => Promise<T>): Promise<
 export async function withPgClient<T>(
   cb: (client: pg.PoolClient) => Promise<T>
 ): Promise<T> {
-  return withPgPool(async (pool) => {
+  return await withPgPool(async (pool) => {
     const client = await pool.connect();
     try {
       return await cb(client);
@@ -30,7 +30,7 @@ export async function withTransaction<T>(
   cb: (client: pg.PoolClient) => Promise<T>,
   closeCommand = 'rollback'
 ): Promise<T> {
-  return withPgClient(async (client) => {
+  return await withPgClient(async (client) => {
     await client.query('begin');
     try {
       return await cb(client);
@@ -50,7 +50,7 @@ export function getFixturesForSqlSchema(sqlSchema: string) {
     : [];
 }
 
-export async function readFixtureForSqlSchema(sqlSchema: string, fixture: string) {
+export function readFixtureForSqlSchema(sqlSchema: string, fixture: string) {
   return fs.promises.readFile(
     path.resolve(__dirname, 'schemas', sqlSchema, 'fixtures', 'queries', fixture),
     'utf8'

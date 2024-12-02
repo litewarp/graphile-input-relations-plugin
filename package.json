@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/package.json",
   "name": "@litewarp/graphile-input-relations-plugin",
   "type": "module",
   "devDependencies": {
@@ -9,9 +10,11 @@
     "@types/bun": "latest",
     "@types/pg": "^8.11.10",
     "eslint": "^9.16.0",
+    "eslint-config-biome": "^1.9.4",
     "eslint-plugin-graphile-export": "^0.0.2-beta.4",
     "graphql-config": "^5.1.3",
     "pg": "^8.13.1",
+    "typescript": "^5.7.2",
     "typescript-eslint": "^8.16.0"
   },
   "dependencies": {
@@ -19,7 +22,7 @@
     "postgraphile": "^5.0.0-beta.33"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.7.2"
   },
   "overrides": {
     "eslint": "^9.16.0",
@@ -27,9 +30,10 @@
   },
   "scripts": {
     "test": "bun test --watch",
-    "format-and-lint": "biome check",
-    "format-and-lint:fix": "biome check --fix",
-    "format-and-lint:staged": "biome check -error-on-warnings --no-errors-on-unmatched --staged"
+    "format-and-lint": "biome check && eslint",
+    "format-and-lint:fix": "biome check --fix && eslint --fix",
+    "format-and-lint:staged": "biome check -error-on-warnings --no-errors-on-unmatched --staged && eslint"
   },
-  "packageManager": "bun@1.1.38"
+  "packageManager": "bun@1.1.38",
+  "trustedDependencies": ["@biomejs/biome"]
 }

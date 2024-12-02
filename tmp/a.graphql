@@ -1,7 +1,5 @@
 type Child implements Node {
-  """
-  Reads a single `Parent` that is related to this `Child`.
-  """
+  """Reads a single `Parent` that is related to this `Child`."""
   dadParent: Parent
   dadParentId: Int
 
@@ -10,26 +8,18 @@ type Child implements Node {
   """
   id: ID!
 
-  """
-  Reads a single `Parent` that is related to this `Child`.
-  """
+  """Reads a single `Parent` that is related to this `Child`."""
   momParent: Parent
   momParentId: Int
   name: String!
   rowId: Int!
 
-  """
-  Reads and enables pagination through a set of `Student`.
-  """
+  """Reads and enables pagination through a set of `Student`."""
   studentsByStudentId(
-    """
-    Read all values in the set after (below) this cursor.
-    """
+    """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """
-    Read all values in the set before (above) this cursor.
-    """
+    """Read all values in the set before (above) this cursor."""
     before: Cursor
 
     """
@@ -37,14 +27,10 @@ type Child implements Node {
     """
     condition: StudentCondition
 
-    """
-    Only read the first `n` values of the set.
-    """
+    """Only read the first `n` values of the set."""
     first: Int
 
-    """
-    Only read the last `n` values of the set.
-    """
+    """Only read the last `n` values of the set."""
     last: Int
 
     """
@@ -53,9 +39,7 @@ type Child implements Node {
     """
     offset: Int
 
-    """
-    The method to use when ordering `Student`.
-    """
+    """The method to use when ordering `Student`."""
     orderBy: [StudentOrderBy!] = [PRIMARY_KEY_ASC]
   ): StudentConnection!
 }
@@ -70,43 +54,29 @@ input ChildByMyStudentIdConnectByNodeIdInput {
   id: ID!
 }
 
-"""
-The Child to be created by this mutation.
-"""
+"""The Child to be created by this mutation."""
 input ChildByMyStudentIdCreateInput {
   dadParentId: Int
   momParentId: Int
   name: String!
 
-  """
-  Nested connector type for parentByMyDadParentId
-  """
+  """Nested connector type for parentByMyDadParentId"""
   parentByDadParentId: ParentByMyDadParentIdInput
 
-  """
-  Nested connector type for parentByMyMomParentId
-  """
+  """Nested connector type for parentByMyMomParentId"""
   parentByMomParentId: ParentByMyMomParentIdInput
   rowId: Int
 
-  """
-  Nested connector type for studentsByTheirStudentId
-  """
+  """Nested connector type for studentsByTheirStudentId"""
   studentsByStudentId: StudentsByTheirStudentIdInput
 }
 
-"""
-Relationship input type for childByMyStudentId
-"""
+"""Relationship input type for childByMyStudentId"""
 input ChildByMyStudentIdInput {
-  """
-  Connect child by node id in the childByMyStudentId relationship
-  """
+  """Connect child by node id in the childByMyStudentId relationship"""
   connectById: ChildByMyStudentIdConnectByNodeIdInput
 
-  """
-  A Child created and linked to this object
-  """
+  """A Child created and linked to this object"""
   create: ChildByMyStudentIdCreateInput
 }
 
@@ -114,90 +84,60 @@ input ChildByMyStudentIdInput {
 A condition to be used against `Child` object types. All fields are tested for equality and combined with a logical ‘and.’
 """
 input ChildCondition {
-  """
-  Checks for equality with the object’s `dadParentId` field.
-  """
+  """Checks for equality with the object’s `dadParentId` field."""
   dadParentId: Int
 
-  """
-  Checks for equality with the object’s `momParentId` field.
-  """
+  """Checks for equality with the object’s `momParentId` field."""
   momParentId: Int
 
-  """
-  Checks for equality with the object’s `rowId` field.
-  """
+  """Checks for equality with the object’s `rowId` field."""
   rowId: Int
 }
 
-"""
-A connection to a list of `Child` values.
-"""
+"""A connection to a list of `Child` values."""
 type ChildConnection {
   """
   A list of edges which contains the `Child` and cursor to aid in pagination.
   """
   edges: [ChildEdge]!
 
-  """
-  A list of `Child` objects.
-  """
+  """A list of `Child` objects."""
   nodes: [Child]!
 
-  """
-  Information to aid in pagination.
-  """
+  """Information to aid in pagination."""
   pageInfo: PageInfo!
 
-  """
-  The count of *all* `Child` you could get from the connection.
-  """
+  """The count of *all* `Child` you could get from the connection."""
   totalCount: Int!
 }
 
-"""
-A `Child` edge in the connection.
-"""
+"""A `Child` edge in the connection."""
 type ChildEdge {
-  """
-  A cursor for use in pagination.
-  """
+  """A cursor for use in pagination."""
   cursor: Cursor
 
-  """
-  The `Child` at the end of the edge.
-  """
+  """The `Child` at the end of the edge."""
   node: Child
 }
 
-"""
-An input for mutations affecting `Child`
-"""
+"""An input for mutations affecting `Child`"""
 input ChildInput {
   dadParentId: Int
   momParentId: Int
   name: String!
 
-  """
-  Nested connector type for parentByMyDadParentId
-  """
+  """Nested connector type for parentByMyDadParentId"""
   parentByDadParentId: ParentByMyDadParentIdInput
 
-  """
-  Nested connector type for parentByMyMomParentId
-  """
+  """Nested connector type for parentByMyMomParentId"""
   parentByMomParentId: ParentByMyMomParentIdInput
   rowId: Int
 
-  """
-  Nested connector type for studentsByTheirStudentId
-  """
+  """Nested connector type for studentsByTheirStudentId"""
   studentsByStudentId: StudentsByTheirStudentIdInput
 }
 
-"""
-Methods to use when ordering `Child`.
-"""
+"""Methods to use when ordering `Child`."""
 enum ChildOrderBy {
   DAD_PARENT_ID_ASC
   DAD_PARENT_ID_DESC
@@ -218,20 +158,14 @@ input ChildPatch {
   momParentId: Int
   name: String
 
-  """
-  Nested connector type for parentByMyDadParentId
-  """
+  """Nested connector type for parentByMyDadParentId"""
   parentByDadParentId: ParentByMyDadParentIdInput
 
-  """
-  Nested connector type for parentByMyMomParentId
-  """
+  """Nested connector type for parentByMyMomParentId"""
   parentByMomParentId: ParentByMyMomParentIdInput
   rowId: Int
 
-  """
-  Nested connector type for studentsByTheirStudentId
-  """
+  """Nested connector type for studentsByTheirStudentId"""
   studentsByStudentId: StudentsByTheirStudentIdInput
 }
 
@@ -245,43 +179,31 @@ input ChildrenByTheirDadParentIdConnectByNodeIdInput {
   id: ID!
 }
 
-"""
-The Child to be created by this mutation.
-"""
+"""The Child to be created by this mutation."""
 input ChildrenByTheirDadParentIdCreateInput {
   dadParentId: Int
   momParentId: Int
   name: String!
 
-  """
-  Nested connector type for parentByMyDadParentId
-  """
+  """Nested connector type for parentByMyDadParentId"""
   parentByDadParentId: ParentByMyDadParentIdInput
 
-  """
-  Nested connector type for parentByMyMomParentId
-  """
+  """Nested connector type for parentByMyMomParentId"""
   parentByMomParentId: ParentByMyMomParentIdInput
   rowId: Int
 
-  """
-  Nested connector type for studentsByTheirStudentId
-  """
+  """Nested connector type for studentsByTheirStudentId"""
   studentsByStudentId: StudentsByTheirStudentIdInput
 }
 
-"""
-Relationship input type for childrenByTheirDadParentId
-"""
+"""Relationship input type for childrenByTheirDadParentId"""
 input ChildrenByTheirDadParentIdInput {
   """
   Connect child by node id in the childrenByTheirDadParentId relationship
   """
   connectById: [ChildrenByTheirDadParentIdConnectByNodeIdInput!]
 
-  """
-  A Child created and linked to this object
-  """
+  """A Child created and linked to this object"""
   create: [ChildrenByTheirDadParentIdCreateInput!]
 }
 
@@ -295,53 +217,37 @@ input ChildrenByTheirMomParentIdConnectByNodeIdInput {
   id: ID!
 }
 
-"""
-The Child to be created by this mutation.
-"""
+"""The Child to be created by this mutation."""
 input ChildrenByTheirMomParentIdCreateInput {
   dadParentId: Int
   momParentId: Int
   name: String!
 
-  """
-  Nested connector type for parentByMyDadParentId
-  """
+  """Nested connector type for parentByMyDadParentId"""
   parentByDadParentId: ParentByMyDadParentIdInput
 
-  """
-  Nested connector type for parentByMyMomParentId
-  """
+  """Nested connector type for parentByMyMomParentId"""
   parentByMomParentId: ParentByMyMomParentIdInput
   rowId: Int
 
-  """
-  Nested connector type for studentsByTheirStudentId
-  """
+  """Nested connector type for studentsByTheirStudentId"""
   studentsByStudentId: StudentsByTheirStudentIdInput
 }
 
-"""
-Relationship input type for childrenByTheirMomParentId
-"""
+"""Relationship input type for childrenByTheirMomParentId"""
 input ChildrenByTheirMomParentIdInput {
   """
   Connect child by node id in the childrenByTheirMomParentId relationship
   """
   connectById: [ChildrenByTheirMomParentIdConnectByNodeIdInput!]
 
-  """
-  A Child created and linked to this object
-  """
+  """A Child created and linked to this object"""
   create: [ChildrenByTheirMomParentIdCreateInput!]
 }
 
-"""
-All input for the create `Child` mutation.
-"""
+"""All input for the create `Child` mutation."""
 input CreateChildInput {
-  """
-  The `Child` to be created by this mutation.
-  """
+  """The `Child` to be created by this mutation."""
   child: ChildInput!
 
   """
@@ -351,22 +257,14 @@ input CreateChildInput {
   clientMutationId: String
 }
 
-"""
-The output of our create `Child` mutation.
-"""
+"""The output of our create `Child` mutation."""
 type CreateChildPayload {
-  """
-  The `Child` that was created by this mutation.
-  """
+  """The `Child` that was created by this mutation."""
   child: Child
 
-  """
-  An edge for our `Child`. May be used by Relay 1.
-  """
+  """An edge for our `Child`. May be used by Relay 1."""
   childEdge(
-    """
-    The method to use when ordering `Child`.
-    """
+    """The method to use when ordering `Child`."""
     orderBy: [ChildOrderBy!]! = [PRIMARY_KEY_ASC]
   ): ChildEdge
 
@@ -382,9 +280,7 @@ type CreateChildPayload {
   query: Query
 }
 
-"""
-All input for the create `Parent` mutation.
-"""
+"""All input for the create `Parent` mutation."""
 input CreateParentInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -392,15 +288,11 @@ input CreateParentInput {
   """
   clientMutationId: String
 
-  """
-  The `Parent` to be created by this mutation.
-  """
+  """The `Parent` to be created by this mutation."""
   parent: ParentInput!
 }
 
-"""
-The output of our create `Parent` mutation.
-"""
+"""The output of our create `Parent` mutation."""
 type CreateParentPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -408,18 +300,12 @@ type CreateParentPayload {
   """
   clientMutationId: String
 
-  """
-  The `Parent` that was created by this mutation.
-  """
+  """The `Parent` that was created by this mutation."""
   parent: Parent
 
-  """
-  An edge for our `Parent`. May be used by Relay 1.
-  """
+  """An edge for our `Parent`. May be used by Relay 1."""
   parentEdge(
-    """
-    The method to use when ordering `Parent`.
-    """
+    """The method to use when ordering `Parent`."""
     orderBy: [ParentOrderBy!]! = [PRIMARY_KEY_ASC]
   ): ParentEdge
 
@@ -429,9 +315,7 @@ type CreateParentPayload {
   query: Query
 }
 
-"""
-All input for the create `School` mutation.
-"""
+"""All input for the create `School` mutation."""
 input CreateSchoolInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -439,15 +323,11 @@ input CreateSchoolInput {
   """
   clientMutationId: String
 
-  """
-  The `School` to be created by this mutation.
-  """
+  """The `School` to be created by this mutation."""
   school: SchoolInput!
 }
 
-"""
-The output of our create `School` mutation.
-"""
+"""The output of our create `School` mutation."""
 type CreateSchoolPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -460,25 +340,17 @@ type CreateSchoolPayload {
   """
   query: Query
 
-  """
-  The `School` that was created by this mutation.
-  """
+  """The `School` that was created by this mutation."""
   school: School
 
-  """
-  An edge for our `School`. May be used by Relay 1.
-  """
+  """An edge for our `School`. May be used by Relay 1."""
   schoolEdge(
-    """
-    The method to use when ordering `School`.
-    """
+    """The method to use when ordering `School`."""
     orderBy: [SchoolOrderBy!]! = [PRIMARY_KEY_ASC]
   ): SchoolEdge
 }
 
-"""
-All input for the create `Student` mutation.
-"""
+"""All input for the create `Student` mutation."""
 input CreateStudentInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -486,15 +358,11 @@ input CreateStudentInput {
   """
   clientMutationId: String
 
-  """
-  The `Student` to be created by this mutation.
-  """
+  """The `Student` to be created by this mutation."""
   student: StudentInput!
 }
 
-"""
-The output of our create `Student` mutation.
-"""
+"""The output of our create `Student` mutation."""
 type CreateStudentPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -507,25 +375,17 @@ type CreateStudentPayload {
   """
   query: Query
 
-  """
-  The `Student` that was created by this mutation.
-  """
+  """The `Student` that was created by this mutation."""
   student: Student
 
-  """
-  An edge for our `Student`. May be used by Relay 1.
-  """
+  """An edge for our `Student`. May be used by Relay 1."""
   studentEdge(
-    """
-    The method to use when ordering `Student`.
-    """
+    """The method to use when ordering `Student`."""
     orderBy: [StudentOrderBy!]! = [PRIMARY_KEY_ASC]
   ): StudentEdge
 }
 
-"""
-All input for the create `Teacher` mutation.
-"""
+"""All input for the create `Teacher` mutation."""
 input CreateTeacherInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -533,15 +393,11 @@ input CreateTeacherInput {
   """
   clientMutationId: String
 
-  """
-  The `Teacher` to be created by this mutation.
-  """
+  """The `Teacher` to be created by this mutation."""
   teacher: TeacherInput!
 }
 
-"""
-The output of our create `Teacher` mutation.
-"""
+"""The output of our create `Teacher` mutation."""
 type CreateTeacherPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -554,30 +410,20 @@ type CreateTeacherPayload {
   """
   query: Query
 
-  """
-  The `Teacher` that was created by this mutation.
-  """
+  """The `Teacher` that was created by this mutation."""
   teacher: Teacher
 
-  """
-  An edge for our `Teacher`. May be used by Relay 1.
-  """
+  """An edge for our `Teacher`. May be used by Relay 1."""
   teacherEdge(
-    """
-    The method to use when ordering `Teacher`.
-    """
+    """The method to use when ordering `Teacher`."""
     orderBy: [TeacherOrderBy!]! = [PRIMARY_KEY_ASC]
   ): TeacherEdge
 }
 
-"""
-A location in a connection that can be used for resuming pagination.
-"""
+"""A location in a connection that can be used for resuming pagination."""
 scalar Cursor
 
-"""
-All input for the `deleteChildById` mutation.
-"""
+"""All input for the `deleteChildById` mutation."""
 input DeleteChildByIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -591,9 +437,7 @@ input DeleteChildByIdInput {
   id: ID!
 }
 
-"""
-All input for the `deleteChild` mutation.
-"""
+"""All input for the `deleteChild` mutation."""
 input DeleteChildInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -603,22 +447,14 @@ input DeleteChildInput {
   rowId: Int!
 }
 
-"""
-The output of our delete `Child` mutation.
-"""
+"""The output of our delete `Child` mutation."""
 type DeleteChildPayload {
-  """
-  The `Child` that was deleted by this mutation.
-  """
+  """The `Child` that was deleted by this mutation."""
   child: Child
 
-  """
-  An edge for our `Child`. May be used by Relay 1.
-  """
+  """An edge for our `Child`. May be used by Relay 1."""
   childEdge(
-    """
-    The method to use when ordering `Child`.
-    """
+    """The method to use when ordering `Child`."""
     orderBy: [ChildOrderBy!]! = [PRIMARY_KEY_ASC]
   ): ChildEdge
 
@@ -635,9 +471,7 @@ type DeleteChildPayload {
   query: Query
 }
 
-"""
-All input for the `deleteParentById` mutation.
-"""
+"""All input for the `deleteParentById` mutation."""
 input DeleteParentByIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -651,9 +485,7 @@ input DeleteParentByIdInput {
   id: ID!
 }
 
-"""
-All input for the `deleteParent` mutation.
-"""
+"""All input for the `deleteParent` mutation."""
 input DeleteParentInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -663,9 +495,7 @@ input DeleteParentInput {
   rowId: Int!
 }
 
-"""
-The output of our delete `Parent` mutation.
-"""
+"""The output of our delete `Parent` mutation."""
 type DeleteParentPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -674,18 +504,12 @@ type DeleteParentPayload {
   clientMutationId: String
   deletedParentId: ID
 
-  """
-  The `Parent` that was deleted by this mutation.
-  """
+  """The `Parent` that was deleted by this mutation."""
   parent: Parent
 
-  """
-  An edge for our `Parent`. May be used by Relay 1.
-  """
+  """An edge for our `Parent`. May be used by Relay 1."""
   parentEdge(
-    """
-    The method to use when ordering `Parent`.
-    """
+    """The method to use when ordering `Parent`."""
     orderBy: [ParentOrderBy!]! = [PRIMARY_KEY_ASC]
   ): ParentEdge
 
@@ -695,9 +519,7 @@ type DeleteParentPayload {
   query: Query
 }
 
-"""
-All input for the `deleteSchoolById` mutation.
-"""
+"""All input for the `deleteSchoolById` mutation."""
 input DeleteSchoolByIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -711,9 +533,7 @@ input DeleteSchoolByIdInput {
   id: ID!
 }
 
-"""
-All input for the `deleteSchool` mutation.
-"""
+"""All input for the `deleteSchool` mutation."""
 input DeleteSchoolInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -723,9 +543,7 @@ input DeleteSchoolInput {
   rowId: Int!
 }
 
-"""
-The output of our delete `School` mutation.
-"""
+"""The output of our delete `School` mutation."""
 type DeleteSchoolPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -739,25 +557,17 @@ type DeleteSchoolPayload {
   """
   query: Query
 
-  """
-  The `School` that was deleted by this mutation.
-  """
+  """The `School` that was deleted by this mutation."""
   school: School
 
-  """
-  An edge for our `School`. May be used by Relay 1.
-  """
+  """An edge for our `School`. May be used by Relay 1."""
   schoolEdge(
-    """
-    The method to use when ordering `School`.
-    """
+    """The method to use when ordering `School`."""
     orderBy: [SchoolOrderBy!]! = [PRIMARY_KEY_ASC]
   ): SchoolEdge
 }
 
-"""
-All input for the `deleteStudentById` mutation.
-"""
+"""All input for the `deleteStudentById` mutation."""
 input DeleteStudentByIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -771,9 +581,7 @@ input DeleteStudentByIdInput {
   id: ID!
 }
 
-"""
-All input for the `deleteStudent` mutation.
-"""
+"""All input for the `deleteStudent` mutation."""
 input DeleteStudentInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -784,9 +592,7 @@ input DeleteStudentInput {
   studentId: Int!
 }
 
-"""
-The output of our delete `Student` mutation.
-"""
+"""The output of our delete `Student` mutation."""
 type DeleteStudentPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -800,25 +606,17 @@ type DeleteStudentPayload {
   """
   query: Query
 
-  """
-  The `Student` that was deleted by this mutation.
-  """
+  """The `Student` that was deleted by this mutation."""
   student: Student
 
-  """
-  An edge for our `Student`. May be used by Relay 1.
-  """
+  """An edge for our `Student`. May be used by Relay 1."""
   studentEdge(
-    """
-    The method to use when ordering `Student`.
-    """
+    """The method to use when ordering `Student`."""
     orderBy: [StudentOrderBy!]! = [PRIMARY_KEY_ASC]
   ): StudentEdge
 }
 
-"""
-All input for the `deleteTeacherById` mutation.
-"""
+"""All input for the `deleteTeacherById` mutation."""
 input DeleteTeacherByIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -832,9 +630,7 @@ input DeleteTeacherByIdInput {
   id: ID!
 }
 
-"""
-All input for the `deleteTeacher` mutation.
-"""
+"""All input for the `deleteTeacher` mutation."""
 input DeleteTeacherInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -844,9 +640,7 @@ input DeleteTeacherInput {
   otherId: Int!
 }
 
-"""
-The output of our delete `Teacher` mutation.
-"""
+"""The output of our delete `Teacher` mutation."""
 type DeleteTeacherPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -860,18 +654,12 @@ type DeleteTeacherPayload {
   """
   query: Query
 
-  """
-  The `Teacher` that was deleted by this mutation.
-  """
+  """The `Teacher` that was deleted by this mutation."""
   teacher: Teacher
 
-  """
-  An edge for our `Teacher`. May be used by Relay 1.
-  """
+  """An edge for our `Teacher`. May be used by Relay 1."""
   teacherEdge(
-    """
-    The method to use when ordering `Teacher`.
-    """
+    """The method to use when ordering `Teacher`."""
     orderBy: [TeacherOrderBy!]! = [PRIMARY_KEY_ASC]
   ): TeacherEdge
 }
@@ -880,9 +668,7 @@ type DeleteTeacherPayload {
 The root mutation type which contains root level fields which mutate data.
 """
 type Mutation {
-  """
-  Creates a single `Child`.
-  """
+  """Creates a single `Child`."""
   createChild(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -890,9 +676,7 @@ type Mutation {
     input: CreateChildInput!
   ): CreateChildPayload
 
-  """
-  Creates a single `Parent`.
-  """
+  """Creates a single `Parent`."""
   createParent(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -900,9 +684,7 @@ type Mutation {
     input: CreateParentInput!
   ): CreateParentPayload
 
-  """
-  Creates a single `School`.
-  """
+  """Creates a single `School`."""
   createSchool(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -910,9 +692,7 @@ type Mutation {
     input: CreateSchoolInput!
   ): CreateSchoolPayload
 
-  """
-  Creates a single `Student`.
-  """
+  """Creates a single `Student`."""
   createStudent(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -920,9 +700,7 @@ type Mutation {
     input: CreateStudentInput!
   ): CreateStudentPayload
 
-  """
-  Creates a single `Teacher`.
-  """
+  """Creates a single `Teacher`."""
   createTeacher(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -930,9 +708,7 @@ type Mutation {
     input: CreateTeacherInput!
   ): CreateTeacherPayload
 
-  """
-  Deletes a single `Child` using a unique key.
-  """
+  """Deletes a single `Child` using a unique key."""
   deleteChild(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -940,9 +716,7 @@ type Mutation {
     input: DeleteChildInput!
   ): DeleteChildPayload
 
-  """
-  Deletes a single `Child` using its globally unique id.
-  """
+  """Deletes a single `Child` using its globally unique id."""
   deleteChildById(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -950,9 +724,7 @@ type Mutation {
     input: DeleteChildByIdInput!
   ): DeleteChildPayload
 
-  """
-  Deletes a single `Parent` using a unique key.
-  """
+  """Deletes a single `Parent` using a unique key."""
   deleteParent(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -960,9 +732,7 @@ type Mutation {
     input: DeleteParentInput!
   ): DeleteParentPayload
 
-  """
-  Deletes a single `Parent` using its globally unique id.
-  """
+  """Deletes a single `Parent` using its globally unique id."""
   deleteParentById(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -970,9 +740,7 @@ type Mutation {
     input: DeleteParentByIdInput!
   ): DeleteParentPayload
 
-  """
-  Deletes a single `School` using a unique key.
-  """
+  """Deletes a single `School` using a unique key."""
   deleteSchool(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -980,9 +748,7 @@ type Mutation {
     input: DeleteSchoolInput!
   ): DeleteSchoolPayload
 
-  """
-  Deletes a single `School` using its globally unique id.
-  """
+  """Deletes a single `School` using its globally unique id."""
   deleteSchoolById(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -990,9 +756,7 @@ type Mutation {
     input: DeleteSchoolByIdInput!
   ): DeleteSchoolPayload
 
-  """
-  Deletes a single `Student` using a unique key.
-  """
+  """Deletes a single `Student` using a unique key."""
   deleteStudent(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1000,9 +764,7 @@ type Mutation {
     input: DeleteStudentInput!
   ): DeleteStudentPayload
 
-  """
-  Deletes a single `Student` using its globally unique id.
-  """
+  """Deletes a single `Student` using its globally unique id."""
   deleteStudentById(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1010,9 +772,7 @@ type Mutation {
     input: DeleteStudentByIdInput!
   ): DeleteStudentPayload
 
-  """
-  Deletes a single `Teacher` using a unique key.
-  """
+  """Deletes a single `Teacher` using a unique key."""
   deleteTeacher(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1020,9 +780,7 @@ type Mutation {
     input: DeleteTeacherInput!
   ): DeleteTeacherPayload
 
-  """
-  Deletes a single `Teacher` using its globally unique id.
-  """
+  """Deletes a single `Teacher` using its globally unique id."""
   deleteTeacherById(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1030,9 +788,7 @@ type Mutation {
     input: DeleteTeacherByIdInput!
   ): DeleteTeacherPayload
 
-  """
-  Updates a single `Child` using a unique key and a patch.
-  """
+  """Updates a single `Child` using a unique key and a patch."""
   updateChild(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1040,9 +796,7 @@ type Mutation {
     input: UpdateChildInput!
   ): UpdateChildPayload
 
-  """
-  Updates a single `Child` using its globally unique id and a patch.
-  """
+  """Updates a single `Child` using its globally unique id and a patch."""
   updateChildById(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1050,9 +804,7 @@ type Mutation {
     input: UpdateChildByIdInput!
   ): UpdateChildPayload
 
-  """
-  Updates a single `Parent` using a unique key and a patch.
-  """
+  """Updates a single `Parent` using a unique key and a patch."""
   updateParent(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1060,9 +812,7 @@ type Mutation {
     input: UpdateParentInput!
   ): UpdateParentPayload
 
-  """
-  Updates a single `Parent` using its globally unique id and a patch.
-  """
+  """Updates a single `Parent` using its globally unique id and a patch."""
   updateParentById(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1070,9 +820,7 @@ type Mutation {
     input: UpdateParentByIdInput!
   ): UpdateParentPayload
 
-  """
-  Updates a single `School` using a unique key and a patch.
-  """
+  """Updates a single `School` using a unique key and a patch."""
   updateSchool(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1080,9 +828,7 @@ type Mutation {
     input: UpdateSchoolInput!
   ): UpdateSchoolPayload
 
-  """
-  Updates a single `School` using its globally unique id and a patch.
-  """
+  """Updates a single `School` using its globally unique id and a patch."""
   updateSchoolById(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1090,9 +836,7 @@ type Mutation {
     input: UpdateSchoolByIdInput!
   ): UpdateSchoolPayload
 
-  """
-  Updates a single `Student` using a unique key and a patch.
-  """
+  """Updates a single `Student` using a unique key and a patch."""
   updateStudent(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1100,9 +844,7 @@ type Mutation {
     input: UpdateStudentInput!
   ): UpdateStudentPayload
 
-  """
-  Updates a single `Student` using its globally unique id and a patch.
-  """
+  """Updates a single `Student` using its globally unique id and a patch."""
   updateStudentById(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1110,9 +852,7 @@ type Mutation {
     input: UpdateStudentByIdInput!
   ): UpdateStudentPayload
 
-  """
-  Updates a single `Teacher` using a unique key and a patch.
-  """
+  """Updates a single `Teacher` using a unique key and a patch."""
   updateTeacher(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1120,9 +860,7 @@ type Mutation {
     input: UpdateTeacherInput!
   ): UpdateTeacherPayload
 
-  """
-  Updates a single `Teacher` using its globally unique id and a patch.
-  """
+  """Updates a single `Teacher` using its globally unique id and a patch."""
   updateTeacherById(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1131,9 +869,7 @@ type Mutation {
   ): UpdateTeacherPayload
 }
 
-"""
-An object with a globally unique `ID`.
-"""
+"""An object with a globally unique `ID`."""
 interface Node {
   """
   A globally unique identifier. Can be used in various places throughout the system to identify this single value.
@@ -1141,44 +877,28 @@ interface Node {
   id: ID!
 }
 
-"""
-Information about pagination in a connection.
-"""
+"""Information about pagination in a connection."""
 type PageInfo {
-  """
-  When paginating forwards, the cursor to continue.
-  """
+  """When paginating forwards, the cursor to continue."""
   endCursor: Cursor
 
-  """
-  When paginating forwards, are there more items?
-  """
+  """When paginating forwards, are there more items?"""
   hasNextPage: Boolean!
 
-  """
-  When paginating backwards, are there more items?
-  """
+  """When paginating backwards, are there more items?"""
   hasPreviousPage: Boolean!
 
-  """
-  When paginating backwards, the cursor to continue.
-  """
+  """When paginating backwards, the cursor to continue."""
   startCursor: Cursor
 }
 
 type Parent implements Node {
-  """
-  Reads and enables pagination through a set of `Child`.
-  """
+  """Reads and enables pagination through a set of `Child`."""
   childrenByDadParentId(
-    """
-    Read all values in the set after (below) this cursor.
-    """
+    """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """
-    Read all values in the set before (above) this cursor.
-    """
+    """Read all values in the set before (above) this cursor."""
     before: Cursor
 
     """
@@ -1186,14 +906,10 @@ type Parent implements Node {
     """
     condition: ChildCondition
 
-    """
-    Only read the first `n` values of the set.
-    """
+    """Only read the first `n` values of the set."""
     first: Int
 
-    """
-    Only read the last `n` values of the set.
-    """
+    """Only read the last `n` values of the set."""
     last: Int
 
     """
@@ -1202,24 +918,16 @@ type Parent implements Node {
     """
     offset: Int
 
-    """
-    The method to use when ordering `Child`.
-    """
+    """The method to use when ordering `Child`."""
     orderBy: [ChildOrderBy!] = [PRIMARY_KEY_ASC]
   ): ChildConnection!
 
-  """
-  Reads and enables pagination through a set of `Child`.
-  """
+  """Reads and enables pagination through a set of `Child`."""
   childrenByMomParentId(
-    """
-    Read all values in the set after (below) this cursor.
-    """
+    """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """
-    Read all values in the set before (above) this cursor.
-    """
+    """Read all values in the set before (above) this cursor."""
     before: Cursor
 
     """
@@ -1227,14 +935,10 @@ type Parent implements Node {
     """
     condition: ChildCondition
 
-    """
-    Only read the first `n` values of the set.
-    """
+    """Only read the first `n` values of the set."""
     first: Int
 
-    """
-    Only read the last `n` values of the set.
-    """
+    """Only read the last `n` values of the set."""
     last: Int
 
     """
@@ -1243,9 +947,7 @@ type Parent implements Node {
     """
     offset: Int
 
-    """
-    The method to use when ordering `Child`.
-    """
+    """The method to use when ordering `Child`."""
     orderBy: [ChildOrderBy!] = [PRIMARY_KEY_ASC]
   ): ChildConnection!
 
@@ -1267,35 +969,23 @@ input ParentByMyDadParentIdConnectByNodeIdInput {
   id: ID!
 }
 
-"""
-The Parent to be created by this mutation.
-"""
+"""The Parent to be created by this mutation."""
 input ParentByMyDadParentIdCreateInput {
-  """
-  Nested connector type for childrenByTheirDadParentId
-  """
+  """Nested connector type for childrenByTheirDadParentId"""
   childrenByDadParentId: ChildrenByTheirDadParentIdInput
 
-  """
-  Nested connector type for childrenByTheirMomParentId
-  """
+  """Nested connector type for childrenByTheirMomParentId"""
   childrenByMomParentId: ChildrenByTheirMomParentIdInput
   parentName: String!
   rowId: Int
 }
 
-"""
-Relationship input type for parentByMyDadParentId
-"""
+"""Relationship input type for parentByMyDadParentId"""
 input ParentByMyDadParentIdInput {
-  """
-  Connect parent by node id in the parentByMyDadParentId relationship
-  """
+  """Connect parent by node id in the parentByMyDadParentId relationship"""
   connectById: ParentByMyDadParentIdConnectByNodeIdInput
 
-  """
-  A Parent created and linked to this object
-  """
+  """A Parent created and linked to this object"""
   create: ParentByMyDadParentIdCreateInput
 }
 
@@ -1309,35 +999,23 @@ input ParentByMyMomParentIdConnectByNodeIdInput {
   id: ID!
 }
 
-"""
-The Parent to be created by this mutation.
-"""
+"""The Parent to be created by this mutation."""
 input ParentByMyMomParentIdCreateInput {
-  """
-  Nested connector type for childrenByTheirDadParentId
-  """
+  """Nested connector type for childrenByTheirDadParentId"""
   childrenByDadParentId: ChildrenByTheirDadParentIdInput
 
-  """
-  Nested connector type for childrenByTheirMomParentId
-  """
+  """Nested connector type for childrenByTheirMomParentId"""
   childrenByMomParentId: ChildrenByTheirMomParentIdInput
   parentName: String!
   rowId: Int
 }
 
-"""
-Relationship input type for parentByMyMomParentId
-"""
+"""Relationship input type for parentByMyMomParentId"""
 input ParentByMyMomParentIdInput {
-  """
-  Connect parent by node id in the parentByMyMomParentId relationship
-  """
+  """Connect parent by node id in the parentByMyMomParentId relationship"""
   connectById: ParentByMyMomParentIdConnectByNodeIdInput
 
-  """
-  A Parent created and linked to this object
-  """
+  """A Parent created and linked to this object"""
   create: ParentByMyMomParentIdCreateInput
 }
 
@@ -1345,72 +1023,48 @@ input ParentByMyMomParentIdInput {
 A condition to be used against `Parent` object types. All fields are tested for equality and combined with a logical ‘and.’
 """
 input ParentCondition {
-  """
-  Checks for equality with the object’s `rowId` field.
-  """
+  """Checks for equality with the object’s `rowId` field."""
   rowId: Int
 }
 
-"""
-A connection to a list of `Parent` values.
-"""
+"""A connection to a list of `Parent` values."""
 type ParentConnection {
   """
   A list of edges which contains the `Parent` and cursor to aid in pagination.
   """
   edges: [ParentEdge]!
 
-  """
-  A list of `Parent` objects.
-  """
+  """A list of `Parent` objects."""
   nodes: [Parent]!
 
-  """
-  Information to aid in pagination.
-  """
+  """Information to aid in pagination."""
   pageInfo: PageInfo!
 
-  """
-  The count of *all* `Parent` you could get from the connection.
-  """
+  """The count of *all* `Parent` you could get from the connection."""
   totalCount: Int!
 }
 
-"""
-A `Parent` edge in the connection.
-"""
+"""A `Parent` edge in the connection."""
 type ParentEdge {
-  """
-  A cursor for use in pagination.
-  """
+  """A cursor for use in pagination."""
   cursor: Cursor
 
-  """
-  The `Parent` at the end of the edge.
-  """
+  """The `Parent` at the end of the edge."""
   node: Parent
 }
 
-"""
-An input for mutations affecting `Parent`
-"""
+"""An input for mutations affecting `Parent`"""
 input ParentInput {
-  """
-  Nested connector type for childrenByTheirDadParentId
-  """
+  """Nested connector type for childrenByTheirDadParentId"""
   childrenByDadParentId: ChildrenByTheirDadParentIdInput
 
-  """
-  Nested connector type for childrenByTheirMomParentId
-  """
+  """Nested connector type for childrenByTheirMomParentId"""
   childrenByMomParentId: ChildrenByTheirMomParentIdInput
   parentName: String!
   rowId: Int
 }
 
-"""
-Methods to use when ordering `Parent`.
-"""
+"""Methods to use when ordering `Parent`."""
 enum ParentOrderBy {
   ID_ASC
   ID_DESC
@@ -1423,50 +1077,32 @@ enum ParentOrderBy {
 Represents an update to a `Parent`. Fields that are set will be updated.
 """
 input ParentPatch {
-  """
-  Nested connector type for childrenByTheirDadParentId
-  """
+  """Nested connector type for childrenByTheirDadParentId"""
   childrenByDadParentId: ChildrenByTheirDadParentIdInput
 
-  """
-  Nested connector type for childrenByTheirMomParentId
-  """
+  """Nested connector type for childrenByTheirMomParentId"""
   childrenByMomParentId: ChildrenByTheirMomParentIdInput
   parentName: String
   rowId: Int
 }
 
-"""
-The root query type which gives access points into the data universe.
-"""
+"""The root query type which gives access points into the data universe."""
 type Query implements Node {
-  """
-  Get a single `Child`.
-  """
+  """Get a single `Child`."""
   child(rowId: Int!): Child
 
-  """
-  Reads a single `Child` using its globally unique `ID`.
-  """
+  """Reads a single `Child` using its globally unique `ID`."""
   childById(
-    """
-    The globally unique `ID` to be used in selecting a single `Child`.
-    """
+    """The globally unique `ID` to be used in selecting a single `Child`."""
     id: ID!
   ): Child
 
-  """
-  Reads and enables pagination through a set of `Child`.
-  """
+  """Reads and enables pagination through a set of `Child`."""
   children(
-    """
-    Read all values in the set after (below) this cursor.
-    """
+    """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """
-    Read all values in the set before (above) this cursor.
-    """
+    """Read all values in the set before (above) this cursor."""
     before: Cursor
 
     """
@@ -1474,14 +1110,10 @@ type Query implements Node {
     """
     condition: ChildCondition
 
-    """
-    Only read the first `n` values of the set.
-    """
+    """Only read the first `n` values of the set."""
     first: Int
 
-    """
-    Only read the last `n` values of the set.
-    """
+    """Only read the last `n` values of the set."""
     last: Int
 
     """
@@ -1490,9 +1122,7 @@ type Query implements Node {
     """
     offset: Int
 
-    """
-    The method to use when ordering `Child`.
-    """
+    """The method to use when ordering `Child`."""
     orderBy: [ChildOrderBy!] = [PRIMARY_KEY_ASC]
   ): ChildConnection
 
@@ -1501,43 +1131,27 @@ type Query implements Node {
   """
   id: ID!
 
-  """
-  Fetches an object given its globally unique `ID`.
-  """
+  """Fetches an object given its globally unique `ID`."""
   node(
-    """
-    The globally unique `ID`.
-    """
+    """The globally unique `ID`."""
     id: ID!
   ): Node
 
-  """
-  Get a single `Parent`.
-  """
+  """Get a single `Parent`."""
   parent(rowId: Int!): Parent
 
-  """
-  Reads a single `Parent` using its globally unique `ID`.
-  """
+  """Reads a single `Parent` using its globally unique `ID`."""
   parentById(
-    """
-    The globally unique `ID` to be used in selecting a single `Parent`.
-    """
+    """The globally unique `ID` to be used in selecting a single `Parent`."""
     id: ID!
   ): Parent
 
-  """
-  Reads and enables pagination through a set of `Parent`.
-  """
+  """Reads and enables pagination through a set of `Parent`."""
   parents(
-    """
-    Read all values in the set after (below) this cursor.
-    """
+    """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """
-    Read all values in the set before (above) this cursor.
-    """
+    """Read all values in the set before (above) this cursor."""
     before: Cursor
 
     """
@@ -1545,14 +1159,10 @@ type Query implements Node {
     """
     condition: ParentCondition
 
-    """
-    Only read the first `n` values of the set.
-    """
+    """Only read the first `n` values of the set."""
     first: Int
 
-    """
-    Only read the last `n` values of the set.
-    """
+    """Only read the last `n` values of the set."""
     last: Int
 
     """
@@ -1561,9 +1171,7 @@ type Query implements Node {
     """
     offset: Int
 
-    """
-    The method to use when ordering `Parent`.
-    """
+    """The method to use when ordering `Parent`."""
     orderBy: [ParentOrderBy!] = [PRIMARY_KEY_ASC]
   ): ParentConnection
 
@@ -1573,33 +1181,21 @@ type Query implements Node {
   """
   query: Query!
 
-  """
-  Get a single `School`.
-  """
+  """Get a single `School`."""
   school(rowId: Int!): School
 
-  """
-  Reads a single `School` using its globally unique `ID`.
-  """
+  """Reads a single `School` using its globally unique `ID`."""
   schoolById(
-    """
-    The globally unique `ID` to be used in selecting a single `School`.
-    """
+    """The globally unique `ID` to be used in selecting a single `School`."""
     id: ID!
   ): School
 
-  """
-  Reads and enables pagination through a set of `School`.
-  """
+  """Reads and enables pagination through a set of `School`."""
   schools(
-    """
-    Read all values in the set after (below) this cursor.
-    """
+    """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """
-    Read all values in the set before (above) this cursor.
-    """
+    """Read all values in the set before (above) this cursor."""
     before: Cursor
 
     """
@@ -1607,14 +1203,10 @@ type Query implements Node {
     """
     condition: SchoolCondition
 
-    """
-    Only read the first `n` values of the set.
-    """
+    """Only read the first `n` values of the set."""
     first: Int
 
-    """
-    Only read the last `n` values of the set.
-    """
+    """Only read the last `n` values of the set."""
     last: Int
 
     """
@@ -1623,39 +1215,25 @@ type Query implements Node {
     """
     offset: Int
 
-    """
-    The method to use when ordering `School`.
-    """
+    """The method to use when ordering `School`."""
     orderBy: [SchoolOrderBy!] = [PRIMARY_KEY_ASC]
   ): SchoolConnection
 
-  """
-  Get a single `Student`.
-  """
+  """Get a single `Student`."""
   student(schoolId: Int!, studentId: Int!): Student
 
-  """
-  Reads a single `Student` using its globally unique `ID`.
-  """
+  """Reads a single `Student` using its globally unique `ID`."""
   studentById(
-    """
-    The globally unique `ID` to be used in selecting a single `Student`.
-    """
+    """The globally unique `ID` to be used in selecting a single `Student`."""
     id: ID!
   ): Student
 
-  """
-  Reads and enables pagination through a set of `Student`.
-  """
+  """Reads and enables pagination through a set of `Student`."""
   students(
-    """
-    Read all values in the set after (below) this cursor.
-    """
+    """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """
-    Read all values in the set before (above) this cursor.
-    """
+    """Read all values in the set before (above) this cursor."""
     before: Cursor
 
     """
@@ -1663,14 +1241,10 @@ type Query implements Node {
     """
     condition: StudentCondition
 
-    """
-    Only read the first `n` values of the set.
-    """
+    """Only read the first `n` values of the set."""
     first: Int
 
-    """
-    Only read the last `n` values of the set.
-    """
+    """Only read the last `n` values of the set."""
     last: Int
 
     """
@@ -1679,39 +1253,25 @@ type Query implements Node {
     """
     offset: Int
 
-    """
-    The method to use when ordering `Student`.
-    """
+    """The method to use when ordering `Student`."""
     orderBy: [StudentOrderBy!] = [PRIMARY_KEY_ASC]
   ): StudentConnection
 
-  """
-  Get a single `Teacher`.
-  """
+  """Get a single `Teacher`."""
   teacher(otherId: Int!): Teacher
 
-  """
-  Reads a single `Teacher` using its globally unique `ID`.
-  """
+  """Reads a single `Teacher` using its globally unique `ID`."""
   teacherById(
-    """
-    The globally unique `ID` to be used in selecting a single `Teacher`.
-    """
+    """The globally unique `ID` to be used in selecting a single `Teacher`."""
     id: ID!
   ): Teacher
 
-  """
-  Reads and enables pagination through a set of `Teacher`.
-  """
+  """Reads and enables pagination through a set of `Teacher`."""
   teachers(
-    """
-    Read all values in the set after (below) this cursor.
-    """
+    """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """
-    Read all values in the set before (above) this cursor.
-    """
+    """Read all values in the set before (above) this cursor."""
     before: Cursor
 
     """
@@ -1719,14 +1279,10 @@ type Query implements Node {
     """
     condition: TeacherCondition
 
-    """
-    Only read the first `n` values of the set.
-    """
+    """Only read the first `n` values of the set."""
     first: Int
 
-    """
-    Only read the last `n` values of the set.
-    """
+    """Only read the last `n` values of the set."""
     last: Int
 
     """
@@ -1735,9 +1291,7 @@ type Query implements Node {
     """
     offset: Int
 
-    """
-    The method to use when ordering `Teacher`.
-    """
+    """The method to use when ordering `Teacher`."""
     orderBy: [TeacherOrderBy!] = [PRIMARY_KEY_ASC]
   ): TeacherConnection
 }
@@ -1750,18 +1304,12 @@ type School implements Node {
   name: String!
   rowId: Int!
 
-  """
-  Reads and enables pagination through a set of `Student`.
-  """
+  """Reads and enables pagination through a set of `Student`."""
   students(
-    """
-    Read all values in the set after (below) this cursor.
-    """
+    """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """
-    Read all values in the set before (above) this cursor.
-    """
+    """Read all values in the set before (above) this cursor."""
     before: Cursor
 
     """
@@ -1769,14 +1317,10 @@ type School implements Node {
     """
     condition: StudentCondition
 
-    """
-    Only read the first `n` values of the set.
-    """
+    """Only read the first `n` values of the set."""
     first: Int
 
-    """
-    Only read the last `n` values of the set.
-    """
+    """Only read the last `n` values of the set."""
     last: Int
 
     """
@@ -1785,24 +1329,16 @@ type School implements Node {
     """
     offset: Int
 
-    """
-    The method to use when ordering `Student`.
-    """
+    """The method to use when ordering `Student`."""
     orderBy: [StudentOrderBy!] = [PRIMARY_KEY_ASC]
   ): StudentConnection!
 
-  """
-  Reads and enables pagination through a set of `Teacher`.
-  """
+  """Reads and enables pagination through a set of `Teacher`."""
   teachers(
-    """
-    Read all values in the set after (below) this cursor.
-    """
+    """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """
-    Read all values in the set before (above) this cursor.
-    """
+    """Read all values in the set before (above) this cursor."""
     before: Cursor
 
     """
@@ -1810,14 +1346,10 @@ type School implements Node {
     """
     condition: TeacherCondition
 
-    """
-    Only read the first `n` values of the set.
-    """
+    """Only read the first `n` values of the set."""
     first: Int
 
-    """
-    Only read the last `n` values of the set.
-    """
+    """Only read the last `n` values of the set."""
     last: Int
 
     """
@@ -1826,9 +1358,7 @@ type School implements Node {
     """
     offset: Int
 
-    """
-    The method to use when ordering `Teacher`.
-    """
+    """The method to use when ordering `Teacher`."""
     orderBy: [TeacherOrderBy!] = [PRIMARY_KEY_ASC]
   ): TeacherConnection!
 }
@@ -1843,36 +1373,24 @@ input SchoolByMySchoolIdConnectByNodeIdInput {
   id: ID!
 }
 
-"""
-The School to be created by this mutation.
-"""
+"""The School to be created by this mutation."""
 input SchoolByMySchoolIdCreateInput {
   name: String!
   rowId: Int
 
-  """
-  Nested connector type for studentsByTheirSchoolId
-  """
+  """Nested connector type for studentsByTheirSchoolId"""
   studentsBySchoolId: StudentsByTheirSchoolIdInput
 
-  """
-  Nested connector type for teachersByTheirSchoolId
-  """
+  """Nested connector type for teachersByTheirSchoolId"""
   teachersBySchoolId: TeachersByTheirSchoolIdInput
 }
 
-"""
-Relationship input type for schoolByMySchoolId
-"""
+"""Relationship input type for schoolByMySchoolId"""
 input SchoolByMySchoolIdInput {
-  """
-  Connect school by node id in the schoolByMySchoolId relationship
-  """
+  """Connect school by node id in the schoolByMySchoolId relationship"""
   connectById: SchoolByMySchoolIdConnectByNodeIdInput
 
-  """
-  A School created and linked to this object
-  """
+  """A School created and linked to this object"""
   create: SchoolByMySchoolIdCreateInput
 }
 
@@ -1880,73 +1398,49 @@ input SchoolByMySchoolIdInput {
 A condition to be used against `School` object types. All fields are tested for equality and combined with a logical ‘and.’
 """
 input SchoolCondition {
-  """
-  Checks for equality with the object’s `rowId` field.
-  """
+  """Checks for equality with the object’s `rowId` field."""
   rowId: Int
 }
 
-"""
-A connection to a list of `School` values.
-"""
+"""A connection to a list of `School` values."""
 type SchoolConnection {
   """
   A list of edges which contains the `School` and cursor to aid in pagination.
   """
   edges: [SchoolEdge]!
 
-  """
-  A list of `School` objects.
-  """
+  """A list of `School` objects."""
   nodes: [School]!
 
-  """
-  Information to aid in pagination.
-  """
+  """Information to aid in pagination."""
   pageInfo: PageInfo!
 
-  """
-  The count of *all* `School` you could get from the connection.
-  """
+  """The count of *all* `School` you could get from the connection."""
   totalCount: Int!
 }
 
-"""
-A `School` edge in the connection.
-"""
+"""A `School` edge in the connection."""
 type SchoolEdge {
-  """
-  A cursor for use in pagination.
-  """
+  """A cursor for use in pagination."""
   cursor: Cursor
 
-  """
-  The `School` at the end of the edge.
-  """
+  """The `School` at the end of the edge."""
   node: School
 }
 
-"""
-An input for mutations affecting `School`
-"""
+"""An input for mutations affecting `School`"""
 input SchoolInput {
   name: String!
   rowId: Int
 
-  """
-  Nested connector type for studentsByTheirSchoolId
-  """
+  """Nested connector type for studentsByTheirSchoolId"""
   studentsBySchoolId: StudentsByTheirSchoolIdInput
 
-  """
-  Nested connector type for teachersByTheirSchoolId
-  """
+  """Nested connector type for teachersByTheirSchoolId"""
   teachersBySchoolId: TeachersByTheirSchoolIdInput
 }
 
-"""
-Methods to use when ordering `School`.
-"""
+"""Methods to use when ordering `School`."""
 enum SchoolOrderBy {
   ID_ASC
   ID_DESC
@@ -1962,14 +1456,10 @@ input SchoolPatch {
   name: String
   rowId: Int
 
-  """
-  Nested connector type for studentsByTheirSchoolId
-  """
+  """Nested connector type for studentsByTheirSchoolId"""
   studentsBySchoolId: StudentsByTheirSchoolIdInput
 
-  """
-  Nested connector type for teachersByTheirSchoolId
-  """
+  """Nested connector type for teachersByTheirSchoolId"""
   teachersBySchoolId: TeachersByTheirSchoolIdInput
 }
 
@@ -1979,15 +1469,11 @@ type Student implements Node {
   """
   id: ID!
 
-  """
-  Reads a single `School` that is related to this `Student`.
-  """
+  """Reads a single `School` that is related to this `Student`."""
   school: School
   schoolId: Int!
 
-  """
-  Reads a single `Child` that is related to this `Student`.
-  """
+  """Reads a single `Child` that is related to this `Student`."""
   student: Child
   studentId: Int!
 }
@@ -1996,77 +1482,51 @@ type Student implements Node {
 A condition to be used against `Student` object types. All fields are tested for equality and combined with a logical ‘and.’
 """
 input StudentCondition {
-  """
-  Checks for equality with the object’s `schoolId` field.
-  """
+  """Checks for equality with the object’s `schoolId` field."""
   schoolId: Int
 
-  """
-  Checks for equality with the object’s `studentId` field.
-  """
+  """Checks for equality with the object’s `studentId` field."""
   studentId: Int
 }
 
-"""
-A connection to a list of `Student` values.
-"""
+"""A connection to a list of `Student` values."""
 type StudentConnection {
   """
   A list of edges which contains the `Student` and cursor to aid in pagination.
   """
   edges: [StudentEdge]!
 
-  """
-  A list of `Student` objects.
-  """
+  """A list of `Student` objects."""
   nodes: [Student]!
 
-  """
-  Information to aid in pagination.
-  """
+  """Information to aid in pagination."""
   pageInfo: PageInfo!
 
-  """
-  The count of *all* `Student` you could get from the connection.
-  """
+  """The count of *all* `Student` you could get from the connection."""
   totalCount: Int!
 }
 
-"""
-A `Student` edge in the connection.
-"""
+"""A `Student` edge in the connection."""
 type StudentEdge {
-  """
-  A cursor for use in pagination.
-  """
+  """A cursor for use in pagination."""
   cursor: Cursor
 
-  """
-  The `Student` at the end of the edge.
-  """
+  """The `Student` at the end of the edge."""
   node: Student
 }
 
-"""
-An input for mutations affecting `Student`
-"""
+"""An input for mutations affecting `Student`"""
 input StudentInput {
-  """
-  Nested connector type for childByMyStudentId
-  """
+  """Nested connector type for childByMyStudentId"""
   childByStudentId: ChildByMyStudentIdInput
 
-  """
-  Nested connector type for schoolByMySchoolId
-  """
+  """Nested connector type for schoolByMySchoolId"""
   schoolBySchoolId: SchoolByMySchoolIdInput
   schoolId: Int!
   studentId: Int!
 }
 
-"""
-Methods to use when ordering `Student`.
-"""
+"""Methods to use when ordering `Student`."""
 enum StudentOrderBy {
   NATURAL
   PRIMARY_KEY_ASC
@@ -2081,14 +1541,10 @@ enum StudentOrderBy {
 Represents an update to a `Student`. Fields that are set will be updated.
 """
 input StudentPatch {
-  """
-  Nested connector type for childByMyStudentId
-  """
+  """Nested connector type for childByMyStudentId"""
   childByStudentId: ChildByMyStudentIdInput
 
-  """
-  Nested connector type for schoolByMySchoolId
-  """
+  """Nested connector type for schoolByMySchoolId"""
   schoolBySchoolId: SchoolByMySchoolIdInput
   schoolId: Int
   studentId: Int
@@ -2104,35 +1560,23 @@ input StudentsByTheirSchoolIdConnectByNodeIdInput {
   id: ID!
 }
 
-"""
-The Student to be created by this mutation.
-"""
+"""The Student to be created by this mutation."""
 input StudentsByTheirSchoolIdCreateInput {
-  """
-  Nested connector type for childByMyStudentId
-  """
+  """Nested connector type for childByMyStudentId"""
   childByStudentId: ChildByMyStudentIdInput
 
-  """
-  Nested connector type for schoolByMySchoolId
-  """
+  """Nested connector type for schoolByMySchoolId"""
   schoolBySchoolId: SchoolByMySchoolIdInput
   schoolId: Int
   studentId: Int
 }
 
-"""
-Relationship input type for studentsByTheirSchoolId
-"""
+"""Relationship input type for studentsByTheirSchoolId"""
 input StudentsByTheirSchoolIdInput {
-  """
-  Connect student by node id in the studentsByTheirSchoolId relationship
-  """
+  """Connect student by node id in the studentsByTheirSchoolId relationship"""
   connectById: [StudentsByTheirSchoolIdConnectByNodeIdInput!]
 
-  """
-  A Student created and linked to this object
-  """
+  """A Student created and linked to this object"""
   create: [StudentsByTheirSchoolIdCreateInput!]
 }
 
@@ -2146,35 +1590,25 @@ input StudentsByTheirStudentIdConnectByNodeIdInput {
   id: ID!
 }
 
-"""
-The Student to be created by this mutation.
-"""
+"""The Student to be created by this mutation."""
 input StudentsByTheirStudentIdCreateInput {
-  """
-  Nested connector type for childByMyStudentId
-  """
+  """Nested connector type for childByMyStudentId"""
   childByStudentId: ChildByMyStudentIdInput
 
-  """
-  Nested connector type for schoolByMySchoolId
-  """
+  """Nested connector type for schoolByMySchoolId"""
   schoolBySchoolId: SchoolByMySchoolIdInput
   schoolId: Int
   studentId: Int
 }
 
-"""
-Relationship input type for studentsByTheirStudentId
-"""
+"""Relationship input type for studentsByTheirStudentId"""
 input StudentsByTheirStudentIdInput {
   """
   Connect student by node id in the studentsByTheirStudentId relationship
   """
   connectById: [StudentsByTheirStudentIdConnectByNodeIdInput!]
 
-  """
-  A Student created and linked to this object
-  """
+  """A Student created and linked to this object"""
   create: [StudentsByTheirStudentIdCreateInput!]
 }
 
@@ -2186,9 +1620,7 @@ type Teacher implements Node {
   name: String!
   otherId: Int!
 
-  """
-  Reads a single `School` that is related to this `Teacher`.
-  """
+  """Reads a single `School` that is related to this `Teacher`."""
   school: School
   schoolId: Int!
 }
@@ -2197,74 +1629,50 @@ type Teacher implements Node {
 A condition to be used against `Teacher` object types. All fields are tested for equality and combined with a logical ‘and.’
 """
 input TeacherCondition {
-  """
-  Checks for equality with the object’s `otherId` field.
-  """
+  """Checks for equality with the object’s `otherId` field."""
   otherId: Int
 
-  """
-  Checks for equality with the object’s `schoolId` field.
-  """
+  """Checks for equality with the object’s `schoolId` field."""
   schoolId: Int
 }
 
-"""
-A connection to a list of `Teacher` values.
-"""
+"""A connection to a list of `Teacher` values."""
 type TeacherConnection {
   """
   A list of edges which contains the `Teacher` and cursor to aid in pagination.
   """
   edges: [TeacherEdge]!
 
-  """
-  A list of `Teacher` objects.
-  """
+  """A list of `Teacher` objects."""
   nodes: [Teacher]!
 
-  """
-  Information to aid in pagination.
-  """
+  """Information to aid in pagination."""
   pageInfo: PageInfo!
 
-  """
-  The count of *all* `Teacher` you could get from the connection.
-  """
+  """The count of *all* `Teacher` you could get from the connection."""
   totalCount: Int!
 }
 
-"""
-A `Teacher` edge in the connection.
-"""
+"""A `Teacher` edge in the connection."""
 type TeacherEdge {
-  """
-  A cursor for use in pagination.
-  """
+  """A cursor for use in pagination."""
   cursor: Cursor
 
-  """
-  The `Teacher` at the end of the edge.
-  """
+  """The `Teacher` at the end of the edge."""
   node: Teacher
 }
 
-"""
-An input for mutations affecting `Teacher`
-"""
+"""An input for mutations affecting `Teacher`"""
 input TeacherInput {
   name: String!
   otherId: Int
 
-  """
-  Nested connector type for schoolByMySchoolId
-  """
+  """Nested connector type for schoolByMySchoolId"""
   schoolBySchoolId: SchoolByMySchoolIdInput
   schoolId: Int!
 }
 
-"""
-Methods to use when ordering `Teacher`.
-"""
+"""Methods to use when ordering `Teacher`."""
 enum TeacherOrderBy {
   NATURAL
   OTHER_ID_ASC
@@ -2282,9 +1690,7 @@ input TeacherPatch {
   name: String
   otherId: Int
 
-  """
-  Nested connector type for schoolByMySchoolId
-  """
+  """Nested connector type for schoolByMySchoolId"""
   schoolBySchoolId: SchoolByMySchoolIdInput
   schoolId: Int
 }
@@ -2299,38 +1705,26 @@ input TeachersByTheirSchoolIdConnectByNodeIdInput {
   id: ID!
 }
 
-"""
-The Teacher to be created by this mutation.
-"""
+"""The Teacher to be created by this mutation."""
 input TeachersByTheirSchoolIdCreateInput {
   name: String!
   otherId: Int
 
-  """
-  Nested connector type for schoolByMySchoolId
-  """
+  """Nested connector type for schoolByMySchoolId"""
   schoolBySchoolId: SchoolByMySchoolIdInput
   schoolId: Int!
 }
 
-"""
-Relationship input type for teachersByTheirSchoolId
-"""
+"""Relationship input type for teachersByTheirSchoolId"""
 input TeachersByTheirSchoolIdInput {
-  """
-  Connect teacher by node id in the teachersByTheirSchoolId relationship
-  """
+  """Connect teacher by node id in the teachersByTheirSchoolId relationship"""
   connectById: [TeachersByTheirSchoolIdConnectByNodeIdInput!]
 
-  """
-  A Teacher created and linked to this object
-  """
+  """A Teacher created and linked to this object"""
   create: [TeachersByTheirSchoolIdCreateInput!]
 }
 
-"""
-All input for the `updateChildById` mutation.
-"""
+"""All input for the `updateChildById` mutation."""
 input UpdateChildByIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -2349,9 +1743,7 @@ input UpdateChildByIdInput {
   patch: ChildPatch!
 }
 
-"""
-All input for the `updateChild` mutation.
-"""
+"""All input for the `updateChild` mutation."""
 input UpdateChildInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -2366,22 +1758,14 @@ input UpdateChildInput {
   rowId: Int!
 }
 
-"""
-The output of our update `Child` mutation.
-"""
+"""The output of our update `Child` mutation."""
 type UpdateChildPayload {
-  """
-  The `Child` that was updated by this mutation.
-  """
+  """The `Child` that was updated by this mutation."""
   child: Child
 
-  """
-  An edge for our `Child`. May be used by Relay 1.
-  """
+  """An edge for our `Child`. May be used by Relay 1."""
   childEdge(
-    """
-    The method to use when ordering `Child`.
-    """
+    """The method to use when ordering `Child`."""
     orderBy: [ChildOrderBy!]! = [PRIMARY_KEY_ASC]
   ): ChildEdge
 
@@ -2397,9 +1781,7 @@ type UpdateChildPayload {
   query: Query
 }
 
-"""
-All input for the `updateParentById` mutation.
-"""
+"""All input for the `updateParentById` mutation."""
 input UpdateParentByIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -2418,9 +1800,7 @@ input UpdateParentByIdInput {
   patch: ParentPatch!
 }
 
-"""
-All input for the `updateParent` mutation.
-"""
+"""All input for the `updateParent` mutation."""
 input UpdateParentInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -2435,9 +1815,7 @@ input UpdateParentInput {
   rowId: Int!
 }
 
-"""
-The output of our update `Parent` mutation.
-"""
+"""The output of our update `Parent` mutation."""
 type UpdateParentPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -2445,18 +1823,12 @@ type UpdateParentPayload {
   """
   clientMutationId: String
 
-  """
-  The `Parent` that was updated by this mutation.
-  """
+  """The `Parent` that was updated by this mutation."""
   parent: Parent
 
-  """
-  An edge for our `Parent`. May be used by Relay 1.
-  """
+  """An edge for our `Parent`. May be used by Relay 1."""
   parentEdge(
-    """
-    The method to use when ordering `Parent`.
-    """
+    """The method to use when ordering `Parent`."""
     orderBy: [ParentOrderBy!]! = [PRIMARY_KEY_ASC]
   ): ParentEdge
 
@@ -2466,9 +1838,7 @@ type UpdateParentPayload {
   query: Query
 }
 
-"""
-All input for the `updateSchoolById` mutation.
-"""
+"""All input for the `updateSchoolById` mutation."""
 input UpdateSchoolByIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -2487,9 +1857,7 @@ input UpdateSchoolByIdInput {
   patch: SchoolPatch!
 }
 
-"""
-All input for the `updateSchool` mutation.
-"""
+"""All input for the `updateSchool` mutation."""
 input UpdateSchoolInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -2504,9 +1872,7 @@ input UpdateSchoolInput {
   rowId: Int!
 }
 
-"""
-The output of our update `School` mutation.
-"""
+"""The output of our update `School` mutation."""
 type UpdateSchoolPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -2519,25 +1885,17 @@ type UpdateSchoolPayload {
   """
   query: Query
 
-  """
-  The `School` that was updated by this mutation.
-  """
+  """The `School` that was updated by this mutation."""
   school: School
 
-  """
-  An edge for our `School`. May be used by Relay 1.
-  """
+  """An edge for our `School`. May be used by Relay 1."""
   schoolEdge(
-    """
-    The method to use when ordering `School`.
-    """
+    """The method to use when ordering `School`."""
     orderBy: [SchoolOrderBy!]! = [PRIMARY_KEY_ASC]
   ): SchoolEdge
 }
 
-"""
-All input for the `updateStudentById` mutation.
-"""
+"""All input for the `updateStudentById` mutation."""
 input UpdateStudentByIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -2556,9 +1914,7 @@ input UpdateStudentByIdInput {
   patch: StudentPatch!
 }
 
-"""
-All input for the `updateStudent` mutation.
-"""
+"""All input for the `updateStudent` mutation."""
 input UpdateStudentInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -2574,9 +1930,7 @@ input UpdateStudentInput {
   studentId: Int!
 }
 
-"""
-The output of our update `Student` mutation.
-"""
+"""The output of our update `Student` mutation."""
 type UpdateStudentPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -2589,25 +1943,17 @@ type UpdateStudentPayload {
   """
   query: Query
 
-  """
-  The `Student` that was updated by this mutation.
-  """
+  """The `Student` that was updated by this mutation."""
   student: Student
 
-  """
-  An edge for our `Student`. May be used by Relay 1.
-  """
+  """An edge for our `Student`. May be used by Relay 1."""
   studentEdge(
-    """
-    The method to use when ordering `Student`.
-    """
+    """The method to use when ordering `Student`."""
     orderBy: [StudentOrderBy!]! = [PRIMARY_KEY_ASC]
   ): StudentEdge
 }
 
-"""
-All input for the `updateTeacherById` mutation.
-"""
+"""All input for the `updateTeacherById` mutation."""
 input UpdateTeacherByIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -2626,9 +1972,7 @@ input UpdateTeacherByIdInput {
   patch: TeacherPatch!
 }
 
-"""
-All input for the `updateTeacher` mutation.
-"""
+"""All input for the `updateTeacher` mutation."""
 input UpdateTeacherInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
@@ -2643,9 +1987,7 @@ input UpdateTeacherInput {
   patch: TeacherPatch!
 }
 
-"""
-The output of our update `Teacher` mutation.
-"""
+"""The output of our update `Teacher` mutation."""
 type UpdateTeacherPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -2658,18 +2000,12 @@ type UpdateTeacherPayload {
   """
   query: Query
 
-  """
-  The `Teacher` that was updated by this mutation.
-  """
+  """The `Teacher` that was updated by this mutation."""
   teacher: Teacher
 
-  """
-  An edge for our `Teacher`. May be used by Relay 1.
-  """
+  """An edge for our `Teacher`. May be used by Relay 1."""
   teacherEdge(
-    """
-    The method to use when ordering `Teacher`.
-    """
+    """The method to use when ordering `Teacher`."""
     orderBy: [TeacherOrderBy!]! = [PRIMARY_KEY_ASC]
   ): TeacherEdge
 }

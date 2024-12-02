@@ -2,12 +2,13 @@ import {
   type PgInsertSingleStep,
   type PgUpdateSingleStep,
   pgInsertSingle,
-} from 'postgraphile/@dataplan/pg';
+} from '@dataplan/pg';
 import {
+  type ExecutableStep,
   type InputObjectFieldApplyPlanResolver,
   __InputListStep,
   __InputObjectStep,
-} from 'postgraphile/grafast';
+} from 'grafast';
 import type {PgRelationInputData} from '../relationships.ts';
 
 export function getNestedCreatePlanResolver<
@@ -32,38 +33,41 @@ export function getNestedCreatePlanResolver<
   );
 
   const prepareAttrs = ($object: __InputObjectStep) => {
-    return Object.keys(remoteResource.codec.attributes).reduce((memo, name) => {
-      const isInsertable = pgCodecAttributeMatches(
-        [remoteResource.codec, name],
-        'attribute:insert'
-      );
+    return Object.keys(remoteResource.codec.attributes).reduce(
+      (memo, name) => {
+        const isInsertable = pgCodecAttributeMatches(
+          [remoteResource.codec, name],
+          'attribute:insert'
+        );
 
-      if (!isInsertable) return memo;
+        if (!isInsertable) return memo;
 
-      const isPrimaryAttribute = primaryUnique?.attributes.some((a) => a === name);
-      const inflectedName = inflection.attribute({
-        attributeName: name,
-        codec: remoteResource.codec,
-      });
+        const isPrimaryAttribute = primaryUnique?.attributes.some((a) => a === name);
+        const inflectedName = inflection.attribute({
+          attributeName: name,
+          codec: remoteResource.codec,
+        });
 
-      if (isPrimaryAttribute) {
-        if (inflectedName === 'rowId') {
-          return memo;
+        if (isPrimaryAttribute) {
+          if (inflectedName === 'rowId') {
+            return memo;
+          }
+          // WARNING!! We have to eval the argument here
+          // and omit the value if it's not present
+          // otherwise, we won't be able to set it down the line
+          // because of the attribute check on PgInsertSingleStep
+          // and PgUpdateSingleStep
+          if (!$object.evalHas(inflectedName)) {
+            return memo;
+          }
         }
-        // WARNING!! We have to eval the argument here
-        // and omit the value if it's not present
-        // otherwise, we won't be able to set it down the line
-        // because of the attribute check on PgInsertSingleStep
-        // and PgUpdateSingleStep
-        if (!$object.evalHas(inflectedName)) {
-          return memo;
-        }
-      }
-      return {
-        ...memo,
-        [name]: $object.get(inflectedName),
-      };
-    }, Object.create(null));
+        return {
+          ...memo,
+          [name]: $object.get(inflectedName),
+        };
+      },
+      Object.create(null) as Record<string, ExecutableStep>
+    );
   };
 
   const resolver: InputObjectFieldApplyPlanResolver<TFieldStep> = (

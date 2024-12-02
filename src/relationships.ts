@@ -3,7 +3,7 @@ import type {
   PgCodecRelation,
   PgCodecWithAttributes,
 } from '@dataplan/pg';
-import type {GraphileBuild} from 'postgraphile/graphile-build';
+import type {GraphileBuild} from 'graphile-build';
 import {type PgTableResource, isNestedMutableResource} from './helpers.ts';
 
 export interface PgCodecAttributeWithName extends PgCodecAttribute {

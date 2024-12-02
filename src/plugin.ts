@@ -1,16 +1,18 @@
+import {PgInsertSingleStep, PgUpdateSingleStep} from '@dataplan/pg';
+import {
+  type FieldArgs,
+  type GrafastInputFieldConfigMap,
+  type ModifierStep,
+  ObjectStep,
+  type SetterStep,
+  type __TrackedValueStep,
+} from 'grafast';
+import {EXPORTABLE} from 'graphile-build';
 import type {
   GraphQLInputFieldConfigMap,
   GraphQLInputObjectType,
   GraphQLInputType,
 } from 'graphql';
-import {PgInsertSingleStep, PgUpdateSingleStep} from 'postgraphile/@dataplan/pg';
-import {
-  type FieldArgs,
-  ObjectStep,
-  type SetterStep,
-  type __TrackedValueStep,
-} from 'postgraphile/grafast';
-import {EXPORTABLE} from 'postgraphile/graphile-build';
 import {
   type PgTableResource,
   isDeletable,
@@ -265,30 +267,36 @@ export const PgNestedMutationsInitSchemaPlugin: GraphileConfig.Plugin = {
                       return {
                         ...Object.entries(
                           (TableType as GraphQLInputObjectType).getFields()
-                        ).reduce((memo, [name, field]) => {
-                          // if the foreign keys live on the remote resource
-                          // allow them to be null so we can set them later
+                        ).reduce(
+                          (memo, [name, field]) => {
+                            // if the foreign keys live on the remote resource
+                            // allow them to be null so we can set them later
 
-                          if (isReferencee && primaryKeyAttrs.includes(name)) {
+                            if (isReferencee && primaryKeyAttrs.includes(name)) {
+                              return {
+                                ...memo,
+                                [name]: fieldWithHooks(
+                                  {fieldName: name},
+                                  {
+                                    ...field,
+                                    type: build.graphql.isNonNullType(field.type)
+                                      ? field.type.ofType
+                                      : field.type,
+                                  }
+                                ),
+                              };
+                            }
+
                             return {
                               ...memo,
-                              [name]: fieldWithHooks(
-                                {fieldName: name},
-                                {
-                                  ...field,
-                                  type: build.graphql.isNonNullType(field.type)
-                                    ? field.type.ofType
-                                    : field.type,
-                                }
-                              ),
+                              [name]: fieldWithHooks({fieldName: name}, field),
                             };
-                          }
-
-                          return {
-                            ...memo,
-                            [name]: fieldWithHooks({fieldName: name}, field),
-                          };
-                        }, Object.create(null)),
+                          },
+                          Object.create(null) as GrafastInputFieldConfigMap<
+                            Grafast.Context,
+                            ModifierStep
+                          >
+                        ),
                       };
                     },
                   }),
@@ -403,7 +411,11 @@ export const PgNestedMutationsInitSchemaPlugin: GraphileConfig.Plugin = {
                               autoApplyAfterParentApplyPlan: true,
                               applyPlan: EXPORTABLE(
                                 (build, getNestedCreatePlanResolver, relation) =>
-                                  function plan($parent, args, info) {
+                                  function plan(
+                                    $parent: PgInsertSingleStep | PgUpdateSingleStep,
+                                    args,
+                                    info
+                                  ) {
                                     getNestedCreatePlanResolver(build, relation)(
                                       $parent,
                                       args,
@@ -458,7 +470,7 @@ export const PgNestedMutationsInitSchemaPlugin: GraphileConfig.Plugin = {
         return _;
       },
       GraphQLInputObjectType_fields(fields, build, context) {
-        const {inflection, wrapDescription, EXPORTABLE} = build;
+        const {inflection, wrapDescription} = build;
         const {
           fieldWithHooks,
           scope: {isPgRowType, pgCodec, isInputType, isPgPatch},
@@ -507,7 +519,7 @@ export const PgNestedMutationsInitSchemaPlugin: GraphileConfig.Plugin = {
                   ),
                 };
               },
-              Object.create(null)
+              Object.create(null) as GraphQLInputFieldConfigMap
             );
 
             const rootFields = mapPgRelationshipRootFields(
@@ -532,7 +544,6 @@ export const PgNestedMutationsInitSchemaPlugin: GraphileConfig.Plugin = {
       },
 
       GraphQLObjectType_fields_field(field, build, context) {
-        const {EXPORTABLE} = build;
         const {
           scope: {isRootMutation, fieldName},
         } = context;
@@ -550,7 +561,7 @@ export const PgNestedMutationsInitSchemaPlugin: GraphileConfig.Plugin = {
               (field, rootFields) =>
                 function plan($parent: __TrackedValueStep, fieldArgs, info) {
                   if (!field.plan) return $parent;
-                  const $object = field.plan($parent, fieldArgs, info);
+                  const $object = field.plan($parent, fieldArgs, info) as ObjectStep;
                   const $insertSingle = $object.get('result');
 
                   rootFields.forEach((path) => {

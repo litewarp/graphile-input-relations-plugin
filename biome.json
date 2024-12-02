@@ -6,9 +6,7 @@
     "useIgnoreFile": true,
     "defaultBranch": "main"
   },
-  "files": {
-    "ignore": ["_archived", "node_modules", "dist", "tests/__snapshots__/**"]
-  },
+  "files": { "ignore": ["node_modules", "dist", "tests/__snapshots__/**"] },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
@@ -30,23 +28,24 @@
         "useOptionalChain": "off"
       },
       "correctness": {
+        "noUnusedImports": "error",
         "noUnusedVariables": "error",
-        "useArrayLiterals": "off",
-        "noUnusedImports": "error"
+        "useArrayLiterals": "off"
       },
       "nursery": { "noCommonJs": "error", "useSortedClasses": "warn" },
       "style": {
         "noNamespace": "off",
-        "useAsConstAssertion": "error",
         "noNonNullAssertion": "error",
-        "useBlockStatements": "off"
+        "useAsConstAssertion": "error",
+        "useBlockStatements": "off",
+        "useThrowOnlyError": "error"
       },
       "suspicious": {
         "noExplicitAny": "error",
         "noExtraNonNullAssertion": "error",
         "noMisleadingInstantiator": "error",
         "noUnsafeDeclarationMerging": "error",
-        "useAwait": "off",
+        "useAwait": "error",
         "useNamespaceKeyword": "error"
       }
     }
@@ -65,5 +64,66 @@
     },
     "globals": []
   },
-  "overrides": []
+  "overrides": [
+    {
+      "include": ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noConstAssign": "off",
+            "noGlobalObjectCalls": "off",
+            "noInvalidBuiltinInstantiation": "off",
+            "noInvalidConstructorSuper": "off",
+            "noNewSymbol": "off",
+            "noSetterReturn": "off",
+            "noUndeclaredVariables": "off",
+            "noUnreachable": "off",
+            "noUnreachableSuper": "off"
+          },
+          "style": { "noArguments": "error", "noVar": "error", "useConst": "error" },
+          "suspicious": {
+            "noClassAssign": "off",
+            "noDuplicateClassMembers": "off",
+            "noDuplicateObjectKeys": "off",
+            "noDuplicateParameters": "off",
+            "noFunctionAssign": "off",
+            "noImportAssign": "off",
+            "noRedeclare": "off",
+            "noUnsafeNegation": "off",
+            "useGetterReturn": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noConstAssign": "off",
+            "noGlobalObjectCalls": "off",
+            "noInvalidBuiltinInstantiation": "off",
+            "noInvalidConstructorSuper": "off",
+            "noNewSymbol": "off",
+            "noSetterReturn": "off",
+            "noUndeclaredVariables": "off",
+            "noUnreachable": "off",
+            "noUnreachableSuper": "off"
+          },
+          "style": { "noArguments": "error", "noVar": "error", "useConst": "error" },
+          "suspicious": {
+            "noClassAssign": "off",
+            "noDuplicateClassMembers": "off",
+            "noDuplicateObjectKeys": "off",
+            "noDuplicateParameters": "off",
+            "noFunctionAssign": "off",
+            "noImportAssign": "off",
+            "noRedeclare": "off",
+            "noUnsafeNegation": "off",
+            "useGetterReturn": "off"
+          }
+        }
+      }
+    }
+  ]
 }

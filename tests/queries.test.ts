@@ -2,14 +2,14 @@ import {beforeAll, beforeEach, describe, expect, it} from 'bun:test';
 import {existsSync, readdirSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {PgSimplifyInflectionPreset} from '@graphile/simplify-inflection';
+import {execute, hookArgs} from 'grafast';
+import {type SchemaResult, makeSchema} from 'graphile-build';
 import {type ExecutionArgs, type ExecutionResult, parse, validate} from 'graphql';
 import type {Pool} from 'pg';
 import {
   makePgService,
   makeWithPgClientViaPgClientAlreadyInTransaction,
 } from 'postgraphile/adaptors/pg';
-import {execute, hookArgs} from 'postgraphile/grafast';
-import {type SchemaResult, makeSchema} from 'postgraphile/graphile-build';
 import {PostGraphileAmberPreset} from 'postgraphile/presets/amber';
 import {RelationshipMutationsPreset} from '../src/index.ts';
 import {withPgClient, withPgPool} from './helpers.ts';
@@ -60,9 +60,9 @@ const createPostGraphileSchema = async (pgPool: Pool, sqlSchema: string) => {
 
 const sqlSchemas = getSqlSchemas();
 
-beforeAll(async () => {
+beforeAll(() => {
   // Ensure process.env.TEST_DATABASE_URL is set
-  if (!process.env.TEST_DATABASE_URL) {
+  if (!process.env['TEST_DATABASE_URL']) {
     console.error(
       'ERROR: No test database configured; aborting. To resolve this, ensure environmental variable TEST_DATABASE_URL is set.'
     );

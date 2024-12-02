@@ -2,13 +2,14 @@ import {
   type PgInsertSingleStep,
   type PgUpdateSingleStep,
   pgUpdateSingle,
-} from 'postgraphile/@dataplan/pg';
+} from '@dataplan/pg';
 import {
+  type ExecutableStep,
   type InputObjectFieldApplyPlanResolver,
   __InputListStep,
   __InputObjectStep,
   specFromNodeId,
-} from 'postgraphile/grafast';
+} from 'grafast';
 import type {PgRelationInputData} from '../relationships.ts';
 
 export function getNestedConnectByIdPlanResolver<
@@ -41,7 +42,7 @@ export function getNestedConnectByIdPlanResolver<
       const spec = specFromNodeId(
         nodeIdHandler,
         $rawArgs.get(inflection.nodeIdFieldName())
-      );
+      ) as Record<string, ExecutableStep>;
 
       Object.keys(spec).forEach((key) => {
         const remoteAttrIdx = remoteAttributes.map((a) => a.name).indexOf(key);
@@ -78,7 +79,7 @@ export function getNestedConnectByIdPlanResolver<
         const spec = specFromNodeId(
           nodeIdHandler,
           $rawArg.get(inflection.nodeIdFieldName())
-        );
+        ) as Record<string, ExecutableStep>;
         const $item = pgUpdateSingle(remoteResource, spec, attrs);
 
         args.apply($item, [i]);
