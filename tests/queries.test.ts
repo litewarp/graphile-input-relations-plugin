@@ -54,7 +54,7 @@ const createPostGraphileSchema = async (pgPool: Pool, sqlSchema: string) => {
       }),
     ],
   });
-  await Bun.write(`./tmp/${sqlSchema}.graphql`, printOrderedSchema(gs.schema));
+  await Bun.write(`./.tmp/${sqlSchema}.graphql`, printOrderedSchema(gs.schema));
   return gs;
 };
 
