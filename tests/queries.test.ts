@@ -1,6 +1,6 @@
-import {beforeAll, beforeEach, describe, expect, it} from 'bun:test';
-import {existsSync, readdirSync} from 'node:fs';
-import {resolve} from 'node:path';
+import {promises as fs, existsSync, readdirSync} from 'node:fs';
+import {dirname, resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {PgSimplifyInflectionPreset} from '@graphile/simplify-inflection';
 import {execute, hookArgs} from 'grafast';
 import {type SchemaResult, makeSchema} from 'graphile-build';
@@ -11,16 +11,16 @@ import {
   makeWithPgClientViaPgClientAlreadyInTransaction,
 } from 'postgraphile/adaptors/pg';
 import {PostGraphileAmberPreset} from 'postgraphile/presets/amber';
+import {beforeAll, beforeEach, describe, expect, it} from 'vitest';
 import {RelationshipMutationsPreset} from '../src/index.ts';
 import {withPgClient, withPgPool} from './helpers.ts';
 import {printOrderedSchema} from './print-ordered-schema.ts';
 
-const __dirname = import.meta.dir;
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const schemasDir = resolve(__dirname, 'schemas');
 
 const readTextFile = async (path: string) => {
-  const file = Bun.file(path);
-  return await file.text();
+  return await fs.readFile(path, 'utf-8');
 };
 
 const getSchemaPath = (schema: string, file?: string) =>
@@ -54,7 +54,7 @@ const createPostGraphileSchema = async (pgPool: Pool, sqlSchema: string) => {
       }),
     ],
   });
-  await Bun.write(`./.tmp/${sqlSchema}.graphql`, printOrderedSchema(gs.schema));
+  await fs.writeFile(`./.tmp/${sqlSchema}.graphql`, printOrderedSchema(gs.schema));
   return gs;
 };
 

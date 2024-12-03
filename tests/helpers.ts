@@ -4,7 +4,7 @@ import pg from 'pg';
 
 export async function withPgPool<T>(cb: (pool: pg.Pool) => Promise<T>): Promise<T> {
   const pool = new pg.Pool({
-    connectionString: process.env.TEST_DATABASE_URL,
+    connectionString: process.env['TEST_DATABASE_URL'],
   });
   try {
     return await cb(pool);

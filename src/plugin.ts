@@ -8,10 +8,12 @@ import {
   type __TrackedValueStep,
 } from 'grafast';
 import {EXPORTABLE} from 'graphile-build';
-import type {
-  GraphQLInputFieldConfigMap,
-  GraphQLInputObjectType,
-  GraphQLInputType,
+import {
+  type GraphQLInputFieldConfigMap,
+  type GraphQLInputObjectType,
+  type GraphQLInputType,
+  GraphQLList,
+  GraphQLNonNull,
 } from 'graphql';
 import type {PgTableResource, RelationshipInputFields} from './interfaces.ts';
 import {getNestedConnectByIdPlanResolver} from './plans/connect-node.ts';
@@ -174,10 +176,7 @@ export const PgNestedMutationsInitSchemaPlugin: GraphileConfig.Plugin = {
       },
 
       init(_, build) {
-        const {
-          inflection,
-          graphql: {GraphQLList, GraphQLNonNull},
-        } = build;
+        const {inflection} = build;
 
         const relationshipInputTypes = new Set<string>();
 

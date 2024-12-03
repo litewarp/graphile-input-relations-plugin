@@ -16,7 +16,8 @@
     "husky": "^9.1.7",
     "pg": "^8.13.1",
     "typescript": "^5.7.2",
-    "typescript-eslint": "^8.16.0"
+    "typescript-eslint": "^8.16.0",
+    "vitest": "^2.1.8"
   },
   "dependencies": {
     "graphql": "16.1.0-experimental-stream-defer.6",
@@ -30,8 +31,8 @@
     "graphql": "16.1.0-experimental-stream-defer.6"
   },
   "scripts": {
-    "test": "bun test --watch",
-    "test:ci": "bun test",
+    "test": "vitest",
+    "test:ci": "vitest run",
     "format-and-lint": "biome check && eslint",
     "format-and-lint:fix": "biome check --unsafe --fix && eslint --fix",
     "format-and-lint:staged": "biome check -error-on-warnings --no-errors-on-unmatched --staged && eslint",
@@ -40,5 +41,5 @@
     "typecheck": "tsc --noEmit"
   },
   "packageManager": "bun@1.1.38",
-  "trustedDependencies": ["@biomejs/biome"]
+  "trustedDependencies": ["@biomejs/biome", "esbuild"]
 }
