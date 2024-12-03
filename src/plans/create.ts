@@ -9,7 +9,7 @@ import {
   __InputListStep,
   __InputObjectStep,
 } from 'grafast';
-import type {PgRelationInputData} from '../relationships.ts';
+import type {PgRelationInputData} from '../interfaces.ts';
 import {rebuildObject} from '../utils/object.ts';
 
 export function getNestedCreatePlanResolver<

@@ -8,7 +8,7 @@ export function isPgTableResource(r: PgResource): r is PgTableResource {
 
 export const isNestedMutableResource = (
   build: GraphileBuild.Build,
-  resource: PgResource
+  resource: PgTableResource
 ): resource is PgTableResource => {
   if (resource.parameters) return false;
   if (!resource.codec.attributes) return false;

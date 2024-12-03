@@ -1,27 +1,7 @@
-import type {
-  PgCodecAttribute,
-  PgCodecRelation,
-  PgCodecWithAttributes,
-} from '@dataplan/pg';
 import type {GraphileBuild} from 'graphile-build';
 import type {PgTableResource} from './interfaces.ts';
+import type {PgRelationInputData} from './interfaces.ts';
 import {isNestedMutableResource} from './utils/resource.ts';
-
-export interface PgCodecAttributeWithName extends PgCodecAttribute {
-  name: string;
-}
-
-export interface PgRelationInputData
-  extends Omit<
-    PgCodecRelation<PgCodecWithAttributes, PgTableResource>,
-    'localCodec' | 'localAttributes' | 'remoteAttributes'
-  > {
-  relationName: string;
-  fieldName: string;
-  localResource: PgTableResource;
-  localAttributes: PgCodecAttributeWithName[];
-  remoteAttributes: PgCodecAttributeWithName[];
-}
 
 export const getRelationships = (
   build: GraphileBuild.Build,

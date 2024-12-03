@@ -15,10 +15,14 @@ import {
   GraphQLList,
   GraphQLNonNull,
 } from 'graphql';
-import type {PgTableResource, RelationshipInputFields} from './interfaces.ts';
+import type {
+  PgRelationInputData,
+  PgTableResource,
+  RelationshipInputFields,
+} from './interfaces.ts';
 import {getNestedConnectByIdPlanResolver} from './plans/connect-node.ts';
 import {getNestedCreatePlanResolver} from './plans/create.ts';
-import {type PgRelationInputData, getRelationships} from './relationships.ts';
+import {getRelationships} from './relationships.ts';
 import {rebuildObject} from './utils/object.ts';
 import {
   isDeletable,
@@ -181,6 +185,7 @@ export const PgNestedMutationsInitSchemaPlugin: GraphileConfig.Plugin = {
         const relationshipInputTypes = new Set<string>();
 
         const tableResources = Object.values(build.input.pgRegistry.pgResources).filter(
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           (resource) => isPgTableResource(resource)
         );
 
@@ -434,6 +439,7 @@ export const PgNestedMutationsInitSchemaPlugin: GraphileConfig.Plugin = {
 
         if (isPgRowType && pgCodec && (isInputType || isPgPatch)) {
           const resource = build.input.pgRegistry.pgResources[pgCodec.name];
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           if (resource && isPgTableResource(resource)) {
             const relationships = getRelationships(build, resource);
             const inputFields: GraphQLInputFieldConfigMap = {};

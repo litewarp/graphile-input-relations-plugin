@@ -10,7 +10,7 @@ import {
   __InputObjectStep,
   specFromNodeId,
 } from 'grafast';
-import type {PgRelationInputData} from '../relationships.ts';
+import type {PgRelationInputData} from '../interfaces.ts';
 
 export function getNestedConnectByIdPlanResolver<
   TFieldStep extends PgInsertSingleStep | PgUpdateSingleStep =

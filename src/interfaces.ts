@@ -1,8 +1,10 @@
 import type {
+  PgCodecAttribute,
   PgCodecRelation,
   PgCodecWithAttributes,
   PgRegistry,
   PgResource,
+  PgResourceParameter,
   PgResourceUnique,
 } from 'postgraphile/@dataplan/pg';
 
@@ -11,13 +13,14 @@ export interface PgCodecRelationWithName
   name: string;
   resource: string;
 }
-export type PgTableResource = PgResource<
-  string,
-  PgCodecWithAttributes,
-  PgResourceUnique[],
-  undefined,
-  PgRegistry
->;
+export interface PgTableResource
+  extends PgResource<
+    string,
+    PgCodecWithAttributes,
+    PgResourceUnique[],
+    PgResourceParameter[],
+    PgRegistry
+  > {}
 
 type BasicFieldInfo = {name: string; type: string};
 
@@ -31,4 +34,19 @@ export interface RelationshipInputFields {
   connect: RelationshipKeyMutationFields;
   update: RelationshipKeyMutationFields;
   delete: RelationshipKeyMutationFields;
+}
+export interface PgCodecAttributeWithName extends PgCodecAttribute {
+  name: string;
+}
+
+export interface PgRelationInputData
+  extends Omit<
+    PgCodecRelation<PgCodecWithAttributes, PgTableResource>,
+    'localCodec' | 'localAttributes' | 'remoteAttributes'
+  > {
+  relationName: string;
+  fieldName: string;
+  localResource: PgTableResource;
+  localAttributes: PgCodecAttributeWithName[];
+  remoteAttributes: PgCodecAttributeWithName[];
 }
