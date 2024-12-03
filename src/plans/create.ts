@@ -10,7 +10,6 @@ import {
   __InputObjectStep,
 } from 'grafast';
 import type {PgRelationInputData} from '../interfaces.ts';
-import {rebuildObject} from '../utils/object.ts';
 
 export function getRelationCreatePlanResolver<
   TFieldStep extends PgInsertSingleStep | PgUpdateSingleStep =
@@ -29,51 +28,49 @@ export function getRelationCreatePlanResolver<
 
   const primaryUnique = remoteResource.uniques.find((u) => u.isPrimary);
 
-  const relFieldNames = (build.pgRelationshipInputTypes[remoteResource.name] ?? []).map(
+  const relFieldNames = (build.pgRelationInputsTypes[remoteResource.name] ?? []).map(
     (r) => r.fieldName
   );
 
   const prepareAttrs = ($object: __InputObjectStep): Record<string, ExecutableStep> => {
-    return rebuildObject({
-      obj: remoteResource.codec.attributes,
-      filter: ([name, _]) => {
-        const isInsertable = pgCodecAttributeMatches(
-          [remoteResource.codec, name],
-          'attribute:insert'
-        );
+    return Object.fromEntries(
+      Object.entries(remoteResource.codec.attributes)
+        .filter(([name, _]) => {
+          const isInsertable = pgCodecAttributeMatches(
+            [remoteResource.codec, name],
+            'attribute:insert'
+          );
 
-        if (!isInsertable) return false;
+          if (!isInsertable) return false;
 
-        const isPrimaryAttribute = primaryUnique?.attributes.some((a) => a === name);
-        const inflectedName = inflection.attribute({
-          attributeName: name,
-          codec: remoteResource.codec,
-        });
+          const isPrimaryAttribute = primaryUnique?.attributes.some((a) => a === name);
+          const inflectedName = inflection.attribute({
+            attributeName: name,
+            codec: remoteResource.codec,
+          });
 
-        if (isPrimaryAttribute) {
-          if (inflectedName === 'rowId') {
-            return false;
+          if (isPrimaryAttribute) {
+            if (inflectedName === 'rowId') {
+              return false;
+            }
+            // WARNING!! We have to eval the argument here
+            // and omit the value if it's not present
+            // otherwise, we won't be able to set it down the line
+            // because of the attribute check on PgInsertSingleStep
+            // and PgUpdateSingleStep
+            if (!$object.evalHas(inflectedName)) {
+              return false;
+            }
           }
-          // WARNING!! We have to eval the argument here
-          // and omit the value if it's not present
-          // otherwise, we won't be able to set it down the line
-          // because of the attribute check on PgInsertSingleStep
-          // and PgUpdateSingleStep
-          if (!$object.evalHas(inflectedName)) {
-            return false;
-          }
-        }
-        return true;
-      },
-      map: ([name, _]) => {
-        return [
+          return true;
+        })
+        .map(([name, _]) => [
           name,
           $object.get(
             inflection.attribute({attributeName: name, codec: remoteResource.codec})
           ),
-        ];
-      },
-    });
+        ])
+    );
   };
 
   const resolver: InputObjectFieldApplyPlanResolver<TFieldStep> = (

@@ -2,7 +2,6 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {fixupConfigRules, includeIgnoreFile} from '@eslint/compat';
 import {FlatCompat} from '@eslint/eslintrc';
-import biome from 'eslint-config-biome';
 import tseslint from 'typescript-eslint';
 
 // mimic CommonJS variables -- not needed if using CommonJS
@@ -43,6 +42,6 @@ export default tseslint.config(
       ],
       '@typescript-eslint/no-for-in-array': 'off',
     },
-  },
-  biome
+  }
+  // biome
 );

@@ -50,3 +50,19 @@ export interface PgRelationInputData
   localAttributes: PgCodecAttributeWithName[];
   remoteAttributes: PgCodecAttributeWithName[];
 }
+
+export type RelationInputTypeInfo =
+  | {
+      fieldName: string;
+      typeName: string;
+      relationName: string;
+      method: 'create';
+      mode: undefined;
+    }
+  | {
+      fieldName: string;
+      typeName: string;
+      relationName: string;
+      method: 'connect' | 'update' | 'delete' | 'disconnect';
+      mode: 'node' | 'keys';
+    };

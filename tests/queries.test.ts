@@ -12,7 +12,7 @@ import {
 } from 'postgraphile/adaptors/pg';
 import {PostGraphileAmberPreset} from 'postgraphile/presets/amber';
 import {beforeAll, beforeEach, describe, expect, it} from 'vitest';
-import {RelationshipMutationsPreset} from '../src/index.ts';
+import {PgRelationInputsPreset} from '../src/index.ts';
 import {withPgClient, withPgPool} from './helpers.ts';
 import {printOrderedSchema} from './print-ordered-schema.ts';
 
@@ -45,7 +45,7 @@ const createPostGraphileSchema = async (pgPool: Pool, sqlSchema: string) => {
     extends: [
       PostGraphileAmberPreset,
       PgSimplifyInflectionPreset,
-      RelationshipMutationsPreset,
+      PgRelationInputsPreset,
     ],
     pgServices: [
       makePgService({

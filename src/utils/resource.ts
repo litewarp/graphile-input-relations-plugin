@@ -1,4 +1,4 @@
-import type {PgResource} from '@dataplan/pg';
+import type {PgResource, PgResourceUnique} from '@dataplan/pg';
 import type {} from 'graphile-build-pg';
 import type {PgTableResource} from '../interfaces.ts';
 
@@ -45,3 +45,44 @@ export const isDeletable = (build: GraphileBuild.Build, resource: PgTableResourc
   if (!resource.uniques || resource.uniques.length < 1) return false;
   return Boolean(build.behavior.pgResourceMatches(resource, 'resource:delete'));
 };
+
+export function getUniqueSpecs(
+  build: GraphileBuild.Build,
+  resource: PgResource,
+  mode: 'resource:update' | 'resource:delete'
+) {
+  const primaryUnique = resource.uniques.find((u: PgResourceUnique) => u.isPrimary);
+  const constraintMode = `constraint:${mode}` as const;
+  const specs = [
+    ...(primaryUnique &&
+    build.getNodeIdCodec !== undefined &&
+    build.behavior.pgCodecMatches(resource.codec, `nodeId:${mode}` as const)
+      ? [{unique: primaryUnique, uniqueMode: 'node'}]
+      : []),
+    ...resource.uniques
+      .filter((unique: PgResourceUnique) => {
+        return build.behavior.pgResourceUniqueMatches([resource, unique], constraintMode);
+      })
+      .map((unique: PgResourceUnique) => ({
+        unique,
+        uniqueMode: 'keys',
+      })),
+  ];
+  return specs;
+}
+
+export function isNodeIdSpec(
+  build: GraphileBuild.Build,
+  resource: PgResource,
+  mode: 'resource:update' | 'resource:delete'
+) {
+  const primaryUnique = resource.uniques.find((u: PgResourceUnique) => u.isPrimary);
+  if (
+    primaryUnique &&
+    build.getNodeIdCodec !== undefined &&
+    build.getNodeIdHandler !== undefined &&
+    build.behavior.pgCodecMatches(resource.codec, `nodeId:${mode}` as const)
+  ) {
+    return true;
+  }
+}

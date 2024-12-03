@@ -1,4 +1,5 @@
 import type {GraphileBuild} from 'graphile-build';
+import type {} from 'postgraphile/@dataplan/pg';
 import type {PgTableResource} from './interfaces.ts';
 import type {PgRelationInputData} from './interfaces.ts';
 import {isNestedMutableResource} from './utils/resource.ts';
