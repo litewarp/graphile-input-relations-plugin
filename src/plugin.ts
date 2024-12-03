@@ -20,8 +20,8 @@ import type {
   PgTableResource,
   RelationshipInputFields,
 } from './interfaces.ts';
-import {getNestedConnectByIdPlanResolver} from './plans/connect-node.ts';
-import {getNestedCreatePlanResolver} from './plans/create.ts';
+import {getRelationConnectByIdPlanResolver} from './plans/connect-node.ts';
+import {getRelationCreatePlanResolver} from './plans/create.ts';
 import {getRelationships} from './relationships.ts';
 import {rebuildObject} from './utils/object.ts';
 import {
@@ -371,19 +371,19 @@ export const PgNestedMutationsInitSchemaPlugin: GraphileConfig.Plugin = {
                               ),
                               autoApplyAfterParentApplyPlan: true,
                               applyPlan: EXPORTABLE(
-                                (build, getNestedCreatePlanResolver, relation) =>
+                                (build, getRelationCreatePlanResolver, relation) =>
                                   function plan(
                                     $parent: PgInsertSingleStep | PgUpdateSingleStep,
                                     args,
                                     info
                                   ) {
-                                    getNestedCreatePlanResolver(build, relation)(
+                                    getRelationCreatePlanResolver(build, relation)(
                                       $parent,
                                       args,
                                       info
                                     );
                                   },
-                                [build, getNestedCreatePlanResolver, relation]
+                                [build, getRelationCreatePlanResolver, relation]
                               ),
                             }
                           ),
@@ -406,9 +406,9 @@ export const PgNestedMutationsInitSchemaPlugin: GraphileConfig.Plugin = {
                               ),
                               autoApplyAfterParentApplyPlan: true,
                               applyPlan: EXPORTABLE(
-                                (build, getNestedConnectByIdPlanResolver, relation) =>
-                                  getNestedConnectByIdPlanResolver(build, relation),
-                                [build, getNestedConnectByIdPlanResolver, relation]
+                                (build, getRelationConnectByIdPlanResolver, relation) =>
+                                  getRelationConnectByIdPlanResolver(build, relation),
+                                [build, getRelationConnectByIdPlanResolver, relation]
                               ),
                             }
                           ),

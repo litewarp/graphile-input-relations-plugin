@@ -12,7 +12,7 @@ import {
 import type {PgRelationInputData} from '../interfaces.ts';
 import {rebuildObject} from '../utils/object.ts';
 
-export function getNestedCreatePlanResolver<
+export function getRelationCreatePlanResolver<
   TFieldStep extends PgInsertSingleStep | PgUpdateSingleStep =
     | PgInsertSingleStep
     | PgUpdateSingleStep,
