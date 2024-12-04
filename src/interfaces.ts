@@ -42,13 +42,14 @@ export interface PgCodecAttributeWithName extends PgCodecAttribute {
 export interface PgRelationInputData
   extends Omit<
     PgCodecRelation<PgCodecWithAttributes, PgTableResource>,
-    'localCodec' | 'localAttributes' | 'remoteAttributes'
+    'localCodec'
   > {
   relationName: string;
   fieldName: string;
-  localResource: PgTableResource;
-  localAttributes: PgCodecAttributeWithName[];
-  remoteAttributes: PgCodecAttributeWithName[];
+  matchedAttributes: {
+    local: PgCodecAttributeWithName;
+    remote: PgCodecAttributeWithName;
+  }[];
 }
 
 export type RelationInputTypeInfo =

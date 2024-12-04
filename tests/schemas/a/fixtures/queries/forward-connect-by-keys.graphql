@@ -3,7 +3,7 @@ mutation AddChildAndConnectToParentByEmail {
     input: {
       child: {
         name: "My baby"
-        parentByMomParentId: {connectByEmail: {email: "johnny@cochran.com"}}
+        momParent: {connectByEmail: {email: "johnny@cochran.com"}}
       }
     }
   ) {

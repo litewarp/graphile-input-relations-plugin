@@ -24,15 +24,17 @@ export function getRelationCreatePlanResolver<
     inflection,
   } = build;
 
-  const {remoteResource, localAttributes, remoteAttributes} = relation;
+  const {remoteResource, matchedAttributes} = relation;
 
   const primaryUnique = remoteResource.uniques.find((u) => u.isPrimary);
 
-  const relFieldNames = (build.pgRelationInputsTypes[remoteResource.name] ?? []).map(
-    (r) => r.fieldName
-  );
+  const relFieldNames = (
+    build.pgRelationInputsTypes[remoteResource.name] ?? []
+  ).map((r) => r.fieldName);
 
-  const prepareAttrs = ($object: __InputObjectStep): Record<string, ExecutableStep> => {
+  const prepareAttrs = (
+    $object: __InputObjectStep
+  ): Record<string, ExecutableStep> => {
     return Object.fromEntries(
       Object.entries(remoteResource.codec.attributes)
         .filter(([name, _]) => {
@@ -43,7 +45,9 @@ export function getRelationCreatePlanResolver<
 
           if (!isInsertable) return false;
 
-          const isPrimaryAttribute = primaryUnique?.attributes.some((a) => a === name);
+          const isPrimaryAttribute = primaryUnique?.attributes.some(
+            (a) => a === name
+          );
           const inflectedName = inflection.attribute({
             attributeName: name,
             codec: remoteResource.codec,
@@ -87,12 +91,9 @@ export function getRelationCreatePlanResolver<
       // build item
       const $item = pgInsertSingle(remoteResource, prepareAttrs($rawArgs));
       // set foreign keys on parent object
-      localAttributes.forEach((local, i) => {
-        const remote = remoteAttributes[i];
-        if (remote) {
-          $object.set(local.name, $item.get(remote.name));
-        }
-      });
+      for (const {local, remote} of matchedAttributes) {
+        $object.set(local.name, $item.get(remote.name));
+      }
       for (const field of relFieldNames) {
         args.apply($item, [field]);
       }
@@ -107,10 +108,7 @@ export function getRelationCreatePlanResolver<
         }
         const attrs = prepareAttrs($rawArg);
 
-        for (const [idx, remote] of remoteAttributes.entries()) {
-          const local = localAttributes[idx];
-          if (!remote || !local) continue;
-
+        for (const {local, remote} of matchedAttributes) {
           attrs[remote.name] = $object.get(local.name);
         }
 

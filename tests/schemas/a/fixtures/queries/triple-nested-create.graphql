@@ -3,7 +3,7 @@ mutation TripleNestedRelationship {
     input: {
       child: {
         name: "Hugo Black"
-        parentByMomParentId: {
+        momParent: {
           create: {
             parentName: "Sandra Day O'Connor"
             childrenByMomParentId: {

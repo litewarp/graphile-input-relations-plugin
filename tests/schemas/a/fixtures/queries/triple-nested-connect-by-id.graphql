@@ -3,9 +3,9 @@ mutation TripleNestedConnectById {
     input: {
       child: {
         name: "Sonia Sotomayor"
-        parentByDadParentId: {connectById: {id: "WyJQYXJlbnQiLDJd=="}}
+        dadParent: {connectById: {id: "WyJQYXJlbnQiLDJd=="}}
         studentsByStudentId: {
-          create: [{schoolBySchoolId: {connectById: {id: "WyJTY2hvb2wiLDJd"}}}]
+          create: [{school: {connectById: {id: "WyJTY2hvb2wiLDJd"}}}]
         }
       }
     }

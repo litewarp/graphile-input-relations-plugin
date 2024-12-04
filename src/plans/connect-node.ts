@@ -22,7 +22,7 @@ export function getRelationConnectByIdPlanResolver<
 ): InputObjectFieldApplyPlanResolver<TFieldStep> {
   const {inflection} = build;
 
-  const {remoteResource, localAttributes, remoteAttributes} = relationship;
+  const {remoteResource, matchedAttributes} = relationship;
 
   const resolver: InputObjectFieldApplyPlanResolver<TFieldStep> = (
     $object,
@@ -45,13 +45,13 @@ export function getRelationConnectByIdPlanResolver<
       ) as Record<string, ExecutableStep>;
       // biome-ignore lint/complexity/noForEach: This is a simple loop
       Object.keys(spec).forEach((key) => {
-        const remoteAttrIdx = remoteAttributes.map((a) => a.name).indexOf(key);
-        const local = localAttributes[remoteAttrIdx];
-        if (local) {
-          $object.set(local.name, spec[key]);
+        const matched = matchedAttributes.find(
+          ({remote}) => remote.name === key
+        );
+        if (matched) {
+          $object.set(matched.local.name, spec[key]);
         }
       });
-
       args.apply($object);
       // Since we're setting fields on the parent object
       // we can just return
@@ -67,9 +67,7 @@ export function getRelationConnectByIdPlanResolver<
           continue;
         }
         const attrs: Record<string, ExecutableStep> = {};
-        for (const [idx, remote] of remoteAttributes.entries()) {
-          const local = localAttributes[idx];
-          if (!local || !remote) continue;
+        for (const {local, remote} of matchedAttributes) {
           attrs[remote.name] = $object.get(local.name);
         }
         const spec = specFromNodeId(

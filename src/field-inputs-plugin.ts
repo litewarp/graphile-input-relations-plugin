@@ -19,8 +19,14 @@ import {isInsertable, isPgTableResource} from './utils/resource.ts';
 declare global {
   namespace GraphileBuild {
     interface Inflection {
-      relationInputField(this: Inflection, relationship: PgRelationInputData): string;
-      relationInputType(this: Inflection, relationship: PgRelationInputData): string;
+      relationInputField(
+        this: Inflection,
+        relationship: PgRelationInputData
+      ): string;
+      relationInputType(
+        this: Inflection,
+        relationship: PgRelationInputData
+      ): string;
     }
     interface ScopeInputObject {
       isRelationInputType?: boolean;
@@ -61,9 +67,7 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
           remoteResource,
         } = relationship;
 
-        const attributes = (!isReferencee ? localAttributes : remoteAttributes).map(
-          (a) => a.name
-        );
+        const attributes = !isReferencee ? localAttributes : remoteAttributes;
         const resourceName = isUnique
           ? remoteResource.name
           : this.pluralize(remoteResource.name);
@@ -83,14 +87,17 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
 
         const duplicateTypes = new Set<string>();
 
-        const tableResources = Object.values(build.input.pgRegistry.pgResources).filter(
+        const tableResources = Object.values(
+          build.input.pgRegistry.pgResources
+        ).filter(
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           (resource) => isPgTableResource(resource)
         );
 
         for (const resource of tableResources) {
           const relations = build.pgRelationInputsTypes[resource.name] ?? [];
-          const relationFields = build.pgRelationInputsFields[resource.name] ?? [];
+          const relationFields =
+            build.pgRelationInputsFields[resource.name] ?? [];
 
           for (const relation of relations) {
             const {
@@ -112,20 +119,6 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
             if (!duplicateTypes.has(typeName)) {
               duplicateTypes.add(typeName);
 
-              const details = {
-                registry: build.input.pgRegistry,
-                codec: resource.codec,
-                relationName,
-              };
-
-              console.log(
-                resource.name,
-                relationName,
-                isUnique && isReferencee && !isUnique
-                  ? inflection.singleRelationBackwards(details)
-                  : inflection.singleRelation(details)
-              );
-
               build.recoverable(null, () => {
                 const getType = (type: GraphQLInputType) => {
                   return isUnique || !isReferencee
@@ -146,75 +139,94 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
                     ),
                     fields: ({fieldWithHooks}) => {
                       return Object.fromEntries(
-                        inputFields.map(({fieldName, typeName, method, mode, unique}) => {
-                          // need a getPlanResolver function
-                          const resolverFn = getResolverFn({method, mode});
+                        inputFields.map(
+                          ({fieldName, typeName, method, mode, unique}) => {
+                            // need a getPlanResolver function
+                            const resolverFn = getResolverFn({method, mode});
 
-                          const resolver = resolverFn
-                            ? mode === 'keys'
-                              ? resolverFn(build, relation, unique)
-                              : resolverFn(build, relation)
-                            : undefined;
+                            const resolver = resolverFn
+                              ? mode === 'keys'
+                                ? resolverFn(build, relation, unique)
+                                : resolverFn(build, relation)
+                              : undefined;
 
-                          return [
-                            fieldName,
-                            fieldWithHooks(
-                              {
-                                fieldName,
+                            return [
+                              fieldName,
+                              fieldWithHooks(
+                                {
+                                  fieldName,
 
-                                isRelationCreateInputField: method === 'create',
-                                isRelationConnectByNodeInputField:
-                                  method === 'connect' && mode === 'node',
-                                isRelationConnectByKeysInputField:
-                                  method === 'connect' && mode === 'keys',
-                                isRelationDisconnectByNodeInputField:
-                                  method === 'disconnect' && mode === 'node',
-                                isRelationDisconnectByKeysInputField:
-                                  method === 'disconnect' && mode === 'keys',
-                                isRelationUpdateByNodeInputField:
-                                  method === 'update' && mode === 'node',
-                                isRelationUpdateByKeysInputField:
-                                  method === 'update' && mode === 'keys',
-                                isRelationDeleteByNodeInputField:
-                                  method === 'delete' && mode === 'node',
-                                isRelationDeleteByKeysInputField:
-                                  method === 'delete' && mode === 'keys',
-                              },
-                              {
-                                description: build.wrapDescription(
-                                  method === 'create'
-                                    ? `A ${remoteResource.name} created and linked to this object`
-                                    : mode === 'node'
-                                      ? `${inflection.upperCamelCase(method)} a ${remoteResource.name} by node Id linked to this object`
-                                      : `${inflection.upperCamelCase(method)} a ${remoteResource.name} by keys (${remoteAttributes.map((a) => a.name).join(', ')}) linked to this object`,
-                                  'field'
-                                ),
-                                type: getType(build.getInputTypeByName(typeName)),
-                                ...(resolver
-                                  ? {
-                                      autoApplyAfterParentApplyPlan: true,
-                                      applyPlan: EXPORTABLE(
-                                        (
-                                          PgInsertSingleStep,
-                                          PgUpdateSingleStep,
-                                          resolver
-                                        ) =>
-                                          function plan($parent, fieldArgs, info) {
-                                            if (
-                                              $parent instanceof PgInsertSingleStep ||
-                                              $parent instanceof PgUpdateSingleStep
+                                  isRelationCreateInputField:
+                                    method === 'create',
+                                  isRelationConnectByNodeInputField:
+                                    method === 'connect' && mode === 'node',
+                                  isRelationConnectByKeysInputField:
+                                    method === 'connect' && mode === 'keys',
+                                  isRelationDisconnectByNodeInputField:
+                                    method === 'disconnect' && mode === 'node',
+                                  isRelationDisconnectByKeysInputField:
+                                    method === 'disconnect' && mode === 'keys',
+                                  isRelationUpdateByNodeInputField:
+                                    method === 'update' && mode === 'node',
+                                  isRelationUpdateByKeysInputField:
+                                    method === 'update' && mode === 'keys',
+                                  isRelationDeleteByNodeInputField:
+                                    method === 'delete' && mode === 'node',
+                                  isRelationDeleteByKeysInputField:
+                                    method === 'delete' && mode === 'keys',
+                                },
+                                {
+                                  description: build.wrapDescription(
+                                    method === 'create'
+                                      ? `A ${remoteResource.name} created and linked to this object`
+                                      : mode === 'node'
+                                        ? `${inflection.upperCamelCase(method)} a ${remoteResource.name} by node Id linked to this object`
+                                        : `${inflection.upperCamelCase(method)} a ${remoteResource.name} by keys (${remoteAttributes.join(', ')}) linked to this object`,
+                                    'field'
+                                  ),
+                                  type: getType(
+                                    build.getInputTypeByName(typeName)
+                                  ),
+                                  ...(resolver
+                                    ? {
+                                        autoApplyAfterParentApplyPlan: true,
+                                        applyPlan: EXPORTABLE(
+                                          (
+                                            PgInsertSingleStep,
+                                            PgUpdateSingleStep,
+                                            resolver
+                                          ) =>
+                                            function plan(
+                                              $parent,
+                                              fieldArgs,
+                                              info
                                             ) {
-                                              resolver($parent, fieldArgs, info);
-                                            }
-                                          },
-                                        [PgInsertSingleStep, PgUpdateSingleStep, resolver]
-                                      ),
-                                    }
-                                  : {}),
-                              }
-                            ),
-                          ];
-                        })
+                                              if (
+                                                $parent instanceof
+                                                  PgInsertSingleStep ||
+                                                $parent instanceof
+                                                  PgUpdateSingleStep
+                                              ) {
+                                                resolver(
+                                                  $parent,
+                                                  fieldArgs,
+                                                  info
+                                                );
+                                              }
+                                            },
+                                          [
+                                            PgInsertSingleStep,
+                                            PgUpdateSingleStep,
+                                            resolver,
+                                          ]
+                                        ),
+                                      }
+                                    : {}),
+                                }
+                              ),
+                            ];
+                          }
+                        )
                       );
                     },
                   }),
@@ -241,45 +253,12 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
             const inputFields: GraphQLInputFieldConfigMap = {};
 
             for (const relation of relations) {
-              const fieldName = inflection.relationInputField(relation);
               const typeName = inflection.relationInputType(relation);
               const InputType = build.getInputTypeByName(typeName);
 
-              const {isUnique, isReferencee, relationName} = relation;
-
-              const details = {
-                registry: build.input.pgRegistry,
-                codec: resource.codec,
-                relationName: relation.relationName,
-              };
-
-              const singleRecordFieldName = isReferencee
-                ? inflection.singleRelationBackwards(details)
-                : inflection.singleRelation(details);
-
-              const connectionFieldName =
-                build.inflection.manyRelationConnection(details);
-              const listFieldName = build.inflection.manyRelationList(details);
-
-              const relationTypeScope = isUnique ? 'singularRelation' : 'manyRelation';
-              const shouldAddSingleField =
-                isUnique &&
-                build.behavior.pgCodecRelationMatches(
-                  relation,
-                  `${relationTypeScope as 'singularRelation'}:resource:single` as const
-                );
-              const shouldAddConnectionField = build.behavior.pgCodecRelationMatches(
-                relation,
-                `${relationTypeScope}:resource:connection`
-              );
-              const shouldAddListField = build.behavior.pgCodecRelationMatches(
-                relation,
-                `${relationTypeScope}:resource:list`
-              );
-
-              inputFields[fieldName] = fieldWithHooks(
+              inputFields[relation.fieldName] = fieldWithHooks(
                 {
-                  fieldName,
+                  fieldName: relation.fieldName,
                   isRelationInputType: true,
                 },
                 () => ({
@@ -292,7 +271,10 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
                   applyPlan: EXPORTABLE(
                     (PgInsertSingleStep, PgUpdateSingleStep) =>
                       function plan(
-                        $obj: SetterStep | PgInsertSingleStep | PgUpdateSingleStep,
+                        $obj:
+                          | SetterStep
+                          | PgInsertSingleStep
+                          | PgUpdateSingleStep,
                         fieldArgs: FieldArgs
                       ) {
                         if (
@@ -338,7 +320,8 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
           const resource = build.pgRootFieldNamesToCodec.get(fieldName);
           if (!resource) return field;
           const inputTypes = build.pgRelationInputsTypes[resource.name] ?? [];
-          const rootFields = build.pgRelationshipMutationRootFields.get(fieldName);
+          const rootFields =
+            build.pgRelationshipMutationRootFields.get(fieldName);
           if (!rootFields || !inputTypes) return field;
 
           return {
@@ -347,7 +330,11 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
               (field, rootFields) =>
                 function plan($parent: __TrackedValueStep, fieldArgs, info) {
                   if (!field.plan) return $parent;
-                  const $object = field.plan($parent, fieldArgs, info) as ObjectStep;
+                  const $object = field.plan(
+                    $parent,
+                    fieldArgs,
+                    info
+                  ) as ObjectStep;
                   const $insertSingle = $object.get('result');
 
                   for (const path of rootFields) {

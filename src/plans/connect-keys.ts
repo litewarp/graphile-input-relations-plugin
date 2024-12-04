@@ -1,8 +1,7 @@
-import {
-  type PgInsertSingleStep,
-  type PgResourceUnique,
-  type PgUpdateSingleStep,
-  pgUpdateSingle,
+import type {
+  PgInsertSingleStep,
+  PgResourceUnique,
+  PgUpdateSingleStep,
 } from '@dataplan/pg';
 import {
   type ExecutableStep,
@@ -23,7 +22,7 @@ export function getRelationConnectByKeysPlanResolver<
 ): InputObjectFieldApplyPlanResolver<TFieldStep> {
   const {inflection} = build;
 
-  const {remoteResource, localAttributes, remoteAttributes} = relationship;
+  const {remoteResource, matchedAttributes} = relationship;
 
   const resolver: InputObjectFieldApplyPlanResolver<TFieldStep> = (
     $object,
@@ -60,23 +59,14 @@ export function getRelationConnectByKeysPlanResolver<
           console.warn(`Unexpected args type: ${$rawArg.constructor.name}`);
           continue;
         }
-        const spec: Record<string, ExecutableStep> = {};
+        // const spec: Record<string, ExecutableStep> = {};
         const attrs: Record<string, ExecutableStep> = {};
-        remoteAttributes.forEach((remote, idx) => {
-          const local = localAttributes[idx];
-          if (local && remote) {
-            attrs[remote.name] = $object.get(local.name);
-            spec[remote.name] = $rawArg.get(
-              inflection.attribute({
-                attributeName: remote.name,
-                codec: remoteResource.codec,
-              })
-            );
-          }
-        });
-        const $item = pgUpdateSingle(remoteResource, spec, attrs);
+        for (const {local, remote} of matchedAttributes) {
+          attrs[remote.name] = $object.get(local.name);
+        }
+        // const $item = pgUpdateSingle(remoteResource, spec, attrs);
 
-        args.apply($item, [i]);
+        // args.apply($item, [i]);
       }
     } else {
       console.warn(`Unexpected args type: ${$rawArgs.constructor.name}`);

@@ -3,7 +3,7 @@ mutation AddParentFromChildWithOtherChildren {
     input: {
       child: {
         name: "Sandra Day"
-        parentByDadParentId: {
+        dadParent: {
           create: {
             parentName: "John Q. Washington"
             childrenByDadParentId: {
