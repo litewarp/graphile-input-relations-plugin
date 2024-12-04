@@ -1,68 +1,61 @@
-import type {} from '@dataplan/pg';
+import type {PgResourceUnique} from '@dataplan/pg';
 import {GraphQLNonNull} from 'graphql';
 import type {} from 'postgraphile/graphile-build';
-import type {PgRelationInputData, RelationInputTypeInfo} from './interfaces.ts';
-import {
-  isDeletable,
-  isNodeIdSpec,
-  isPgTableResource,
-  isUpdatable,
-} from './utils/resource.ts';
+import type {PgTableResource, RelationInputTypeInfo} from './interfaces.ts';
+import {getSpecs, isDeletable, isPgTableResource, isUpdatable} from './utils/resource.ts';
+
+interface RelationInflectionInfo {
+  disconnect?: boolean;
+  remoteResource: PgTableResource;
+  unique: PgResourceUnique;
+  relationName: string;
+}
 
 declare global {
   namespace GraphileBuild {
     interface Inflection {
       relationConnectNodeField(
         this: Inflection,
-        relationship: PgRelationInputData,
-        disconnect?: boolean
+        details: Omit<RelationInflectionInfo, 'unique'>
       ): string;
       relationConnectNodeInputType(
         this: Inflection,
-        relationship: PgRelationInputData,
-        disconnect?: boolean
+        details: Omit<RelationInflectionInfo, 'unique'>
       ): string;
+      relationDeleteNodeField(this: Inflection, details?: RelationInflectionInfo): string;
+      relationDeleteNodeInputType(
+        this: Inflection,
+        details: Omit<RelationInflectionInfo, 'unique'>
+      ): string;
+      relationUpdateNodeField(this: Inflection, details?: RelationInflectionInfo): string;
+      relationUpdateNodeInputType(
+        this: Inflection,
+        details: Omit<RelationInflectionInfo, 'unique'>
+      ): string;
+
       relationConnectByKeysField(
         this: Inflection,
-        relationship: PgRelationInputData,
-        disconnect?: boolean
+        details: RelationInflectionInfo
       ): string;
       relationConnectByKeysInputType(
         this: Inflection,
-        relationship: PgRelationInputData,
-        disconnect?: boolean
-      ): string;
-      relationDeleteNodeField(
-        this: Inflection,
-        relationship: PgRelationInputData
-      ): string;
-      relationDeleteNodeInputType(
-        this: Inflection,
-        relationship: PgRelationInputData
+        details: RelationInflectionInfo
       ): string;
       relationDeleteByKeysField(
         this: Inflection,
-        relationship: PgRelationInputData
+        details: RelationInflectionInfo
       ): string;
       relationDeleteByKeysInputType(
         this: Inflection,
-        relationship: PgRelationInputData
-      ): string;
-      relationUpdateNodeField(
-        this: Inflection,
-        relationship: PgRelationInputData
-      ): string;
-      relationUpdateNodeInputType(
-        this: Inflection,
-        relationship: PgRelationInputData
+        details: RelationInflectionInfo
       ): string;
       relationUpdateByKeysField(
         this: Inflection,
-        relationship: PgRelationInputData
+        relationship: RelationInflectionInfo
       ): string;
       relationUpdateByKeysInputType(
         this: Inflection,
-        relationship: PgRelationInputData
+        relationship: RelationInflectionInfo
       ): string;
     }
     interface ScopeInputObject {
@@ -87,61 +80,50 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin = 
 
   inflection: {
     add: {
-      relationConnectNodeField(_options, _relationship, disconnect) {
+      relationConnectNodeField(_options, {disconnect}) {
         const action = disconnect ? 'disconnect' : 'connect';
         return this.camelCase(`${action}-by-${this.nodeIdFieldName()}`);
       },
-      relationConnectNodeInputType(_options, {relationName}, disconnect) {
+      relationConnectNodeInputType(_options, {relationName, disconnect}) {
         const action = disconnect ? 'disconnect' : 'connect';
         return this.upperCamelCase(`${relationName}-${action}-by-node-id-input`);
       },
-      relationConnectByKeysField(_options, {remoteAttributes}, disconnect) {
+      relationConnectByKeysField(_options, {remoteResource, disconnect, unique}) {
         const action = disconnect ? 'disconnect' : 'connect';
-        const attrs = remoteAttributes.map((a) => a.name);
-        return this.camelCase(`${action}-by-${attrs.join('-and-')}`);
-      },
-      relationConnectByKeysInputType(
-        _options,
-        {relationName, remoteAttributes},
-        disconnect
-      ) {
-        const action = disconnect ? 'disconnect' : 'connect';
-        const attrs = remoteAttributes.map((a) => a.name);
-        return this.upperCamelCase(
-          `${relationName}-${action}-by-${attrs.join('-and-')}-input`
+        return this.camelCase(
+          `${action}-by-${this._joinAttributeNames(remoteResource.codec, unique.attributes)}`
         );
       },
-      relationUpdateNodeField(_options, _relationship) {
+      relationConnectByKeysInputType(_options, details) {
+        return this.upperCamelCase(`${this.relationConnectByKeysField(details)}-input`);
+      },
+      relationUpdateNodeField(_options) {
         return this.camelCase(`update-by-${this.nodeIdFieldName()}`);
       },
       relationUpdateNodeInputType(_options, {relationName}) {
         return this.upperCamelCase(`${relationName}-update-by-node-id-input`);
       },
-      relationUpdateByKeysField(_options, {remoteAttributes}) {
-        const attrs = remoteAttributes.map((a) => a.name);
-        return this.camelCase(`update-by-${attrs.join('-and-')}`);
-      },
-      relationUpdateByKeysInputType(_options, {relationName, remoteAttributes}) {
-        const attrs = remoteAttributes.map((a) => a.name);
-        return this.upperCamelCase(
-          `${relationName}-update-by-${attrs.join('-and-')}-input`
+      relationUpdateByKeysField(_options, {remoteResource, unique}) {
+        return this.camelCase(
+          `update-by-${this._joinAttributeNames(remoteResource.codec, unique.attributes)}`
         );
       },
-      relationDeleteNodeField(_options, _relationship) {
+      relationUpdateByKeysInputType(_options, details) {
+        return this.upperCamelCase(`${this.relationUpdateByKeysField(details)}-input`);
+      },
+      relationDeleteNodeField(_options) {
         return this.camelCase(`delete-by-${this.nodeIdFieldName()}`);
       },
       relationDeleteNodeInputType(_options, {relationName}) {
         return this.upperCamelCase(`${relationName}-delete-by-node-id-input`);
       },
-      relationDeleteByKeysField(_options, {remoteAttributes}) {
-        const attrs = remoteAttributes.map((a) => a.name);
-        return this.camelCase(`delete-by-${attrs.join('-and-')}`);
-      },
-      relationDeleteByKeysInputType(_options, {relationName, remoteAttributes}) {
-        const attrs = remoteAttributes.map((a) => a.name);
-        return this.upperCamelCase(
-          `${relationName}-delete-by-${attrs.join('-and-')}-input`
+      relationDeleteByKeysField(_options, {remoteResource, unique}) {
+        return this.camelCase(
+          `delete-by-${this._joinAttributeNames(remoteResource.codec, unique.attributes)}`
         );
+      },
+      relationDeleteByKeysInputType(_options, details) {
+        return this.upperCamelCase(`${this.relationDeleteByKeysField(details)}-input`);
       },
     },
   },
@@ -185,87 +167,41 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin = 
                   `Can't add ${method} field for ${relationName} relation because the ${resource.name} resource is not updatable.`
                 );
               }
-
-              const nodeIdSpec = isNodeIdSpec(
+              const specs = getSpecs(
                 build,
                 remoteResource,
-                // until behaviors are implemented, connect === update
                 `resource:${method === 'delete' ? 'delete' : 'update'}`
               );
+              for (const spec of specs) {
+                if (spec.uniqueMode === 'node') {
+                  const nodeIdFieldName = inflection.nodeIdFieldName();
+                  const fieldName =
+                    method === 'connect'
+                      ? inflection.relationConnectNodeField(relation)
+                      : method === 'delete'
+                        ? inflection.relationDeleteNodeField()
+                        : inflection.relationUpdateNodeField();
 
-              if (nodeIdSpec) {
-                const nodeIdFieldName = inflection.nodeIdFieldName();
-                const fieldName =
-                  method === 'connect'
-                    ? inflection.relationConnectNodeField(relation)
-                    : method === 'delete'
-                      ? inflection.relationDeleteNodeField(relation)
-                      : inflection.relationUpdateNodeField(relation);
+                  const typeName =
+                    method === 'connect'
+                      ? inflection.relationConnectNodeInputType(relation)
+                      : method === 'delete'
+                        ? inflection.relationDeleteNodeInputType(relation)
+                        : inflection.relationUpdateNodeInputType(relation);
 
-                const typeName =
-                  method === 'connect'
-                    ? inflection.relationConnectNodeInputType(relation)
-                    : method === 'delete'
-                      ? inflection.relationDeleteNodeInputType(relation)
-                      : inflection.relationUpdateNodeInputType(relation);
-
-                if (!duplicateTypes.has(typeName)) {
-                  duplicateTypes.add(typeName);
-                  build.recoverable(null, () => {
-                    build.registerInputObjectType(
-                      typeName,
-                      {
-                        isRelationConnectNodeInputType: method === 'connect',
-                        isRelationDeleteByNodeInputType: method === 'delete',
-                        isRelationUpdateByNodeInputType: method === 'update',
-                      },
-                      () => ({
-                        description: build.wrapDescription(
-                          `Relationship ${method} by node id input field for ${remoteResource.name} in the ${relationName} relationship`,
-                          'type'
-                        ),
-                        fields: ({fieldWithHooks}) => ({
-                          [nodeIdFieldName]: fieldWithHooks(
-                            {fieldName: nodeIdFieldName},
-                            () => ({
-                              description: build.wrapDescription(
-                                `The node id input field to ${method} ${remoteResource.name} in the ${relationName} relationship`,
-                                'field'
-                              ),
-                              type: new GraphQLNonNull(build.graphql.GraphQLID),
-                            })
-                          ),
-                        }),
-                      }),
-                      `Creating relationship ${method} by node id input type for ${relationName} relationship`
-                    );
-                    resourceRelationInputs.push({
-                      fieldName,
-                      typeName,
-                      relationName,
-                      method,
-                      mode: 'node',
-                    });
-                  });
-                }
-
-                if (method === 'connect') {
-                  // add a disconnect by node id field
-                  const fieldName = inflection.relationConnectNodeField(relation, true);
-                  const typeName = inflection.relationConnectNodeInputType(
-                    relation,
-                    true
-                  );
                   if (!duplicateTypes.has(typeName)) {
                     duplicateTypes.add(typeName);
-                    // add a disconnect by node id field
                     build.recoverable(null, () => {
                       build.registerInputObjectType(
                         typeName,
-                        {isRelationDisconnectByNodeInputType: true},
+                        {
+                          isRelationConnectNodeInputType: method === 'connect',
+                          isRelationDeleteByNodeInputType: method === 'delete',
+                          isRelationUpdateByNodeInputType: method === 'update',
+                        },
                         () => ({
                           description: build.wrapDescription(
-                            `Relationship disconnect by node id input field for ${remoteResource.name} in the ${relationName} relationship`,
+                            `Relationship ${method} by node id input field for ${remoteResource.name} in the ${relationName} relationship`,
                             'type'
                           ),
                           fields: ({fieldWithHooks}) => ({
@@ -273,7 +209,7 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin = 
                               {fieldName: nodeIdFieldName},
                               () => ({
                                 description: build.wrapDescription(
-                                  `The node id input field to disconnect ${remoteResource.name} in the ${relationName} relationship`,
+                                  `The node id input field to ${method} ${remoteResource.name} in the ${relationName} relationship`,
                                   'field'
                                 ),
                                 type: new GraphQLNonNull(build.graphql.GraphQLID),
@@ -281,7 +217,7 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin = 
                             ),
                           }),
                         }),
-                        `Creating relationship disconnect by node id input type for ${relationName} relationship`
+                        `Creating relationship ${method} by node id input type for ${relationName} relationship`
                       );
                       resourceRelationInputs.push({
                         fieldName,
@@ -292,102 +228,91 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin = 
                       });
                     });
                   }
-                }
-              }
-
-              const fieldName =
-                method === 'connect'
-                  ? inflection.relationConnectByKeysField(relation)
-                  : method === 'delete'
-                    ? inflection.relationDeleteByKeysField(relation)
-                    : inflection.relationUpdateByKeysField(relation);
-
-              const typeName =
-                method === 'connect'
-                  ? inflection.relationConnectByKeysInputType(relation)
-                  : method === 'delete'
-                    ? inflection.relationDeleteByKeysInputType(relation)
-                    : inflection.relationUpdateByKeysInputType(relation);
-
-              // check to see if the only key is "rowId" and skip if so
-              const isRowIdOnly =
-                remoteAttributes.length === 1 &&
-                inflection.attribute({
-                  attributeName: remoteAttributes[0].name,
-                  codec: remoteResource.codec,
-                }) === 'rowId';
-
-              if (!isRowIdOnly && !duplicateTypes.has(typeName)) {
-                duplicateTypes.add(typeName);
-
-                build.recoverable(null, () => {
-                  build.registerInputObjectType(
-                    typeName,
-                    {
-                      isRelationUpdateByKeysInputType: method === 'update',
-                      isRelationDeleteByKeysInputType: method === 'delete',
-                      isRelationConnectByKeysInputType: method === 'connect',
-                    },
-                    () => ({
-                      description: build.wrapDescription(
-                        `Relationship ${method} by keys (${remoteAttributes.map((a) => a.name).join(', ')}) input field for ${remoteResource.name} in the ${relationName} relationship`,
-                        'type'
-                      ),
-                      fields: ({fieldWithHooks}) => {
-                        return Object.fromEntries(
-                          remoteAttributes.map((a) => {
-                            const fieldName = inflection.attribute({
-                              attributeName: a.name,
-                              codec: remoteResource.codec,
-                            });
-                            return [
-                              fieldName,
-                              fieldWithHooks(
-                                {fieldName},
-                                {
-                                  description: build.wrapDescription(
-                                    `The ${a.name} input field to ${method} ${remoteResource.name} in the ${relationName} relationship`,
-                                    'field'
-                                  ),
-                                  type: build.getGraphQLTypeByPgCodec(a.codec, 'input'),
-                                }
-                              ),
-                            ];
-                          })
-                        );
-                      },
-                    }),
-                    `Creating relationship ${method} by keys (${remoteAttributes.map((a) => a.name).join(', ')}) input type for ${relationName} relationship`
-                  );
-
-                  resourceRelationInputs.push({
-                    fieldName,
-                    typeName,
-                    relationName,
-                    method,
-                    mode: 'keys',
-                  });
 
                   if (method === 'connect') {
-                    // add a disconnect by keys field
-                    build.recoverable(null, () => {
-                      const fieldName = inflection.relationConnectByKeysField(
-                        relation,
-                        true
-                      );
-                      const typeName = inflection.relationConnectByKeysInputType(
-                        relation,
-                        true
-                      );
+                    // add a disconnect by node id field
+                    const fieldName = inflection.relationConnectNodeField({
+                      ...relation,
+                      disconnect: true,
+                    });
+                    const typeName = inflection.relationConnectNodeInputType({
+                      ...relation,
+                      disconnect: true,
+                    });
+                    if (!duplicateTypes.has(typeName)) {
+                      duplicateTypes.add(typeName);
+                      // add a disconnect by node id field
+                      build.recoverable(null, () => {
+                        build.registerInputObjectType(
+                          typeName,
+                          {isRelationDisconnectByNodeInputType: true},
+                          () => ({
+                            description: build.wrapDescription(
+                              `Relationship disconnect by node id input field for ${remoteResource.name} in the ${relationName} relationship`,
+                              'type'
+                            ),
+                            fields: ({fieldWithHooks}) => ({
+                              [nodeIdFieldName]: fieldWithHooks(
+                                {fieldName: nodeIdFieldName},
+                                () => ({
+                                  description: build.wrapDescription(
+                                    `The node id input field to disconnect ${remoteResource.name} in the ${relationName} relationship`,
+                                    'field'
+                                  ),
+                                  type: new GraphQLNonNull(build.graphql.GraphQLID),
+                                })
+                              ),
+                            }),
+                          }),
+                          `Creating relationship disconnect by node id input type for ${relationName} relationship`
+                        );
+                        resourceRelationInputs.push({
+                          fieldName,
+                          typeName,
+                          relationName,
+                          method,
+                          mode: 'node',
+                        });
+                      });
+                    }
+                  }
+                } else if (spec.uniqueMode === 'keys') {
+                  const inflectionInfo = {...relation, unique: spec.unique};
+                  const fieldName =
+                    method === 'connect'
+                      ? inflection.relationConnectByKeysField(inflectionInfo)
+                      : method === 'delete'
+                        ? inflection.relationDeleteByKeysField(inflectionInfo)
+                        : inflection.relationUpdateByKeysField(inflectionInfo);
 
+                  const typeName =
+                    method === 'connect'
+                      ? inflection.relationConnectByKeysInputType(inflectionInfo)
+                      : method === 'delete'
+                        ? inflection.relationDeleteByKeysInputType(inflectionInfo)
+                        : inflection.relationUpdateByKeysInputType(inflectionInfo);
+
+                  const isRowIdOnly =
+                    remoteAttributes.length === 1 &&
+                    inflection.attribute({
+                      attributeName: remoteAttributes[0].name,
+                      codec: remoteResource.codec,
+                    }) === 'rowId';
+
+                  if (!isRowIdOnly && !duplicateTypes.has(typeName)) {
+                    duplicateTypes.add(typeName);
+
+                    build.recoverable(null, () => {
                       build.registerInputObjectType(
                         typeName,
                         {
-                          isRelationDisconnectByKeysInputType: true,
+                          isRelationUpdateByKeysInputType: method === 'update',
+                          isRelationDeleteByKeysInputType: method === 'delete',
+                          isRelationConnectByKeysInputType: method === 'connect',
                         },
                         () => ({
                           description: build.wrapDescription(
-                            `Relationship disconnect by keys (${remoteAttributes.map((a) => a.name).join(', ')}) input field for ${remoteResource.name} in the ${relationName} relationship`,
+                            `Relationship ${method} by keys (${remoteAttributes.map((a) => a.name).join(', ')}) input field for ${remoteResource.name} in the ${relationName} relationship`,
                             'type'
                           ),
                           fields: ({fieldWithHooks}) => {
@@ -403,7 +328,7 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin = 
                                     {fieldName},
                                     {
                                       description: build.wrapDescription(
-                                        `The ${a.name} input field to disconnect ${remoteResource.name} in the ${relationName} relationship`,
+                                        `The ${a.name} input field to ${method} ${remoteResource.name} in the ${relationName} relationship`,
                                         'field'
                                       ),
                                       type: build.getGraphQLTypeByPgCodec(
@@ -417,8 +342,9 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin = 
                             );
                           },
                         }),
-                        `Creating relationship disconnect by keys (${remoteAttributes.map((a) => a.name).join(', ')}) input type for ${relationName} relationship`
+                        `Creating relationship ${method} by keys (${remoteAttributes.map((a) => a.name).join(', ')}) input type for ${relationName} relationship`
                       );
+
                       resourceRelationInputs.push({
                         fieldName,
                         typeName,
@@ -426,15 +352,78 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin = 
                         method,
                         mode: 'keys',
                       });
+
+                      if (method === 'connect') {
+                        // add a disconnect by keys field
+                        build.recoverable(null, () => {
+                          const fieldName = inflection.relationConnectByKeysField({
+                            ...relation,
+                            disconnect: true,
+                            unique: spec.unique,
+                          });
+                          const typeName = inflection.relationConnectByKeysInputType({
+                            ...relation,
+                            disconnect: true,
+                            unique: spec.unique,
+                          });
+
+                          build.registerInputObjectType(
+                            typeName,
+                            {
+                              isRelationDisconnectByKeysInputType: true,
+                            },
+                            () => ({
+                              description: build.wrapDescription(
+                                `Relationship disconnect by keys (${remoteAttributes.map((a) => a.name).join(', ')}) input field for ${remoteResource.name} in the ${relationName} relationship`,
+                                'type'
+                              ),
+                              fields: ({fieldWithHooks}) => {
+                                return Object.fromEntries(
+                                  remoteAttributes.map((a) => {
+                                    const fieldName = inflection.attribute({
+                                      attributeName: a.name,
+                                      codec: remoteResource.codec,
+                                    });
+                                    return [
+                                      fieldName,
+                                      fieldWithHooks(
+                                        {fieldName},
+                                        {
+                                          description: build.wrapDescription(
+                                            `The ${a.name} input field to disconnect ${remoteResource.name} in the ${relationName} relationship`,
+                                            'field'
+                                          ),
+                                          type: build.getGraphQLTypeByPgCodec(
+                                            a.codec,
+                                            'input'
+                                          ),
+                                        }
+                                      ),
+                                    ];
+                                  })
+                                );
+                              },
+                            }),
+                            `Creating relationship disconnect by keys (${remoteAttributes.map((a) => a.name).join(', ')}) input type for ${relationName} relationship`
+                          );
+                          resourceRelationInputs.push({
+                            fieldName,
+                            typeName,
+                            relationName,
+                            method,
+                            mode: 'keys',
+                          });
+                        });
+                      }
                     });
                   }
-                });
+                }
+                build.pgRelationInputsFields[resource.name] = [
+                  ...build.pgRelationInputsFields[resource.name],
+                  ...resourceRelationInputs,
+                ];
               }
             }
-            build.pgRelationInputsFields[resource.name] = [
-              ...build.pgRelationInputsFields[resource.name],
-              ...resourceRelationInputs,
-            ];
           }
         }
         return _;

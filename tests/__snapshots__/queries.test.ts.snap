@@ -17,6 +17,14 @@ exports[`a > query=forward-connect-by-id.graphql 1`] = `
 }
 `;
 
+exports[`a > query=forward-connect-by-keys.graphql 1`] = `
+{
+  "data": {
+    "createChild": null,
+  },
+}
+`;
+
 exports[`a > query=forward-create.graphql 1`] = `
 {
   "data": {

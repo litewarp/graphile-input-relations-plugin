@@ -8,7 +8,6 @@ import {
   type InputObjectFieldApplyPlanResolver,
   __InputListStep,
   __InputObjectStep,
-  specFromNodeId,
 } from 'grafast';
 import type {PgRelationInputData} from '../interfaces.ts';
 
@@ -39,19 +38,20 @@ export function getRelationConnectByKeysPlanResolver<
     if ($rawArgs instanceof __InputObjectStep) {
       // key to add is on the parent
       // set it and return
-      const spec = specFromNodeId(
-        nodeIdHandler,
-        $rawArgs.get(inflection.nodeIdFieldName())
-      ) as Record<string, ExecutableStep>;
-      // biome-ignore lint/complexity/noForEach: This is a simple loop
-      Object.keys(spec).forEach((key) => {
-        const remoteAttrIdx = remoteAttributes.map((a) => a.name).indexOf(key);
-        const local = localAttributes[remoteAttrIdx];
-        if (local) {
-          $object.set(local.name, spec[key]);
+      remoteAttributes.forEach((remote, idx) => {
+        const local = localAttributes[idx];
+        if (local && remote) {
+          $object.set(
+            local.name,
+            $rawArgs.get(
+              inflection.attribute({
+                attributeName: remote.name,
+                codec: remoteResource.codec,
+              })
+            )
+          );
         }
       });
-
       args.apply($object);
       // Since we're setting fields on the parent object
       // we can just return
@@ -66,16 +66,20 @@ export function getRelationConnectByKeysPlanResolver<
           console.warn(`Unexpected args type: ${$rawArg.constructor.name}`);
           continue;
         }
+        const spec: Record<string, ExecutableStep> = {};
         const attrs: Record<string, ExecutableStep> = {};
-        for (const [idx, remote] of remoteAttributes.entries()) {
+        remoteAttributes.forEach((remote, idx) => {
           const local = localAttributes[idx];
-          if (!local || !remote) continue;
-          attrs[remote.name] = $object.get(local.name);
-        }
-        const spec = specFromNodeId(
-          nodeIdHandler,
-          $rawArg.get(inflection.nodeIdFieldName())
-        ) as Record<string, ExecutableStep>;
+          if (local && remote) {
+            attrs[remote.name] = $object.get(local.name);
+            spec[remote.name] = $rawArg.get(
+              inflection.attribute({
+                attributeName: remote.name,
+                codec: remoteResource.codec,
+              })
+            );
+          }
+        });
         const $item = pgUpdateSingle(remoteResource, spec, attrs);
 
         args.apply($item, [i]);

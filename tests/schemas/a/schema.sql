@@ -26,6 +26,7 @@ CREATE TABLE a.student (
 
 CREATE TABLE a.teacher (
   other_id serial PRIMARY KEY,
+  unique_field TEXT UNIQUE NOT NULL,
   name TEXT NOT NULL,
   school_id INTEGER NOT NULL,
   CONSTRAINT teacher_school_id_fkey FOREIGN key (school_id) REFERENCES a.school (id)
@@ -40,3 +41,9 @@ CREATE INDEX ON a.student (student_id);
 CREATE INDEX ON a.child (mom_parent_id);
 
 CREATE INDEX ON a.child (dad_parent_id);
+
+CREATE INDEX ON a.student (school_id, student_id);
+
+CREATE INDEX ON a.teacher (school_id);
+
+CREATE UNIQUE INDEX ON a.teacher (unique_field);

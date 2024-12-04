@@ -46,7 +46,23 @@ export const isDeletable = (build: GraphileBuild.Build, resource: PgTableResourc
   return Boolean(build.behavior.pgResourceMatches(resource, 'resource:delete'));
 };
 
-export function getUniqueSpecs(
+export function isNodeIdSpec(
+  build: GraphileBuild.Build,
+  resource: PgResource,
+  mode: 'resource:update' | 'resource:delete'
+) {
+  const primaryUnique = resource.uniques.find((u: PgResourceUnique) => u.isPrimary);
+  if (
+    primaryUnique &&
+    build.getNodeIdCodec !== undefined &&
+    build.getNodeIdHandler !== undefined &&
+    build.behavior.pgCodecMatches(resource.codec, `nodeId:${mode}` as const)
+  ) {
+    return true;
+  }
+}
+
+export function getSpecs(
   build: GraphileBuild.Build,
   resource: PgResource,
   mode: 'resource:update' | 'resource:delete'
@@ -69,20 +85,4 @@ export function getUniqueSpecs(
       })),
   ];
   return specs;
-}
-
-export function isNodeIdSpec(
-  build: GraphileBuild.Build,
-  resource: PgResource,
-  mode: 'resource:update' | 'resource:delete'
-) {
-  const primaryUnique = resource.uniques.find((u: PgResourceUnique) => u.isPrimary);
-  if (
-    primaryUnique &&
-    build.getNodeIdCodec !== undefined &&
-    build.getNodeIdHandler !== undefined &&
-    build.behavior.pgCodecMatches(resource.codec, `nodeId:${mode}` as const)
-  ) {
-    return true;
-  }
 }

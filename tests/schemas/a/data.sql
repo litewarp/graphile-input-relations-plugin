@@ -38,6 +38,8 @@ VALUES
   (2, 1);
 
 INSERT INTO
-  a.teacher (name, school_id)
+  a.teacher (name, school_id, unique_field)
 VALUES
-  ('teacher 1', 1);
+  ('teacher 1', 1, 'random unique field 1'),
+  ('teacher 2', 2, 'random unique field 2'),
+  ('teacher 3', 3, 'random unique field 3');
