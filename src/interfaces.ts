@@ -57,12 +57,22 @@ export type RelationInputTypeInfo =
       typeName: string;
       relationName: string;
       method: 'create';
-      mode: undefined;
+      mode?: undefined;
+      unique?: undefined;
     }
   | {
       fieldName: string;
       typeName: string;
       relationName: string;
       method: 'connect' | 'update' | 'delete' | 'disconnect';
-      mode: 'node' | 'keys';
+      mode: 'node';
+      unique?: undefined;
+    }
+  | {
+      fieldName: string;
+      typeName: string;
+      relationName: string;
+      method: 'connect' | 'update' | 'delete' | 'disconnect';
+      mode: 'keys';
+      unique: PgResourceUnique;
     };

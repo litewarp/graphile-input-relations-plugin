@@ -1,6 +1,7 @@
 import type {PgResourceUnique} from '@dataplan/pg';
-import {GraphQLNonNull} from 'graphql';
+import {GraphQLID, GraphQLNonNull} from 'graphql';
 import type {} from 'postgraphile/graphile-build';
+import type {} from 'postgraphile/graphile-build-pg/pg-introspection';
 import type {PgTableResource, RelationInputTypeInfo} from './interfaces.ts';
 import {getSpecs, isDeletable, isPgTableResource, isUpdatable} from './utils/resource.ts';
 
@@ -146,8 +147,7 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin = 
           const resourceRelationInputs: RelationInputTypeInfo[] = [];
 
           for (const relation of relationships) {
-            const {isReferencee, remoteResource, relationName, remoteAttributes} =
-              relation;
+            const {isReferencee, remoteResource, relationName} = relation;
 
             const methods = ['connect', 'update', 'delete'] as const;
 
@@ -173,256 +173,219 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin = 
                 `resource:${method === 'delete' ? 'delete' : 'update'}`
               );
               for (const spec of specs) {
-                if (spec.uniqueMode === 'node') {
-                  const nodeIdFieldName = inflection.nodeIdFieldName();
+                const {unique, uniqueMode} = spec;
+                const nodeIdFieldName =
+                  uniqueMode === 'node' ? inflection.nodeIdFieldName() : null;
+                const details = {...relation, unique};
+                const fieldName =
+                  method === 'connect'
+                    ? uniqueMode === 'node'
+                      ? inflection.relationConnectNodeField(details)
+                      : inflection.relationConnectByKeysField(details)
+                    : method === 'delete'
+                      ? uniqueMode === 'node'
+                        ? inflection.relationDeleteNodeField(details)
+                        : inflection.relationDeleteByKeysField(details)
+                      : uniqueMode === 'node'
+                        ? inflection.relationUpdateNodeField()
+                        : inflection.relationUpdateByKeysField(details);
+
+                const typeName =
+                  method === 'connect'
+                    ? uniqueMode === 'node'
+                      ? inflection.relationConnectNodeInputType(details)
+                      : inflection.relationConnectByKeysInputType(details)
+                    : method === 'delete'
+                      ? uniqueMode === 'node'
+                        ? inflection.relationDeleteNodeInputType(details)
+                        : inflection.relationDeleteByKeysInputType(details)
+                      : uniqueMode === 'node'
+                        ? inflection.relationUpdateNodeInputType(details)
+                        : inflection.relationUpdateByKeysInputType(details);
+
+                if (!duplicateTypes.has(typeName)) {
+                  duplicateTypes.add(typeName);
+                  build.recoverable(null, () => {
+                    build.registerInputObjectType(
+                      typeName,
+                      {
+                        isRelationConnectNodeInputType: method === 'connect',
+                        isRelationDeleteByNodeInputType: method === 'delete',
+                        isRelationUpdateByNodeInputType: method === 'update',
+                      },
+                      () => ({
+                        description: build.wrapDescription(
+                          `Relationship ${method} by node id input field for ${remoteResource.name} in the ${relationName} relationship`,
+                          'type'
+                        ),
+                        fields: ({fieldWithHooks}) => {
+                          const fields =
+                            spec.uniqueMode === 'node' && nodeIdFieldName
+                              ? {
+                                  [nodeIdFieldName]: fieldWithHooks(
+                                    {
+                                      fieldName: nodeIdFieldName,
+                                    },
+                                    {
+                                      description: build.wrapDescription(
+                                        `The globally unique \`ID\` which will identify a single \`${inflection.tableType(remoteResource.codec)}\` to be ${method}ed.`,
+                                        'field'
+                                      ),
+                                      type: new GraphQLNonNull(GraphQLID),
+                                    }
+                                  ),
+                                }
+                              : Object.fromEntries(
+                                  spec.unique.attributes.map((attr) => {
+                                    const fieldName = inflection.attribute({
+                                      attributeName: attr,
+                                      codec: remoteResource.codec,
+                                    });
+                                    const attribute =
+                                      remoteResource.codec.attributes[attr];
+                                    const fieldType = build.getGraphQLTypeByPgCodec(
+                                      attribute.codec,
+                                      'input'
+                                    );
+                                    if (!fieldType) {
+                                      throw new Error(
+                                        `Could not find field type for ${attr}`
+                                      );
+                                    }
+                                    return [
+                                      fieldName,
+                                      fieldWithHooks(
+                                        {fieldName},
+                                        {
+                                          description: attribute.description,
+                                          type: new GraphQLNonNull(fieldType),
+                                        }
+                                      ),
+                                    ];
+                                  })
+                                );
+                          return fields;
+                        },
+                      }),
+                      `Creating relationship $methodby node id input type for ${relationName} relationship`
+                    );
+                    resourceRelationInputs.push({
+                      fieldName,
+                      typeName,
+                      relationName,
+                      method,
+                      ...(uniqueMode === 'keys'
+                        ? {mode: 'keys', unique}
+                        : {mode: 'node'}),
+                    });
+                  });
+                }
+
+                if (method === 'connect') {
+                  // add a disconnect by node id field
                   const fieldName =
-                    method === 'connect'
-                      ? inflection.relationConnectNodeField(relation)
-                      : method === 'delete'
-                        ? inflection.relationDeleteNodeField()
-                        : inflection.relationUpdateNodeField();
+                    uniqueMode === 'node'
+                      ? inflection.relationConnectNodeField({
+                          ...details,
+                          disconnect: true,
+                        })
+                      : inflection.relationConnectByKeysField({
+                          ...details,
+                          disconnect: true,
+                        });
 
                   const typeName =
-                    method === 'connect'
-                      ? inflection.relationConnectNodeInputType(relation)
-                      : method === 'delete'
-                        ? inflection.relationDeleteNodeInputType(relation)
-                        : inflection.relationUpdateNodeInputType(relation);
-
+                    uniqueMode === 'node'
+                      ? inflection.relationConnectNodeInputType({
+                          ...details,
+                          disconnect: true,
+                        })
+                      : inflection.relationConnectByKeysInputType({
+                          ...details,
+                          disconnect: true,
+                        });
                   if (!duplicateTypes.has(typeName)) {
                     duplicateTypes.add(typeName);
                     build.recoverable(null, () => {
                       build.registerInputObjectType(
                         typeName,
                         {
-                          isRelationConnectNodeInputType: method === 'connect',
-                          isRelationDeleteByNodeInputType: method === 'delete',
-                          isRelationUpdateByNodeInputType: method === 'update',
+                          isRelationDisconnectByNodeInputType: true,
                         },
                         () => ({
                           description: build.wrapDescription(
                             `Relationship ${method} by node id input field for ${remoteResource.name} in the ${relationName} relationship`,
                             'type'
                           ),
-                          fields: ({fieldWithHooks}) => ({
-                            [nodeIdFieldName]: fieldWithHooks(
-                              {fieldName: nodeIdFieldName},
-                              () => ({
-                                description: build.wrapDescription(
-                                  `The node id input field to ${method} ${remoteResource.name} in the ${relationName} relationship`,
-                                  'field'
-                                ),
-                                type: new GraphQLNonNull(build.graphql.GraphQLID),
-                              })
-                            ),
-                          }),
-                        }),
-                        `Creating relationship ${method} by node id input type for ${relationName} relationship`
-                      );
-                      resourceRelationInputs.push({
-                        fieldName,
-                        typeName,
-                        relationName,
-                        method,
-                        mode: 'node',
-                      });
-                    });
-                  }
-
-                  if (method === 'connect') {
-                    // add a disconnect by node id field
-                    const fieldName = inflection.relationConnectNodeField({
-                      ...relation,
-                      disconnect: true,
-                    });
-                    const typeName = inflection.relationConnectNodeInputType({
-                      ...relation,
-                      disconnect: true,
-                    });
-                    if (!duplicateTypes.has(typeName)) {
-                      duplicateTypes.add(typeName);
-                      // add a disconnect by node id field
-                      build.recoverable(null, () => {
-                        build.registerInputObjectType(
-                          typeName,
-                          {isRelationDisconnectByNodeInputType: true},
-                          () => ({
-                            description: build.wrapDescription(
-                              `Relationship disconnect by node id input field for ${remoteResource.name} in the ${relationName} relationship`,
-                              'type'
-                            ),
-                            fields: ({fieldWithHooks}) => ({
-                              [nodeIdFieldName]: fieldWithHooks(
-                                {fieldName: nodeIdFieldName},
-                                () => ({
-                                  description: build.wrapDescription(
-                                    `The node id input field to disconnect ${remoteResource.name} in the ${relationName} relationship`,
-                                    'field'
-                                  ),
-                                  type: new GraphQLNonNull(build.graphql.GraphQLID),
-                                })
-                              ),
-                            }),
-                          }),
-                          `Creating relationship disconnect by node id input type for ${relationName} relationship`
-                        );
-                        resourceRelationInputs.push({
-                          fieldName,
-                          typeName,
-                          relationName,
-                          method,
-                          mode: 'node',
-                        });
-                      });
-                    }
-                  }
-                } else if (spec.uniqueMode === 'keys') {
-                  const inflectionInfo = {...relation, unique: spec.unique};
-                  const fieldName =
-                    method === 'connect'
-                      ? inflection.relationConnectByKeysField(inflectionInfo)
-                      : method === 'delete'
-                        ? inflection.relationDeleteByKeysField(inflectionInfo)
-                        : inflection.relationUpdateByKeysField(inflectionInfo);
-
-                  const typeName =
-                    method === 'connect'
-                      ? inflection.relationConnectByKeysInputType(inflectionInfo)
-                      : method === 'delete'
-                        ? inflection.relationDeleteByKeysInputType(inflectionInfo)
-                        : inflection.relationUpdateByKeysInputType(inflectionInfo);
-
-                  const isRowIdOnly =
-                    remoteAttributes.length === 1 &&
-                    inflection.attribute({
-                      attributeName: remoteAttributes[0].name,
-                      codec: remoteResource.codec,
-                    }) === 'rowId';
-
-                  if (!isRowIdOnly && !duplicateTypes.has(typeName)) {
-                    duplicateTypes.add(typeName);
-
-                    build.recoverable(null, () => {
-                      build.registerInputObjectType(
-                        typeName,
-                        {
-                          isRelationUpdateByKeysInputType: method === 'update',
-                          isRelationDeleteByKeysInputType: method === 'delete',
-                          isRelationConnectByKeysInputType: method === 'connect',
-                        },
-                        () => ({
-                          description: build.wrapDescription(
-                            `Relationship ${method} by keys (${remoteAttributes.map((a) => a.name).join(', ')}) input field for ${remoteResource.name} in the ${relationName} relationship`,
-                            'type'
-                          ),
                           fields: ({fieldWithHooks}) => {
-                            return Object.fromEntries(
-                              remoteAttributes.map((a) => {
-                                const fieldName = inflection.attribute({
-                                  attributeName: a.name,
-                                  codec: remoteResource.codec,
-                                });
-                                return [
-                                  fieldName,
-                                  fieldWithHooks(
-                                    {fieldName},
-                                    {
-                                      description: build.wrapDescription(
-                                        `The ${a.name} input field to ${method} ${remoteResource.name} in the ${relationName} relationship`,
-                                        'field'
-                                      ),
-                                      type: build.getGraphQLTypeByPgCodec(
-                                        a.codec,
+                            const fields =
+                              spec.uniqueMode === 'node' && nodeIdFieldName
+                                ? {
+                                    [nodeIdFieldName]: fieldWithHooks(
+                                      {
+                                        fieldName: nodeIdFieldName,
+                                      },
+                                      {
+                                        description: build.wrapDescription(
+                                          `The globally unique \`ID\` which will identify a single \`${inflection.tableType(remoteResource.codec)}\` to be ${method}ed.`,
+                                          'field'
+                                        ),
+                                        type: new GraphQLNonNull(GraphQLID),
+                                      }
+                                    ),
+                                  }
+                                : Object.fromEntries(
+                                    spec.unique.attributes.map((attr) => {
+                                      const fieldName = inflection.attribute({
+                                        attributeName: attr,
+                                        codec: remoteResource.codec,
+                                      });
+                                      const attribute =
+                                        remoteResource.codec.attributes[attr];
+                                      const fieldType = build.getGraphQLTypeByPgCodec(
+                                        attribute.codec,
                                         'input'
-                                      ),
-                                    }
-                                  ),
-                                ];
-                              })
-                            );
+                                      );
+                                      if (!fieldType) {
+                                        throw new Error(
+                                          `Could not find field type for ${attr}`
+                                        );
+                                      }
+                                      return [
+                                        fieldName,
+                                        fieldWithHooks(
+                                          {fieldName},
+                                          {
+                                            description: attribute.description,
+                                            type: new GraphQLNonNull(fieldType),
+                                          }
+                                        ),
+                                      ];
+                                    })
+                                  );
+                            return fields;
                           },
                         }),
-                        `Creating relationship ${method} by keys (${remoteAttributes.map((a) => a.name).join(', ')}) input type for ${relationName} relationship`
+                        `Creating relationship ${method} by ${uniqueMode} ${uniqueMode === 'node' ? 'id' : `(${unique.attributes.join(', ')})`}input type for ${relationName} relationship`
                       );
-
                       resourceRelationInputs.push({
                         fieldName,
                         typeName,
                         relationName,
-                        method,
-                        mode: 'keys',
+                        method: 'disconnect',
+                        ...(uniqueMode === 'keys'
+                          ? {mode: 'keys', unique}
+                          : {mode: 'node'}),
                       });
-
-                      if (method === 'connect') {
-                        // add a disconnect by keys field
-                        build.recoverable(null, () => {
-                          const fieldName = inflection.relationConnectByKeysField({
-                            ...relation,
-                            disconnect: true,
-                            unique: spec.unique,
-                          });
-                          const typeName = inflection.relationConnectByKeysInputType({
-                            ...relation,
-                            disconnect: true,
-                            unique: spec.unique,
-                          });
-
-                          build.registerInputObjectType(
-                            typeName,
-                            {
-                              isRelationDisconnectByKeysInputType: true,
-                            },
-                            () => ({
-                              description: build.wrapDescription(
-                                `Relationship disconnect by keys (${remoteAttributes.map((a) => a.name).join(', ')}) input field for ${remoteResource.name} in the ${relationName} relationship`,
-                                'type'
-                              ),
-                              fields: ({fieldWithHooks}) => {
-                                return Object.fromEntries(
-                                  remoteAttributes.map((a) => {
-                                    const fieldName = inflection.attribute({
-                                      attributeName: a.name,
-                                      codec: remoteResource.codec,
-                                    });
-                                    return [
-                                      fieldName,
-                                      fieldWithHooks(
-                                        {fieldName},
-                                        {
-                                          description: build.wrapDescription(
-                                            `The ${a.name} input field to disconnect ${remoteResource.name} in the ${relationName} relationship`,
-                                            'field'
-                                          ),
-                                          type: build.getGraphQLTypeByPgCodec(
-                                            a.codec,
-                                            'input'
-                                          ),
-                                        }
-                                      ),
-                                    ];
-                                  })
-                                );
-                              },
-                            }),
-                            `Creating relationship disconnect by keys (${remoteAttributes.map((a) => a.name).join(', ')}) input type for ${relationName} relationship`
-                          );
-                          resourceRelationInputs.push({
-                            fieldName,
-                            typeName,
-                            relationName,
-                            method,
-                            mode: 'keys',
-                          });
-                        });
-                      }
                     });
                   }
                 }
-                build.pgRelationInputsFields[resource.name] = [
-                  ...build.pgRelationInputsFields[resource.name],
-                  ...resourceRelationInputs,
-                ];
               }
+
+              build.pgRelationInputsFields[resource.name] = [
+                ...build.pgRelationInputsFields[resource.name],
+                ...resourceRelationInputs,
+              ];
             }
           }
         }

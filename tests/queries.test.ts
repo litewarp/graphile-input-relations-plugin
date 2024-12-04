@@ -4,7 +4,12 @@ import {fileURLToPath} from 'node:url';
 import {PgSimplifyInflectionPreset} from '@graphile/simplify-inflection';
 import {execute, hookArgs} from 'grafast';
 import {type SchemaResult, makeSchema} from 'graphile-build';
-import {type ExecutionArgs, type ExecutionResult, parse, validate} from 'graphql';
+import {
+  type ExecutionArgs,
+  type ExecutionResult,
+  parse,
+  validate,
+} from 'graphql';
 import type {Pool} from 'pg';
 import {
   makePgService,
@@ -30,7 +35,9 @@ const getFixturesDir = (schema: string) =>
   resolve(schemasDir, schema, 'fixtures', 'queries');
 
 const getAllFixtures = (schema: string) =>
-  existsSync(getFixturesDir(schema)) ? readdirSync(getFixturesDir(schema)).sort() : [];
+  existsSync(getFixturesDir(schema))
+    ? readdirSync(getFixturesDir(schema)).sort()
+    : [];
 
 const readSchema = async (schema: string, file?: string) =>
   readTextFile(getSchemaPath(schema, file));
@@ -54,7 +61,10 @@ const createPostGraphileSchema = async (pgPool: Pool, sqlSchema: string) => {
       }),
     ],
   });
-  await fs.writeFile(`./.tmp/${sqlSchema}.graphql`, printOrderedSchema(gs.schema));
+  await fs.writeFile(
+    `./.tmp/${sqlSchema}.graphql`,
+    printOrderedSchema(gs.schema)
+  );
   return gs;
 };
 
@@ -103,27 +113,31 @@ for (const sqlSchema of sqlSchemas) {
             document,
           };
           await hookArgs(args, resolvedPreset, {});
-          const result = await withPgClient<ExecutionResult>(async (pgClient) => {
-            // We must override the context because we didn't use a pool above and so
-            // we need to add our own client
-            // NOTE: the withPgClient needed on context is **VERY DIFFERENT** to our
-            // withPgClient test helper. We should rename our test helper ;)
+          const result = await withPgClient<ExecutionResult>(
+            async (pgClient) => {
+              // We must override the context because we didn't use a pool above and so
+              // we need to add our own client
+              // NOTE: the withPgClient needed on context is **VERY DIFFERENT** to our
+              // withPgClient test helper. We should rename our test helper ;)
 
-            const contextWithPgClient = makeWithPgClientViaPgClientAlreadyInTransaction(
-              pgClient,
-              false
-            );
+              const contextWithPgClient =
+                makeWithPgClientViaPgClientAlreadyInTransaction(
+                  pgClient,
+                  false
+                );
 
-            try {
-              args.contextValue = {
-                pgSettings: (args.contextValue as {pgSettings: unknown}).pgSettings,
-                withPgClient: contextWithPgClient,
-              };
-              return (await execute(args)) as Promise<ExecutionResult>;
-            } finally {
-              await contextWithPgClient.release?.();
+              try {
+                args.contextValue = {
+                  pgSettings: (args.contextValue as {pgSettings: unknown})
+                    .pgSettings,
+                  withPgClient: contextWithPgClient,
+                };
+                return (await execute(args)) as Promise<ExecutionResult>;
+              } finally {
+                await contextWithPgClient.release?.();
+              }
             }
-          });
+          );
           if (result.errors) {
             console.log(result.errors.map((e) => e.originalError ?? e));
           }

@@ -8,7 +8,10 @@ mutation TripleNestedRelationship {
             parentName: "Sandra Day O'Connor"
             childrenByMomParentId: {
               create: [
-                {name: "John Roberts", studentsByStudentId: {create: [{schoolId: 2}]}}
+                {
+                  name: "John Roberts"
+                  studentsByStudentId: {create: [{schoolId: 2}]}
+                }
               ]
             }
           }

@@ -43,6 +43,17 @@ exports[`a > query=forward-create.graphql 1`] = `
 }
 `;
 
+exports[`a > query=foward-connect-by-keys.graphql 1`] = `
+{
+  "data": {
+    "createSchool": null,
+  },
+  "errors": [
+    [GraphQLError: Tried to '.get("id")', but no such attribute exists on ConnectByUniqueFieldInput],
+  ],
+}
+`;
+
 exports[`a > query=mixed-multi-level-insert.graphql 1`] = `
 {
   "data": {

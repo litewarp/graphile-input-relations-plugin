@@ -9,7 +9,14 @@ export const getRelationships = (
   localResource: PgTableResource
 ): PgRelationInputData[] =>
   Object.entries(localResource.getRelations()).reduce((memo, [relationName, details]) => {
-    const {remoteResource, isUnique, isReferencee} = details;
+    const {
+      remoteResource,
+      isUnique,
+      isReferencee,
+      localAttributes: _localAttributeNames,
+      remoteAttributes: _remoteAttributeNames,
+      ...rest
+    } = details;
 
     if (!isNestedMutableResource(build, details.remoteResource)) return memo;
 
@@ -34,6 +41,7 @@ export const getRelationships = (
       isUnique: isUnique,
       isReferencee: isReferencee,
       remoteResource: remoteResource,
+      ...rest,
     };
     relationship.fieldName = build.inflection.relationInputField(relationship);
 

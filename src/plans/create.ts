@@ -67,7 +67,10 @@ export function getRelationCreatePlanResolver<
         .map(([name, _]) => [
           name,
           $object.get(
-            inflection.attribute({attributeName: name, codec: remoteResource.codec})
+            inflection.attribute({
+              attributeName: name,
+              codec: remoteResource.codec,
+            })
           ),
         ])
     );

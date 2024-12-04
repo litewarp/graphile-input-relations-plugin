@@ -17,16 +17,16 @@ export function getResolverFn<
 >({
   method,
   mode,
-}: Pick<RelationInputTypeInfo, 'method' | 'mode'>):
+}: Pick<RelationInputTypeInfo, 'method' | 'mode' | 'unique'>):
   | GetFieldPlanResolverFn<TStep>
   | undefined {
   switch (method) {
     case 'create':
-      return getRelationCreatePlanResolver<TStep>;
+      return getRelationCreatePlanResolver;
     case 'connect':
       return mode === 'node'
-        ? getRelationConnectByIdPlanResolver<TStep>
-        : getRelationConnectByKeysPlanResolver<TStep>;
+        ? getRelationConnectByIdPlanResolver
+        : getRelationConnectByKeysPlanResolver;
     case 'disconnect':
     // return getRelationConnectByKeysPlanResolver;
     case 'update':

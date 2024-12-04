@@ -4,7 +4,10 @@ mutation forwardUpdateByNodeId {
       id: "WyJDaGlsZCIsMV0"
       patch: {
         parentByDadParentId: {
-          updateByNodeId: {id: "WyJQYXJlbnQiLDFd", patch: {parentName: "Sally Ride"}}
+          updateByNodeId: {
+            id: "WyJQYXJlbnQiLDFd"
+            patch: {parentName: "Sally Ride"}
+          }
         }
       }
     }

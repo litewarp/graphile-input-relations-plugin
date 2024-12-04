@@ -1,8 +1,11 @@
-# test connectByNodeId of a related table that does not contains the foreign keys for the relationship
-# i.e., foreign key on root table
-mutation AddChildAndConnectToParentByNodeId {
+mutation AddChildAndConnectToParentByEmail {
   createChild(
-    input: {child: {name: "My baby", parentByMomParentId: {connectById: {id: 1}}}}
+    input: {
+      child: {
+        name: "My baby"
+        parentByMomParentId: {connectByEmail: {email: "johnny@cochran.com"}}
+      }
+    }
   ) {
     child {
       id

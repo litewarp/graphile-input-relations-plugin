@@ -1,5 +1,6 @@
 import {
   type PgInsertSingleStep,
+  type PgResourceUnique,
   type PgUpdateSingleStep,
   pgUpdateSingle,
 } from '@dataplan/pg';
@@ -17,7 +18,8 @@ export function getRelationConnectByKeysPlanResolver<
     | PgUpdateSingleStep,
 >(
   build: GraphileBuild.Build,
-  relationship: PgRelationInputData
+  relationship: PgRelationInputData,
+  unique: PgResourceUnique
 ): InputObjectFieldApplyPlanResolver<TFieldStep> {
   const {inflection} = build;
 
@@ -29,29 +31,21 @@ export function getRelationConnectByKeysPlanResolver<
     _info
   ) => {
     const $rawArgs = args.getRaw();
-    const nodeIdHandler =
-      build.getNodeIdHandler &&
-      build.getNodeIdHandler(inflection.tableType(remoteResource.codec));
-    if (!nodeIdHandler) {
-      throw new Error(`No nodeIdHandler found for ${remoteResource.name}`);
-    }
     if ($rawArgs instanceof __InputObjectStep) {
       // key to add is on the parent
       // set it and return
-      remoteAttributes.forEach((remote, idx) => {
-        const local = localAttributes[idx];
-        if (local && remote) {
-          $object.set(
-            local.name,
-            $rawArgs.get(
-              inflection.attribute({
-                attributeName: remote.name,
-                codec: remoteResource.codec,
-              })
-            )
-          );
-        }
-      });
+
+      for (const attr of unique.attributes) {
+        $object.set(
+          attr,
+          $rawArgs.get(
+            inflection.attribute({
+              attributeName: attr,
+              codec: remoteResource.codec,
+            })
+          )
+        );
+      }
       args.apply($object);
       // Since we're setting fields on the parent object
       // we can just return

@@ -3,7 +3,11 @@ DROP SCHEMA if EXISTS a cascade;
 
 CREATE SCHEMA a;
 
-CREATE TABLE a.parent (id serial PRIMARY KEY, parent_name TEXT NOT NULL);
+CREATE TABLE a.parent (
+  id serial PRIMARY KEY,
+  parent_name TEXT NOT NULL,
+  email TEXT UNIQUE
+);
 
 CREATE TABLE a.child (
   id serial PRIMARY KEY,
@@ -47,3 +51,5 @@ CREATE INDEX ON a.student (school_id, student_id);
 CREATE INDEX ON a.teacher (school_id);
 
 CREATE UNIQUE INDEX ON a.teacher (unique_field);
+
+CREATE UNIQUE INDEX ON a.parent (email);

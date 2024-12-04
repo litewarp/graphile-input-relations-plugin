@@ -112,6 +112,20 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
             if (!duplicateTypes.has(typeName)) {
               duplicateTypes.add(typeName);
 
+              const details = {
+                registry: build.input.pgRegistry,
+                codec: resource.codec,
+                relationName,
+              };
+
+              console.log(
+                resource.name,
+                relationName,
+                isUnique && isReferencee && !isUnique
+                  ? inflection.singleRelationBackwards(details)
+                  : inflection.singleRelation(details)
+              );
+
               build.recoverable(null, () => {
                 const getType = (type: GraphQLInputType) => {
                   return isUnique || !isReferencee
@@ -132,11 +146,14 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
                     ),
                     fields: ({fieldWithHooks}) => {
                       return Object.fromEntries(
-                        inputFields.map(({fieldName, typeName, method, mode}) => {
+                        inputFields.map(({fieldName, typeName, method, mode, unique}) => {
                           // need a getPlanResolver function
                           const resolverFn = getResolverFn({method, mode});
+
                           const resolver = resolverFn
-                            ? resolverFn(build, relation)
+                            ? mode === 'keys'
+                              ? resolverFn(build, relation, unique)
+                              : resolverFn(build, relation)
                             : undefined;
 
                           return [
@@ -227,6 +244,38 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
               const fieldName = inflection.relationInputField(relation);
               const typeName = inflection.relationInputType(relation);
               const InputType = build.getInputTypeByName(typeName);
+
+              const {isUnique, isReferencee, relationName} = relation;
+
+              const details = {
+                registry: build.input.pgRegistry,
+                codec: resource.codec,
+                relationName: relation.relationName,
+              };
+
+              const singleRecordFieldName = isReferencee
+                ? inflection.singleRelationBackwards(details)
+                : inflection.singleRelation(details);
+
+              const connectionFieldName =
+                build.inflection.manyRelationConnection(details);
+              const listFieldName = build.inflection.manyRelationList(details);
+
+              const relationTypeScope = isUnique ? 'singularRelation' : 'manyRelation';
+              const shouldAddSingleField =
+                isUnique &&
+                build.behavior.pgCodecRelationMatches(
+                  relation,
+                  `${relationTypeScope as 'singularRelation'}:resource:single` as const
+                );
+              const shouldAddConnectionField = build.behavior.pgCodecRelationMatches(
+                relation,
+                `${relationTypeScope}:resource:connection`
+              );
+              const shouldAddListField = build.behavior.pgCodecRelationMatches(
+                relation,
+                `${relationTypeScope}:resource:list`
+              );
 
               inputFields[fieldName] = fieldWithHooks(
                 {

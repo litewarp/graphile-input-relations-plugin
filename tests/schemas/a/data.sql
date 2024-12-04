@@ -6,9 +6,9 @@ VALUES
 
 -- id: 2, nodeId: WyJQYXJlbnQiLDJd
 INSERT INTO
-  a.parent (parent_name)
+  a.parent (parent_name, email)
 VALUES
-  ('dad');
+  ('dad', 'johnny@cochran.com');
 
 -- id: 1, nodeId: WyJDaGlsZCIsMV0=
 INSERT INTO

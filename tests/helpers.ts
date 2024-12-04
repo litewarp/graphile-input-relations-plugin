@@ -2,7 +2,9 @@ import * as fs from 'node:fs';
 import path from 'node:path';
 import pg from 'pg';
 
-export async function withPgPool<T>(cb: (pool: pg.Pool) => Promise<T>): Promise<T> {
+export async function withPgPool<T>(
+  cb: (pool: pg.Pool) => Promise<T>
+): Promise<T> {
   const pool = new pg.Pool({
     connectionString: process.env['TEST_DATABASE_URL'],
   });
@@ -45,14 +47,23 @@ export function getFixturesForSqlSchema(sqlSchema: string) {
     path.resolve(__dirname, 'schemas', sqlSchema, 'fixtures', 'queries')
   )
     ? fs
-        .readdirSync(path.resolve(__dirname, 'schemas', sqlSchema, 'fixtures', 'queries'))
+        .readdirSync(
+          path.resolve(__dirname, 'schemas', sqlSchema, 'fixtures', 'queries')
+        )
         .sort()
     : [];
 }
 
 export function readFixtureForSqlSchema(sqlSchema: string, fixture: string) {
   return fs.promises.readFile(
-    path.resolve(__dirname, 'schemas', sqlSchema, 'fixtures', 'queries', fixture),
+    path.resolve(
+      __dirname,
+      'schemas',
+      sqlSchema,
+      'fixtures',
+      'queries',
+      fixture
+    ),
     'utf8'
   );
 }

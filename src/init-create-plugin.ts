@@ -7,7 +7,11 @@ import type {
   RelationInputTypeInfo,
 } from './interfaces.ts';
 import {getRelationships} from './relationships.ts';
-import {isInsertable, isPgTableResource, isUpdatable} from './utils/resource.ts';
+import {
+  isInsertable,
+  isPgTableResource,
+  isUpdatable,
+} from './utils/resource.ts';
 
 declare global {
   namespace GraphileBuild {
@@ -18,7 +22,10 @@ declare global {
       pgRelationInputsTypes: Record<string, PgRelationInputData[]>;
     }
     interface Inflection {
-      relationCreateField(this: Inflection, relationship: PgRelationInputData): string;
+      relationCreateField(
+        this: Inflection,
+        relationship: PgRelationInputData
+      ): string;
       relationCreateInputType(
         this: Inflection,
         relationship: PgRelationInputData
@@ -35,7 +42,12 @@ export const PgRelationInputsInitCreatePlugin: GraphileConfig.Plugin = {
   description:
     'Gathers the context data for the nested mutations plugin and adds a create field if needed',
   version: '0.0.1',
-  after: ['smart-tags', 'PgFakeConstraintsPlugin', 'PgTablesPlugin', 'PgRelationsPlugin'],
+  after: [
+    'smart-tags',
+    'PgFakeConstraintsPlugin',
+    'PgTablesPlugin',
+    'PgRelationsPlugin',
+  ],
   experimental: true,
 
   inflection: {
@@ -65,7 +77,9 @@ export const PgRelationInputsInitCreatePlugin: GraphileConfig.Plugin = {
 
         const duplicateTypes = new Set<string>();
 
-        const tableResources = Object.values(build.input.pgRegistry.pgResources).filter(
+        const tableResources = Object.values(
+          build.input.pgRegistry.pgResources
+        ).filter(
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           (resource) => isPgTableResource(resource)
         );
@@ -137,7 +151,10 @@ export const PgRelationInputsInitCreatePlugin: GraphileConfig.Plugin = {
                             }
                             return [
                               name,
-                              fieldWithHooks({fieldName: name}, {...field, type}),
+                              fieldWithHooks(
+                                {fieldName: name},
+                                {...field, type}
+                              ),
                             ];
                           })
                         );
