@@ -1,14 +1,14 @@
 -- id: 1, nodeId: WyJQYXJlbnQiLDFd
 INSERT INTO
-  a.parent (parent_name)
+  a.parent (parent_name, email)
 VALUES
-  ('mom');
+  ('mom', 'martha@washington.com');
 
 -- id: 2, nodeId: WyJQYXJlbnQiLDJd
 INSERT INTO
-  a.parent (parent_name, email)
+  a.parent (parent_name)
 VALUES
-  ('dad', 'johnny@cochran.com');
+  ('dad');
 
 -- id: 1, nodeId: WyJDaGlsZCIsMV0=
 INSERT INTO

@@ -1,11 +1,19 @@
-import type {PgInsertSingleStep, PgUpdateSingleStep} from 'postgraphile/@dataplan/pg';
+import type {
+  PgInsertSingleStep,
+  PgUpdateSingleStep,
+} from 'postgraphile/@dataplan/pg';
 import type {InputObjectFieldApplyPlanResolver} from 'postgraphile/grafast';
-import type {PgRelationInputData, RelationInputTypeInfo} from '../interfaces.ts';
+import type {
+  PgRelationInputData,
+  RelationInputTypeInfo,
+} from '../interfaces.ts';
 import {getRelationConnectByKeysPlanResolver} from './connect-keys.ts';
 import {getRelationConnectByIdPlanResolver} from './connect-node.ts';
 import {getRelationCreatePlanResolver} from './create.ts';
 
-type GetFieldPlanResolverFn<TStep extends PgInsertSingleStep | PgUpdateSingleStep> = (
+type GetFieldPlanResolverFn<
+  TStep extends PgInsertSingleStep | PgUpdateSingleStep,
+> = (
   build: GraphileBuild.Build,
   relation: PgRelationInputData
 ) => InputObjectFieldApplyPlanResolver<TStep>;

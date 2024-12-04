@@ -14,13 +14,20 @@ export const isNestedMutableResource = (
   if (!resource.codec.attributes) return false;
   if (resource.codec.polymorphism) return false;
   if (resource.codec.isAnonymous) return false;
-  const behaviors = ['resource:insert', 'resource:update', 'resource:delete'] as const;
+  const behaviors = [
+    'resource:insert',
+    'resource:update',
+    'resource:delete',
+  ] as const;
   return behaviors.some((behavior) =>
     build.behavior.pgResourceMatches(resource, behavior)
   );
 };
 
-export const isInsertable = (build: GraphileBuild.Build, resource: PgTableResource) => {
+export const isInsertable = (
+  build: GraphileBuild.Build,
+  resource: PgTableResource
+) => {
   if (resource.parameters) return false;
   if (!resource.codec.attributes) return false;
   if (resource.codec.polymorphism) return false;
@@ -28,7 +35,10 @@ export const isInsertable = (build: GraphileBuild.Build, resource: PgTableResour
   return build.behavior.pgResourceMatches(resource, 'resource:insert') === true;
 };
 
-export const isUpdatable = (build: GraphileBuild.Build, resource: PgTableResource) => {
+export const isUpdatable = (
+  build: GraphileBuild.Build,
+  resource: PgTableResource
+) => {
   if (resource.parameters) return false;
   if (!resource.codec.attributes) return false;
   if (resource.codec.polymorphism) return false;
@@ -37,7 +47,10 @@ export const isUpdatable = (build: GraphileBuild.Build, resource: PgTableResourc
   return Boolean(build.behavior.pgResourceMatches(resource, 'resource:update'));
 };
 
-export const isDeletable = (build: GraphileBuild.Build, resource: PgTableResource) => {
+export const isDeletable = (
+  build: GraphileBuild.Build,
+  resource: PgTableResource
+) => {
   if (resource.parameters) return false;
   if (!resource.codec.attributes) return false;
   if (resource.codec.polymorphism) return false;
@@ -51,7 +64,9 @@ export function isNodeIdSpec(
   resource: PgResource,
   mode: 'resource:update' | 'resource:delete'
 ) {
-  const primaryUnique = resource.uniques.find((u: PgResourceUnique) => u.isPrimary);
+  const primaryUnique = resource.uniques.find(
+    (u: PgResourceUnique) => u.isPrimary
+  );
   if (
     primaryUnique &&
     build.getNodeIdCodec !== undefined &&
@@ -67,7 +82,9 @@ export function getSpecs(
   resource: PgResource,
   mode: 'resource:update' | 'resource:delete'
 ) {
-  const primaryUnique = resource.uniques.find((u: PgResourceUnique) => u.isPrimary);
+  const primaryUnique = resource.uniques.find(
+    (u: PgResourceUnique) => u.isPrimary
+  );
   const constraintMode = `constraint:${mode}` as const;
   const specs = [
     ...(primaryUnique &&
@@ -77,7 +94,10 @@ export function getSpecs(
       : []),
     ...resource.uniques
       .filter((unique: PgResourceUnique) => {
-        return build.behavior.pgResourceUniqueMatches([resource, unique], constraintMode);
+        return build.behavior.pgResourceUniqueMatches(
+          [resource, unique],
+          constraintMode
+        );
       })
       .map((unique: PgResourceUnique) => ({
         unique,

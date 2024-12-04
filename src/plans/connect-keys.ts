@@ -30,21 +30,31 @@ export function getRelationConnectByKeysPlanResolver<
     _info
   ) => {
     const $rawArgs = args.getRaw();
+
     if ($rawArgs instanceof __InputObjectStep) {
       // key to add is on the parent
       // set it and return
 
-      for (const attr of unique.attributes) {
-        $object.set(
-          attr,
-          $rawArgs.get(
-            inflection.attribute({
-              attributeName: attr,
-              codec: remoteResource.codec,
-            })
-          )
-        );
+      const spec = Object.fromEntries(
+        unique.attributes.map((attr) => {
+          return [
+            attr,
+            $rawArgs.get(
+              inflection.attribute({
+                attributeName: attr,
+                codec: remoteResource.codec,
+              })
+            ),
+          ];
+        })
+      );
+
+      const $item = remoteResource.get(spec);
+
+      for (const {local, remote} of matchedAttributes) {
+        $object.set(local.name, $item.get(remote.name));
       }
+
       args.apply($object);
       // Since we're setting fields on the parent object
       // we can just return
