@@ -20,6 +20,7 @@ import {
   updateResolver,
 } from './plans/index.ts';
 import {
+  getSpecs,
   isInsertable,
   isPgTableResource,
   isUpdatable,
@@ -317,9 +318,9 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
               Object.keys(inputFields)
             );
 
+            // only sets create keys
             for (const [fieldName, paths] of Object.entries(rootFields)) {
               build.pgRelationshipMutationRootFields.set(fieldName, paths);
-              build.pgRootFieldNamesToCodec.set(fieldName, resource);
             }
 
             return build.extend(
@@ -341,23 +342,15 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
             pgResource,
           },
         } = context;
-        if (
-          (isPgUpdateByKeysInputType || isPgUpdateNodeInputType) &&
-          pgResource &&
-          fieldName === 'patch'
-        ) {
-          return {
-            ...field,
-            autoApplyAfterParentApplyPlan: true,
-            applyPlan: EXPORTABLE(
-              () => ($obj: ObjectStep, fieldArgs: FieldArgs) => {
-                const $item = $obj.get('result');
-
-                fieldArgs.apply($item);
-              },
-              []
-            ),
-          };
+        if (fieldName === 'patch') {
+          if (
+            (isPgUpdateByKeysInputType || isPgUpdateNodeInputType) &&
+            pgResource
+          ) {
+            return {
+              ...field,
+            };
+          }
         }
         return field;
       },
@@ -422,25 +415,29 @@ const mapPgRelationshipRootFields = <
 
   if (isInsertable(build, resource)) {
     fieldNames.add(build.inflection.createField(resource));
+    build.pgRootFieldNamesToCodec.set(
+      build.inflection.createField(resource),
+      resource
+    );
     paths.push(['input', build.inflection.tableFieldName(resource)]);
   }
   if (isUpdatable(build, resource)) {
     // get the localResource specs to determine the root fields
     // to apply the arguments through
-    // const updateSpecs = getSpecs(build, resource, 'resource:update');
-    // for (const {uniqueMode, unique} of updateSpecs) {
-    //   if (uniqueMode === 'node') {
-    //     fieldNames.add(build.inflection.updateNodeField({resource, unique}));
-    //   } else {
-    //     fieldNames.add(build.inflection.updateByKeysField({resource, unique}));
-    //   }
-    // paths.push(['input', 'patch']);
-    // }
-    // paths.push([
-    //   'input',
-    //   build.inflection.patchField(build.inflection.tableFieldName(resource)),
-    // ]);
-    // }
+    const updateSpecs = getSpecs(build, resource, 'resource:update');
+    for (const {uniqueMode, unique} of updateSpecs) {
+      if (uniqueMode === 'node') {
+        build.pgRootFieldNamesToCodec.set(
+          build.inflection.updateNodeField({resource, unique}),
+          resource
+        );
+      } else {
+        build.pgRootFieldNamesToCodec.set(
+          build.inflection.updateByKeysField({resource, unique}),
+          resource
+        );
+      }
+    }
   }
 
   const allPaths = connectorFields.reduce((memo, connectorFieldName) => {
@@ -449,6 +446,8 @@ const mapPgRelationshipRootFields = <
   }, [] as string[][]);
 
   return Object.fromEntries(
-    [...fieldNames.values()].map((fieldName) => [fieldName, allPaths])
+    [...fieldNames.values()].map((fieldName) => {
+      return [fieldName, allPaths];
+    })
   ) as Record<TFieldName, string[][]>;
 };

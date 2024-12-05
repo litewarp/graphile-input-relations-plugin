@@ -52,7 +52,6 @@ export function getRelationConnectByNodePlanResolver<
           $object.set(matched.local.name, spec[key]);
         }
       });
-      args.apply($object);
       // Since we're setting fields on the parent object
       // we can just return
     } else if ($rawArgs instanceof __InputListStep) {
@@ -75,7 +74,6 @@ export function getRelationConnectByNodePlanResolver<
           $rawArg.get(inflection.nodeIdFieldName())
         ) as Record<string, ExecutableStep>;
         const $item = pgUpdateSingle(remoteResource, spec, attrs);
-
         args.apply($item, [i]);
       }
     } else {

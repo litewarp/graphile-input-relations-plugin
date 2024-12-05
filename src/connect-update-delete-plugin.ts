@@ -340,7 +340,7 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin =
                             return fields;
                           },
                         }),
-                        `Creating relationship $methodby node id input type for ${relationName} relationship`
+                        `Creating relationship ${method} by node id input type for ${relationName} relationship`
                       );
                       resourceRelationInputs.push({
                         fieldName,

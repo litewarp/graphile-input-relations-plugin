@@ -37,7 +37,8 @@
     "format-and-lint:staged": "biome check -error-on-warnings --no-errors-on-unmatched --staged && eslint",
     "pre-commit": "bun format-and-lint && bun typecheck && bun test:ci && git add -A",
     "prepare": "husky",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch"
   },
   "packageManager": "bun@1.1.38",
   "trustedDependencies": ["@biomejs/biome", "esbuild"]

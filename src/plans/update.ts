@@ -58,9 +58,9 @@ export function getRelationUpdatePlanResolver<
             // otherwise, we won't be able to set it down the line
             // because of the attribute check on PgUpdateSingleStep
             // and PgUpdateSingleStep
-            if (!$object.evalHas(inflectedName)) {
-              return false;
-            }
+            // if (!$object.evalHas(inflectedName)) {
+            //   return false;
+            // }
           }
           return true;
         })
@@ -75,6 +75,9 @@ export function getRelationUpdatePlanResolver<
         ])
     );
   };
+  const relFieldNames = (
+    build.pgRelationInputsTypes[remoteResource.name] ?? []
+  ).map((r) => r.fieldName);
 
   const resolver: InputObjectFieldApplyPlanResolver<TFieldStep> = (
     _$object,
@@ -103,7 +106,9 @@ export function getRelationUpdatePlanResolver<
           prepareAttrs($patch as __InputObjectStep)
         );
 
-        args.apply($item);
+        for (const field of relFieldNames) {
+          args.apply($item, ['patch', field]);
+        }
       } else {
         // handle keys
       }
@@ -133,7 +138,9 @@ export function getRelationUpdatePlanResolver<
             prepareAttrs($patch as __InputObjectStep)
           );
 
-          args.apply($item, [i]);
+          for (const field of relFieldNames) {
+            args.apply($item, [i, 'patch', field]);
+          }
         } else {
           // handle keys
         }

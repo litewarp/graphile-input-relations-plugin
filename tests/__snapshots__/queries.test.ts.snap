@@ -60,7 +60,7 @@ exports[`a > query=forward-update-by-id.graphql 1`] = `
         "id": "WyJDaGlsZCIsMV0=",
         "momParent": {
           "id": "WyJQYXJlbnQiLDFd",
-          "parentName": "Sally Ride",
+          "parentName": "mom",
         },
         "name": "Jimminy Cricket",
       },
@@ -262,6 +262,41 @@ exports[`a > query=triple-nested-create.graphql 1`] = `
           "parentName": "Sandra Day O'Connor",
         },
         "name": "Hugo Black",
+      },
+    },
+  },
+}
+`;
+
+exports[`a > query=triple-nested-update.graphql 1`] = `
+{
+  "data": {
+    "updateChildById": {
+      "child": {
+        "id": "WyJDaGlsZCIsMV0=",
+        "name": "Johnny Cochran",
+        "studentsByStudentId": {
+          "nodes": [
+            {
+              "id": "WyJTdHVkZW50IiwyLDFd",
+              "school": {
+                "id": "WyJTY2hvb2wiLDJd",
+                "name": "pine",
+                "teachers": {
+                  "nodes": [
+                    {
+                      "id": "WyJUZWFjaGVyIiwyXQ==",
+                      "name": "teacher 2",
+                      "uniqueField": "random unique field 2",
+                    },
+                  ],
+                  "totalCount": 1,
+                },
+              },
+            },
+          ],
+          "totalCount": 1,
+        },
       },
     },
   },
