@@ -29,27 +29,23 @@ export function getRelationUpdatePlanResolver<
   } = build;
   const {remoteResource} = relation;
 
-  const primaryUnique = remoteResource.uniques.find((u) => u.isPrimary);
-
   const prepareAttrs = (
     $object: __InputObjectStep
   ): Record<string, ExecutableStep> => {
     return Object.fromEntries(
       Object.entries(remoteResource.codec.attributes)
-        .filter(([name, _]) => {
+        .filter(([name, {notNull}]) => {
           const isUpdatable = pgCodecAttributeMatches(
             [remoteResource.codec, name],
             'attribute:update'
           );
           if (!isUpdatable) return false;
-          const isPrimaryAttribute = primaryUnique?.attributes.some(
-            (a) => a === name
-          );
+
           const inflectedName = inflection.attribute({
             attributeName: name,
             codec: remoteResource.codec,
           });
-          if (isPrimaryAttribute) {
+          if (notNull) {
             if (inflectedName === 'rowId') {
               return false;
             }
@@ -58,9 +54,9 @@ export function getRelationUpdatePlanResolver<
             // otherwise, we won't be able to set it down the line
             // because of the attribute check on PgUpdateSingleStep
             // and PgUpdateSingleStep
-            // if (!$object.evalHas(inflectedName)) {
-            //   return false;
-            // }
+            if (!$object.evalHas(inflectedName)) {
+              return false;
+            }
           }
           return true;
         })
@@ -84,7 +80,6 @@ export function getRelationUpdatePlanResolver<
     args,
     _info
   ) => {
-    console.log('in update resolver');
     const $rawArgs = args.getRaw();
 
     if ($rawArgs instanceof __InputObjectStep) {

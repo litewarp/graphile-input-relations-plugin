@@ -26,8 +26,6 @@ export function getRelationCreatePlanResolver<
 
   const {remoteResource, matchedAttributes} = relation;
 
-  const primaryUnique = remoteResource.uniques.find((u) => u.isPrimary);
-
   const relFieldNames = (
     build.pgRelationInputsTypes[remoteResource.name] ?? []
   ).map((r) => r.fieldName);
@@ -37,7 +35,7 @@ export function getRelationCreatePlanResolver<
   ): Record<string, ExecutableStep> => {
     return Object.fromEntries(
       Object.entries(remoteResource.codec.attributes)
-        .filter(([name, _]) => {
+        .filter(([name, {notNull}]) => {
           const isInsertable = pgCodecAttributeMatches(
             [remoteResource.codec, name],
             'attribute:insert'
@@ -45,15 +43,12 @@ export function getRelationCreatePlanResolver<
 
           if (!isInsertable) return false;
 
-          const isPrimaryAttribute = primaryUnique?.attributes.some(
-            (a) => a === name
-          );
           const inflectedName = inflection.attribute({
             attributeName: name,
             codec: remoteResource.codec,
           });
 
-          if (isPrimaryAttribute) {
+          if (notNull) {
             if (inflectedName === 'rowId') {
               return false;
             }

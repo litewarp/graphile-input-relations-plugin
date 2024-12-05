@@ -17,6 +17,7 @@ import {
   connectByKeysResolver,
   connectByNodeResolver,
   createResolver,
+  updateResolver,
 } from './plans/index.ts';
 import {
   getSpecs,
@@ -163,13 +164,16 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
                                         unique
                                       );
                                 case 'update':
-                                  return null;
+                                  return updateResolver(
+                                    build,
+                                    relation,
+                                    mode,
+                                    unique
+                                  );
                                 default:
                                   return null;
                               }
                             })();
-
-                            console.log(method, resolver);
 
                             return [
                               fieldName,
@@ -329,6 +333,27 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
           }
         }
         return fields;
+      },
+
+      GraphQLInputObjectType_fields_field(field, _build, context) {
+        const {isPgUpdateInputType, fieldName} = context.scope;
+
+        if (isPgUpdateInputType && fieldName === 'patch') {
+          return {
+            ...field,
+            autoApplyAfterParentApplyPlan: true,
+            applyPlan: EXPORTABLE(
+              () =>
+                function plan($object: PgUpdateSingleStep, args: FieldArgs) {
+                  const $item = $object.get('result');
+                  args.apply($item);
+                },
+              []
+            ),
+          };
+        }
+
+        return field;
       },
 
       GraphQLObjectType_fields_field(field, build, context) {
