@@ -1,0 +1,25 @@
+mutation DoubleNestedForwardUpdate {
+  updateChildById(
+    input: {
+      id: "WyJDaGlsZCIsMV0="
+      patch: {
+        name: "Johnny Cochran"
+        dadParent: {
+          updateById: {
+            id: "WyJQYXJlbnQiLDJd="
+            patch: {parentName: "Samuel Alito"}
+          }
+        }
+      }
+    }
+  ) {
+    child {
+      id
+      name
+      dadParent {
+        id
+        parentName
+      }
+    }
+  }
+}

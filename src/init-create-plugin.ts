@@ -66,8 +66,8 @@ export const PgRelationInputsInitCreatePlugin: GraphileConfig.Plugin = {
       build(build) {
         build.pgRelationshipMutationRootFields = new Map();
         build.pgRootFieldNamesToCodec = new Map();
-        build.pgRelationInputsFields = {};
         build.pgRelationInputsTypes = {};
+        build.pgRelationInputsFields = {};
 
         return build;
       },

@@ -3,14 +3,14 @@ import {
   type PgResourceUnique,
   type PgUpdateSingleStep,
   pgUpdateSingle,
-} from 'postgraphile/@dataplan/pg';
+} from '@dataplan/pg';
 import {
   type ExecutableStep,
   type InputObjectFieldApplyPlanResolver,
   __InputListStep,
   __InputObjectStep,
   specFromNodeId,
-} from 'postgraphile/grafast';
+} from 'grafast';
 import type {PgRelationInputData} from '../interfaces.ts';
 
 export function getRelationUpdatePlanResolver<
@@ -75,15 +75,16 @@ export function getRelationUpdatePlanResolver<
         ])
     );
   };
-  const relFieldNames = (
-    build.pgRelationInputsTypes[remoteResource.name] ?? []
-  ).map((r) => r.fieldName);
+  // const relFieldNames = (
+  //   build.pgRelationInputsTypes[remoteResource.name] ?? []
+  // ).map((r) => r.fieldName);
 
   const resolver: InputObjectFieldApplyPlanResolver<TFieldStep> = (
     _$object,
     args,
     _info
   ) => {
+    console.log('in update resolver');
     const $rawArgs = args.getRaw();
 
     if ($rawArgs instanceof __InputObjectStep) {
@@ -106,9 +107,11 @@ export function getRelationUpdatePlanResolver<
           prepareAttrs($patch as __InputObjectStep)
         );
 
-        for (const field of relFieldNames) {
-          args.apply($item, ['patch', field]);
-        }
+        args.apply($item);
+
+        // for (const field of relFieldNames) {
+        //   args.apply($item, ['patch', field]);
+        // }
       } else {
         // handle keys
       }
@@ -138,9 +141,10 @@ export function getRelationUpdatePlanResolver<
             prepareAttrs($patch as __InputObjectStep)
           );
 
-          for (const field of relFieldNames) {
-            args.apply($item, [i, 'patch', field]);
-          }
+          // for (const field of relFieldNames) {
+          //   args.apply($item, [i, 'patch', field]);
+          // }
+          args.apply($item, [i]);
         } else {
           // handle keys
         }

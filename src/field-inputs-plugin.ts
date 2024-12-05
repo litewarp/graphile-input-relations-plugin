@@ -17,7 +17,6 @@ import {
   connectByKeysResolver,
   connectByNodeResolver,
   createResolver,
-  updateResolver,
 } from './plans/index.ts';
 import {
   getSpecs,
@@ -151,26 +150,26 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
                       return Object.fromEntries(
                         inputFields.map(
                           ({fieldName, typeName, method, mode, unique}) => {
-                            // need a getPlanResolver function
-                            const resolver =
-                              method === 'create'
-                                ? createResolver(build, relation)
-                                : method === 'connect'
-                                  ? mode === 'node'
+                            const resolver = (() => {
+                              switch (method) {
+                                case 'create':
+                                  return createResolver(build, relation);
+                                case 'connect':
+                                  return mode === 'node'
                                     ? connectByNodeResolver(build, relation)
                                     : connectByKeysResolver(
                                         build,
                                         relation,
                                         unique
-                                      )
-                                  : method === 'update'
-                                    ? updateResolver(
-                                        build,
-                                        relation,
-                                        mode,
-                                        unique
-                                      )
-                                    : null;
+                                      );
+                                case 'update':
+                                  return null;
+                                default:
+                                  return null;
+                              }
+                            })();
+
+                            console.log(method, resolver);
 
                             return [
                               fieldName,
@@ -318,7 +317,6 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
               Object.keys(inputFields)
             );
 
-            // only sets create keys
             for (const [fieldName, paths] of Object.entries(rootFields)) {
               build.pgRelationshipMutationRootFields.set(fieldName, paths);
             }
@@ -331,28 +329,6 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
           }
         }
         return fields;
-      },
-
-      GraphQLInputObjectType_fields_field(field, _build, context) {
-        const {
-          scope: {
-            fieldName,
-            isPgUpdateByKeysInputType,
-            isPgUpdateNodeInputType,
-            pgResource,
-          },
-        } = context;
-        if (fieldName === 'patch') {
-          if (
-            (isPgUpdateByKeysInputType || isPgUpdateNodeInputType) &&
-            pgResource
-          ) {
-            return {
-              ...field,
-            };
-          }
-        }
-        return field;
       },
 
       GraphQLObjectType_fields_field(field, build, context) {
