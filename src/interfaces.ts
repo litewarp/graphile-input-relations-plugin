@@ -64,7 +64,7 @@ export type RelationInputTypeInfo =
       relationName: string;
       method: 'connect' | 'update' | 'delete' | 'disconnect';
       mode: 'node';
-      unique?: undefined;
+      unique: PgResourceUnique;
     }
   | {
       fieldName: string;

@@ -236,9 +236,8 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin =
                       typeName,
                       relationName,
                       method,
-                      ...(uniqueMode === 'keys'
-                        ? {mode: 'keys', unique}
-                        : {mode: 'node'}),
+                      unique,
+                      mode: uniqueMode === 'node' ? 'node' : 'keys',
                     });
                   } else {
                     duplicateTypes.add(typeName);
@@ -256,7 +255,7 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin =
                             'type'
                           ),
                           fields: ({fieldWithHooks}) => {
-                            const fields =
+                            let fields =
                               spec.uniqueMode === 'node' && nodeIdFieldName
                                 ? {
                                     [nodeIdFieldName]: fieldWithHooks(
@@ -302,6 +301,42 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin =
                                       ];
                                     })
                                   );
+
+                            if (method === 'update') {
+                              // find the patch field
+                              const tablePatchName =
+                                build.getGraphQLTypeNameByPgCodec(
+                                  remoteResource.codec,
+                                  'patch'
+                                );
+                              if (tablePatchName) {
+                                const fieldName = inflection.patchField(
+                                  inflection.tableType(remoteResource.codec)
+                                );
+                                fields = build.extend(
+                                  fields,
+                                  {
+                                    [fieldName]: fieldWithHooks(
+                                      {
+                                        fieldName,
+                                      },
+                                      {
+                                        description: build.wrapDescription(
+                                          `An object where the defined keys will be updated on the \`${inflection.tableType(remoteResource.codec)}\` being ${method}ed.`,
+                                          'field'
+                                        ),
+                                        type: new GraphQLNonNull(
+                                          build.getInputTypeByName(
+                                            tablePatchName
+                                          )
+                                        ),
+                                      }
+                                    ),
+                                  },
+                                  `Adding patch field to relation update input type for ${relationName} relationship`
+                                );
+                              }
+                            }
                             return fields;
                           },
                         }),
@@ -312,9 +347,8 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin =
                         typeName,
                         relationName,
                         method,
-                        ...(uniqueMode === 'keys'
-                          ? {mode: 'keys', unique}
-                          : {mode: 'node'}),
+                        unique,
+                        mode: uniqueMode === 'node' ? 'node' : 'keys',
                       });
                     });
                   }
@@ -415,9 +449,8 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin =
                           typeName,
                           relationName,
                           method: 'disconnect',
-                          ...(uniqueMode === 'keys'
-                            ? {mode: 'keys', unique}
-                            : {mode: 'node'}),
+                          unique,
+                          mode: uniqueMode === 'node' ? 'node' : 'keys',
                         });
                       });
                     }

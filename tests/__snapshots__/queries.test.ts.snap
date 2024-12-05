@@ -52,6 +52,23 @@ exports[`a > query=forward-create.graphql 1`] = `
 }
 `;
 
+exports[`a > query=forward-update-by-id.graphql 1`] = `
+{
+  "data": {
+    "updateChildById": {
+      "child": {
+        "id": "WyJDaGlsZCIsMV0=",
+        "momParent": {
+          "id": "WyJQYXJlbnQiLDFd",
+          "parentName": "Sally Ride",
+        },
+        "name": "Jimminy Cricket",
+      },
+    },
+  },
+}
+`;
+
 exports[`a > query=mixed-multi-level-insert.graphql 1`] = `
 {
   "data": {

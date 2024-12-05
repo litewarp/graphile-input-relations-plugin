@@ -1,10 +1,11 @@
 mutation forwardUpdateByNodeId {
   updateChildById(
     input: {
-      id: "WyJDaGlsZCIsMV0"
+      id: "WyJDaGlsZCIsMV0="
       patch: {
-        parentByDadParentId: {
-          updateByNodeId: {
+        name: "Jimminy Cricket"
+        momParent: {
+          updateById: {
             id: "WyJQYXJlbnQiLDFd"
             patch: {parentName: "Sally Ride"}
           }
@@ -15,6 +16,10 @@ mutation forwardUpdateByNodeId {
     child {
       id
       name
+      momParent {
+        id
+        parentName
+      }
     }
   }
 }
