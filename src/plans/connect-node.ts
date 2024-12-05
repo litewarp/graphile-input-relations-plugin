@@ -12,7 +12,7 @@ import {
 } from 'grafast';
 import type {PgRelationInputData} from '../interfaces.ts';
 
-export function getRelationConnectByIdPlanResolver<
+export function getRelationConnectByNodePlanResolver<
   TFieldStep extends PgInsertSingleStep | PgUpdateSingleStep =
     | PgInsertSingleStep
     | PgUpdateSingleStep,

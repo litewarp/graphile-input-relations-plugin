@@ -40,10 +40,7 @@ export interface PgCodecAttributeWithName extends PgCodecAttribute {
 }
 
 export interface PgRelationInputData
-  extends Omit<
-    PgCodecRelation<PgCodecWithAttributes, PgTableResource>,
-    'localCodec'
-  > {
+  extends PgCodecRelation<PgCodecWithAttributes, PgTableResource> {
   relationName: string;
   fieldName: string;
   matchedAttributes: {

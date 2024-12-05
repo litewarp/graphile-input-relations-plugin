@@ -13,7 +13,11 @@ import {
   GraphQLNonNull,
 } from 'graphql';
 import type {PgRelationInputData, PgTableResource} from './interfaces.ts';
-import {getResolverFn} from './plans/index.ts';
+import {
+  connectByKeysResolver,
+  connectByNodeResolver,
+  createResolver,
+} from './plans/index.ts';
 import {isInsertable, isPgTableResource} from './utils/resource.ts';
 
 declare global {
@@ -142,13 +146,18 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
                         inputFields.map(
                           ({fieldName, typeName, method, mode, unique}) => {
                             // need a getPlanResolver function
-                            const resolverFn = getResolverFn({method, mode});
-
-                            const resolver = resolverFn
-                              ? mode === 'keys'
-                                ? resolverFn(build, relation, unique)
-                                : resolverFn(build, relation)
-                              : undefined;
+                            const resolver =
+                              method === 'create'
+                                ? createResolver(build, relation)
+                                : method === 'connect'
+                                  ? mode === 'node'
+                                    ? connectByNodeResolver(build, relation)
+                                    : connectByKeysResolver(
+                                        build,
+                                        relation,
+                                        unique
+                                      )
+                                  : undefined;
 
                             return [
                               fieldName,

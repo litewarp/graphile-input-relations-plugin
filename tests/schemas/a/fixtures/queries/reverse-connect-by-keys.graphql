@@ -3,7 +3,7 @@ mutation CreateSchoolAndConnectToTeacherByUniqueField {
     input: {
       school: {
         name: "My School"
-        teachersBySchoolId: {
+        teachers: {
           connectByUniqueField: [{uniqueField: "random unique field 2"}]
         }
       }

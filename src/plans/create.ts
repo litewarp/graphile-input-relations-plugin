@@ -98,6 +98,7 @@ export function getRelationCreatePlanResolver<
         args.apply($item, [field]);
       }
     } else if ($rawArgs instanceof __InputListStep) {
+      // WARNING!! We have to eval the array length here to iterate
       const length = $rawArgs.evalLength() ?? 0;
       for (let i = 0; i < length; i++) {
         const $rawArg = $rawArgs.at(i);

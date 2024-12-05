@@ -1,10 +1,10 @@
-import type {
-  PgInsertSingleStep,
-  PgResourceUnique,
-  PgUpdateSingleStep,
+import {
+  type PgInsertSingleStep,
+  type PgResourceUnique,
+  type PgUpdateSingleStep,
+  pgUpdateSingle,
 } from '@dataplan/pg';
 import {
-  type ExecutableStep,
   type InputObjectFieldApplyPlanResolver,
   __InputListStep,
   __InputObjectStep,
@@ -60,8 +60,6 @@ export function getRelationConnectByKeysPlanResolver<
       // we can just return
     } else if ($rawArgs instanceof __InputListStep) {
       // keys are on the children
-      // create an update object for pgUpdateSingle
-      // and apply it down the line to other connector fields
       const length = $rawArgs.evalLength() ?? 0;
       for (let i = 0; i < length; i++) {
         const $rawArg = $rawArgs.at(i);
@@ -69,19 +67,33 @@ export function getRelationConnectByKeysPlanResolver<
           console.warn(`Unexpected args type: ${$rawArg.constructor.name}`);
           continue;
         }
-        // const spec: Record<string, ExecutableStep> = {};
-        const attrs: Record<string, ExecutableStep> = {};
-        for (const {local, remote} of matchedAttributes) {
-          attrs[remote.name] = $object.get(local.name);
-        }
-        // const $item = pgUpdateSingle(remoteResource, spec, attrs);
 
-        // args.apply($item, [i]);
+        const spec = Object.fromEntries(
+          unique.attributes.map((attr) => [
+            attr,
+            $rawArg.get(
+              inflection.attribute({
+                attributeName: attr,
+                codec: remoteResource.codec,
+              })
+            ),
+          ])
+        );
+
+        const attrs = Object.fromEntries(
+          matchedAttributes.map(({local, remote}) => [
+            remote.name,
+            $object.get(local.name),
+          ])
+        );
+
+        const $item = pgUpdateSingle(remoteResource, spec, attrs);
+
+        // apply the argument down the line
+        args.apply($item, [i]);
       }
-    } else {
-      console.warn(`Unexpected args type: ${$rawArgs.constructor.name}`);
-      return;
-    }
+    } else console.warn(`Unexpected args type: ${$rawArgs.constructor.name}`);
+    return;
   };
 
   return resolver;

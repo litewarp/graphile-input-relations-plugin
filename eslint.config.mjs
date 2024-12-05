@@ -43,5 +43,4 @@ export default tseslint.config(
       '@typescript-eslint/no-for-in-array': 'off',
     },
   }
-  // biome
 );

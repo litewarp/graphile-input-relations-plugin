@@ -109,6 +109,29 @@ exports[`a > query=reverse-connect-by-id.graphql 1`] = `
 }
 `;
 
+exports[`a > query=reverse-connect-by-keys.graphql 1`] = `
+{
+  "data": {
+    "createSchool": {
+      "school": {
+        "id": "WyJTY2hvb2wiLDRd",
+        "name": "My School",
+        "teachers": {
+          "nodes": [
+            {
+              "id": "WyJUZWFjaGVyIiwyXQ==",
+              "name": "teacher 2",
+              "uniqueField": "random unique field 2",
+            },
+          ],
+          "totalCount": 1,
+        },
+      },
+    },
+  },
+}
+`;
+
 exports[`a > query=reverse-create.graphql 1`] = `
 {
   "data": {
