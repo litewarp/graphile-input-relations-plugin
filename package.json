@@ -8,6 +8,7 @@
   "publishConfig": {
     "access": "public"
   },
+  "homepage": "https://github.com/litewarp/graphile-relation-inputs-plugin",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

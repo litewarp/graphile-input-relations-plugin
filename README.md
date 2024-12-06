@@ -128,23 +128,23 @@ input TeachersByTheirSchoolIdUpdateByNodeIdInput {
 
 The Following Mutations are Currently Supported
 
-[ X ] Create
-[ X ] ConnectByNodeId
-[ X ] ConnectByUniqueKeys
-[ X ] UpdateByNodeId
-[ X ] UpdateByUniqueKeys
-[   ] DisconnectByNodeId
-[   ] DisconnectByUniqueKeys
-[   ] DeleteByNodeId
-[   ] DeleteByUniqueKeys
+- [x] Create
+- [X] ConnectByNodeId
+- [X] ConnectByUniqueKeys
+- [X] UpdateByNodeId
+- [X] UpdateByUniqueKeys
+- [ ] DisconnectByNodeId
+- [ ] DisconnectByUniqueKeys
+- [ ] DeleteByNodeId
+- [ ] DeleteByUniqueKeys
 
 TODO:
-[  ] Add semantic version / changesets
-[  ] Migrate tests from [version 4 library](https://github.com/mlipscombe/postgraphile-plugin-nested-mutations/tree/master/__tests__)
-[  ] Make Plugin "Exportable"
-[  ] Use Behaviors ("nested:resource:update", etc.)
-[  ] Use tags (override fieldname)
-[  ] Add config options to limit complexity / recursive depth
-[  ] Publish to JSR?
+- [ ] Add semantic version / changesets
+- [ ] Migrate tests from [version 4 library](https://github.com/mlipscombe/postgraphile-plugin-nested-mutations/tree/master/__tests__)
+- [ ] Make Plugin "Exportable"
+- [ ] Use Behaviors ("nested:resource:update", etc.)
+- [ ] Use tags (override fieldname)
+- [ ] Add config options to limit complexity / recursive depth
+- [ ] Publish to JSR?
 
 Shoutout to [Benjie](https://github.com/benjie) and the entire graphile team. This is a small addition to their voluminous efforts.
