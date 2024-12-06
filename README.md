@@ -2,12 +2,12 @@
 
 ## A Postgraphile Plugin to Update Nested Relations as Part of a Create or Update Mutation. 
 
-This is a port of the ["Nested Mutations"](https://github.com/mlipscombe/postgraphile-plugin-nested-mutations) plugin for Postgraphile v4. Given the ambiguity regarding the term "nested mutations" (see, e.g., [Benjie's screed on multiple mutations](https://benjie.dev/graphql/nested-mutations)), I've renamed it RelationInputs to more accurately reflect it's purpose.
+This is a port of the ["Nested Mutations"](https://github.com/mlipscombe/postgraphile-plugin-nested-mutations) plugin for Postgraphile v4. Given the ambiguity regarding the term "nested mutations" (see, e.g., [Benjie's screed](https://benjie.dev/graphql/nested-mutations)), I've renamed it Relation Inputs to more accurately reflect it's purpose. That is, this plugin allows you to edit related resources in a single mutation graph.
 
-This plugin adds mutation input fields for your relation inputs. For example, given a schema of:
+Given a schema of:
 
 ```graphql
-Type School implements Node {
+type School implements Node {
   id: ID!
   name: String!
 
