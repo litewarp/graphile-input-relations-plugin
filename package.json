@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@litewarp/graphile-relation-inputs-plugin",
   "description": "A plugin for PostGraphile v5 that allows you to mutate a resource's nested relations",
-  "version": "0.0.1-alpha",
+  "version": "0.0.2-alpha",
   "license": "MIT",
   "type": "module",
   "publishConfig": {

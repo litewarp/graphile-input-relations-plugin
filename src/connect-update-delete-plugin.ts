@@ -174,7 +174,12 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin =
             const resourceRelationInputs: RelationInputTypeInfo[] = [];
 
             for (const relation of relationships) {
-              const {isReferencee, remoteResource, relationName} = relation;
+              const {
+                isReferencee,
+                remoteResource,
+                relationName,
+                matchedAttributes,
+              } = relation;
 
               const methods = ['connect', 'update', 'delete'] as const;
 
@@ -354,7 +359,7 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin =
                   }
 
                   if (method === 'connect') {
-                    // add a disconnect by node id field
+                    // add a disconnect by node id field if possible
                     const fieldName =
                       uniqueMode === 'node'
                         ? inflection.relationConnectNodeField({
@@ -376,7 +381,14 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin =
                             ...details,
                             disconnect: true,
                           });
-                    if (!duplicateTypes.has(typeName)) {
+
+                    // check to see if the foreign key can be null'ed
+                    // or if it is a required field
+                    const hasNonNullableKeys = relation.isReferencee
+                      ? matchedAttributes.some(({remote}) => remote.notNull)
+                      : matchedAttributes.some(({local}) => local.notNull);
+
+                    if (!duplicateTypes.has(typeName) && !hasNonNullableKeys) {
                       duplicateTypes.add(typeName);
                       build.recoverable(null, () => {
                         build.registerInputObjectType(

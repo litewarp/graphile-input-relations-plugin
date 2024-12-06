@@ -132,7 +132,9 @@ The Following Mutations are Currently Supported
 [ X ] ConnectByNodeId
 [ X ] ConnectByUniqueKeys
 [ X ] UpdateByNodeId
-[   ] UpdateByUniqueKeys
+[ X ] UpdateByUniqueKeys
+[   ] DisconnectByNodeId
+[   ] DisconnectByUniqueKeys
 [   ] DeleteByNodeId
 [   ] DeleteByUniqueKeys
 
