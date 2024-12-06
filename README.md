@@ -2,7 +2,7 @@
 
 ## A Postgraphile Plugin to Update Nested Relations as Part of a Create or Update Mutation. 
 
-This is a port of the ["Nested Mutations"](https://github.com/mlipscombe/postgraphile-plugin-nested-mutations) plugin for Postgraphile v4. Given the ambiguity regarding the term "nested mutations" (see, e.g., [Benjie's screed](https://benjie.dev/graphql/nested-mutations)), I've renamed it Relation Inputs to more accurately reflect it's purpose. That is, this plugin allows you to edit related resources in a single mutation graph.
+This is a port of the ["Nested Mutations"](https://github.com/mlipscombe/postgraphile-plugin-nested-mutations) plugin for Postgraphile v4. Given the ambiguity regarding the term "nested mutations" (see, e.g., [Benjie's screed](https://benjie.dev/graphql/nested-mutations)), I've renamed it Relation Inputs to more accurately reflect it's purpose. That is, this plugin allows you to edit related resources in a single mutation graph. Importantly, the plugin utilizes existing step plans to recursively apply mutations down the line. 
 
 Given a schema of:
 
@@ -125,3 +125,24 @@ input TeachersByTheirSchoolIdUpdateByNodeIdInput {
 ```
 
 ## Warning! This is a work in progress and experimental.
+
+The Following Mutations are Currently Supported
+
+[ X ] Create
+[ X ] ConnectByNodeId
+[ X ] ConnectByUniqueKeys
+[ X ] UpdateByNodeId
+[   ] UpdateByUniqueKeys
+[   ] DeleteByNodeId
+[   ] DeleteByUniqueKeys
+
+TODO:
+[  ] Add semantic version / changesets
+[  ] Migrate tests from [version 4 library](https://github.com/mlipscombe/postgraphile-plugin-nested-mutations/tree/master/__tests__)
+[  ] Make Plugin "Exportable"
+[  ] Use Behaviors ("nested:resource:update", etc.)
+[  ] Use tags (override fieldname)
+[  ] Add config options to limit complexity / recursive depth
+[  ] Publish to JSR?
+
+Shoutout to [Benjie](https://github.com/benjie) and the entire graphile team. This is a small addition to their voluminous efforts.
