@@ -209,6 +209,34 @@ exports[`a > query=reverse-create.graphql 1`] = `
 }
 `;
 
+exports[`a > query=reverse-update-by-keys.graphql 1`] = `
+{
+  "data": {
+    "updateSchoolById": {
+      "school": {
+        "id": "WyJTY2hvb2wiLDJd",
+        "name": "Greendale Community College",
+        "teachers": {
+          "nodes": [
+            {
+              "id": "WyJUZWFjaGVyIiwxXQ==",
+              "name": "Edna Krabappel",
+              "uniqueField": "random unique field 1",
+            },
+            {
+              "id": "WyJUZWFjaGVyIiwyXQ==",
+              "name": "Seymour Skinner",
+              "uniqueField": "random unique field 2",
+            },
+          ],
+          "totalCount": 2,
+        },
+      },
+    },
+  },
+}
+`;
+
 exports[`a > query=reverse-update-by-node.graphql 1`] = `
 {
   "data": {

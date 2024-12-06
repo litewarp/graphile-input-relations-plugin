@@ -1,0 +1,35 @@
+mutation UpdateSchoolAndPatchTeachers {
+  updateSchoolById(
+    input: {
+      id: "WyJTY2hvb2wiLDJd="
+      patch: {
+        name: "Greendale Community College"
+        teachers: {
+          updateByUniqueField: [
+            {
+              uniqueField: "random unique field 1"
+              patch: {name: "Edna Krabappel"}
+            }
+            {
+              uniqueField: "random unique field 2"
+              patch: {name: "Seymour Skinner"}
+            }
+          ]
+        }
+      }
+    }
+  ) {
+    school {
+      id
+      name
+      teachers {
+        totalCount
+        nodes {
+          id
+          name
+          uniqueField
+        }
+      }
+    }
+  }
+}

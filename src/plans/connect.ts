@@ -5,73 +5,44 @@ import {
   pgUpdateSingle,
 } from '@dataplan/pg';
 import {
-  type ExecutableStep,
   type InputObjectFieldApplyPlanResolver,
   __InputListStep,
   __InputObjectStep,
   specFromNodeId,
 } from 'grafast';
+import type {ExecutableStep} from 'postgraphile/grafast';
 import type {PgRelationInputData} from '../interfaces.ts';
 
-export function getRelationUpdatePlanResolver<
+export function getRelationConnectPlanResolver<
   TFieldStep extends PgInsertSingleStep | PgUpdateSingleStep =
     | PgInsertSingleStep
     | PgUpdateSingleStep,
 >(
   build: GraphileBuild.Build,
-  relation: PgRelationInputData,
+  relationship: PgRelationInputData,
   mode: 'node' | 'keys',
   unique: PgResourceUnique
 ): InputObjectFieldApplyPlanResolver<TFieldStep> {
-  const {
-    inflection,
-    behavior: {pgCodecAttributeMatches},
-  } = build;
-  const {remoteResource} = relation;
+  const {inflection} = build;
 
-  const isUpdatable = (name: string) =>
-    pgCodecAttributeMatches([remoteResource.codec, name], 'attribute:update');
-
-  const prepareAttrs = (
-    $object: __InputObjectStep
-  ): Record<string, ExecutableStep> => {
-    return Object.entries(remoteResource.codec.attributes).reduce(
-      (memo, [attributeName, {notNull}]) => {
-        const inflectedName = inflection.attribute({
-          attributeName,
-          codec: remoteResource.codec,
-        });
-        if (!isUpdatable(attributeName)) return memo;
-
-        if (notNull && inflectedName === 'rowId') return memo;
-        // WARNING!! We have to eval the argument here
-        // and omit the value if it's not present to avoid
-        // inserting null values
-        if (notNull && !$object.evalHas(inflectedName)) return memo;
-
-        memo[attributeName] = $object.get(inflectedName);
-        return memo;
-      },
-      {} as Record<string, ExecutableStep>
-    );
-  };
+  const {remoteResource, matchedAttributes} = relationship;
 
   const resolver: InputObjectFieldApplyPlanResolver<TFieldStep> = (
-    _$object,
+    $object,
     args,
     _info
   ) => {
     const $rawArgs = args.getRaw();
+    let spec: Record<string, ExecutableStep> = {};
 
     if ($rawArgs instanceof __InputObjectStep) {
-      // We are in a forward relation
-      let spec: Record<string, ExecutableStep> = {};
+      // we are in a forward relation
+      // foreign key is on the local resource
 
       if (mode === 'node') {
         const handler =
           build.getNodeIdHandler &&
           build.getNodeIdHandler(inflection.tableType(remoteResource.codec));
-
         if (!handler) {
           throw new Error(`No nodeIdHandler found for ${remoteResource.name}`);
         }
@@ -81,28 +52,24 @@ export function getRelationUpdatePlanResolver<
         ) as Record<string, ExecutableStep>;
       } else if (mode === 'keys') {
         spec = Object.fromEntries(
-          (unique.attributes as string[]).map((attributeName) => [
+          unique.attributes.map((attributeName) => [
             attributeName,
             $rawArgs.get(
-              inflection.attribute({
-                attributeName,
-                codec: remoteResource.codec,
-              })
+              inflection.attribute({attributeName, codec: remoteResource.codec})
             ),
-          ])
-        ) as Record<string, ExecutableStep>;
+          ]) as [string, ExecutableStep][]
+        );
       }
 
-      const $patch = $rawArgs.get('patch');
-      const $item = pgUpdateSingle(
-        remoteResource,
-        spec,
-        prepareAttrs($patch as __InputObjectStep)
-      );
+      const $item = remoteResource.get(spec);
 
-      args.apply($item);
+      for (const {local, remote} of matchedAttributes) {
+        $object.set(local.name, $item.get(remote.name));
+      }
+
+      args.apply($object);
     } else if ($rawArgs instanceof __InputListStep) {
-      // We are in a backward relation
+      // backward relation
       // WARNING!! We have to eval the array length here to iterate
       const length = $rawArgs.evalLength() ?? 0;
       for (let i = 0; i < length; i++) {
@@ -116,42 +83,48 @@ export function getRelationUpdatePlanResolver<
         let spec: Record<string, ExecutableStep> = {};
 
         if (mode === 'node') {
-          const nodeIdHandler =
+          const handler =
             build.getNodeIdHandler &&
             build.getNodeIdHandler(inflection.tableType(remoteResource.codec));
-          if (!nodeIdHandler) {
+
+          if (!handler) {
             throw new Error(
               `No nodeIdHandler found for ${remoteResource.name}`
             );
           }
           spec = specFromNodeId(
-            nodeIdHandler,
+            handler,
             $rawArg.get(inflection.nodeIdFieldName())
           ) as Record<string, ExecutableStep>;
-        } else {
+        } else if (mode === 'keys') {
           spec = Object.fromEntries(
-            (unique.attributes as string[]).map((attributeName) => [
-              attributeName,
+            unique.attributes.map((attr) => [
+              attr,
               $rawArg.get(
                 inflection.attribute({
-                  attributeName,
+                  attributeName: attr,
                   codec: remoteResource.codec,
                 })
               ),
             ])
-          ) as Record<string, ExecutableStep>;
-          // handle keys
+          );
         }
-        const $patch = $rawArg.get('patch');
-        const $item = pgUpdateSingle(
-          remoteResource,
-          spec,
-          prepareAttrs($patch as __InputObjectStep)
+
+        const attrs = Object.fromEntries(
+          matchedAttributes.map(({local, remote}) => [
+            remote.name,
+            $object.get(local.name),
+          ])
         );
 
+        const $item = pgUpdateSingle(remoteResource, spec, attrs);
+
+        // apply the argument down the line
         args.apply($item, [i]);
       }
-    }
+    } else console.warn(`Unexpected args type: ${$rawArgs.constructor.name}`);
+    return;
   };
+
   return resolver;
 }

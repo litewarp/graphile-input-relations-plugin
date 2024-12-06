@@ -14,8 +14,7 @@ import {
 } from 'graphql';
 import type {PgRelationInputData, PgTableResource} from './interfaces.ts';
 import {
-  connectByKeysResolver,
-  connectByNodeResolver,
+  connectResolver,
   createResolver,
   updateResolver,
 } from './plans/index.ts';
@@ -156,13 +155,13 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
                                 case 'create':
                                   return createResolver(build, relation);
                                 case 'connect':
-                                  return mode === 'node'
-                                    ? connectByNodeResolver(build, relation)
-                                    : connectByKeysResolver(
-                                        build,
-                                        relation,
-                                        unique
-                                      );
+                                  return connectResolver(
+                                    build,
+                                    relation,
+                                    mode,
+                                    unique
+                                  );
+
                                 case 'update':
                                   return updateResolver(
                                     build,
