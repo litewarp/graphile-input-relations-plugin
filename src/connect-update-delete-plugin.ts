@@ -394,63 +394,71 @@ export const PgRelationInputsConnectUpdateDeletePlugin: GraphileConfig.Plugin =
                         build.registerInputObjectType(
                           typeName,
                           {
-                            isRelationDisconnectByNodeInputType: true,
+                            isRelationDisconnectByNodeInputType:
+                              uniqueMode === 'node',
+                            isRelationDisconnectByKeysInputType:
+                              uniqueMode === 'keys',
                           },
                           () => ({
                             description: build.wrapDescription(
-                              `Relationship ${method} by node id input field for ${remoteResource.name} in the ${relationName} relationship`,
+                              `Relationship ${method} by ${uniqueMode} input field for ${remoteResource.name} in the ${relationName} relationship`,
                               'type'
                             ),
                             fields: ({fieldWithHooks}) => {
                               const fields =
-                                spec.uniqueMode === 'node' && nodeIdFieldName
-                                  ? {
-                                      [nodeIdFieldName]: fieldWithHooks(
-                                        {
-                                          fieldName: nodeIdFieldName,
-                                        },
-                                        {
-                                          description: build.wrapDescription(
-                                            `The globally unique \`ID\` which will identify a single \`${inflection.tableType(remoteResource.codec)}\` to be ${method}ed.`,
-                                            'field'
-                                          ),
-                                          type: new GraphQLNonNull(GraphQLID),
-                                        }
-                                      ),
-                                    }
-                                  : Object.fromEntries(
-                                      spec.unique.attributes.map((attr) => {
-                                        const fieldName = inflection.attribute({
-                                          attributeName: attr,
-                                          codec: remoteResource.codec,
-                                        });
-                                        const attribute =
-                                          remoteResource.codec.attributes[attr];
-                                        const fieldType =
-                                          build.getGraphQLTypeByPgCodec(
-                                            attribute.codec,
-                                            'input'
-                                          );
-                                        if (!fieldType) {
-                                          throw new Error(
-                                            `Could not find field type for ${attr}`
-                                          );
-                                        }
-                                        return [
-                                          fieldName,
-                                          fieldWithHooks(
-                                            {fieldName},
-                                            {
-                                              description:
-                                                attribute.description,
-                                              type: new GraphQLNonNull(
-                                                fieldType
-                                              ),
-                                            }
-                                          ),
-                                        ];
-                                      })
-                                    );
+                                spec.uniqueMode === 'node'
+                                  ? nodeIdFieldName
+                                    ? {
+                                        [nodeIdFieldName]: fieldWithHooks(
+                                          {fieldName: nodeIdFieldName},
+                                          {
+                                            description: build.wrapDescription(
+                                              `The globally unique \`ID\` which will identify a single \`${inflection.tableType(remoteResource.codec)}\` to be ${method}ed.`,
+                                              'field'
+                                            ),
+                                            type: new GraphQLNonNull(GraphQLID),
+                                          }
+                                        ),
+                                      }
+                                    : {}
+                                  : uniqueMode === 'keys'
+                                    ? Object.fromEntries(
+                                        spec.unique.attributes.map((attr) => {
+                                          const fieldName =
+                                            inflection.attribute({
+                                              attributeName: attr,
+                                              codec: remoteResource.codec,
+                                            });
+                                          const attribute =
+                                            remoteResource.codec.attributes[
+                                              attr
+                                            ];
+                                          const fieldType =
+                                            build.getGraphQLTypeByPgCodec(
+                                              attribute.codec,
+                                              'input'
+                                            );
+                                          if (!fieldType) {
+                                            throw new Error(
+                                              `Could not find field type for ${attr}`
+                                            );
+                                          }
+                                          return [
+                                            fieldName,
+                                            fieldWithHooks(
+                                              {fieldName},
+                                              {
+                                                description:
+                                                  attribute.description,
+                                                type: new GraphQLNonNull(
+                                                  fieldType
+                                                ),
+                                              }
+                                            ),
+                                          ];
+                                        })
+                                      )
+                                    : {};
                               return fields;
                             },
                           }),

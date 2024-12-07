@@ -34,11 +34,9 @@ export function getRelationDisconnectPlanResolver<
     args,
     _info
   ) => {
-    console.log('in disconnect resolver');
     const $rawArgs = args.getRaw();
 
     if ($rawArgs instanceof __InputObjectStep) {
-      console.log('forward relation');
       // we are in a forward relation
       // foreign key is on the local resource
 
