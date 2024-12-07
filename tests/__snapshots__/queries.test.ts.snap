@@ -69,6 +69,14 @@ exports[`a > query=forward-create.graphql 1`] = `
 }
 `;
 
+exports[`a > query=forward-disconnect-by-id.graphql 1`] = `
+{
+  "errors": [
+    [GraphQLError: Attempted to update a record, but no new values were specified.],
+  ],
+}
+`;
+
 exports[`a > query=forward-update-by-id.graphql 1`] = `
 {
   "data": {
@@ -203,6 +211,23 @@ exports[`a > query=reverse-create.graphql 1`] = `
         },
         "id": "WyJQYXJlbnQiLDNd",
         "parentName": "test f1",
+      },
+    },
+  },
+}
+`;
+
+exports[`a > query=reverse-disconnect-by-id.graphql 1`] = `
+{
+  "data": {
+    "updateParentByEmail": {
+      "parent": {
+        "childrenByMomParentId": {
+          "nodes": [],
+        },
+        "email": "martha@washington.com",
+        "id": "WyJQYXJlbnQiLDFd",
+        "parentName": "Martha Washington",
       },
     },
   },

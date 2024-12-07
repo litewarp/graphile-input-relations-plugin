@@ -16,6 +16,7 @@ import type {PgRelationInputData, PgTableResource} from './interfaces.ts';
 import {
   connectResolver,
   createResolver,
+  disconnectResolver,
   updateResolver,
 } from './plans/index.ts';
 import {
@@ -161,9 +162,15 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
                                     mode,
                                     unique
                                   );
-
                                 case 'update':
                                   return updateResolver(
+                                    build,
+                                    relation,
+                                    mode,
+                                    unique
+                                  );
+                                case 'disconnect':
+                                  return disconnectResolver(
                                     build,
                                     relation,
                                     mode,

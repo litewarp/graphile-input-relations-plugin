@@ -30,48 +30,30 @@ export function getRelationCreatePlanResolver<
     build.pgRelationInputsTypes[remoteResource.name] ?? []
   ).map((r) => r.fieldName);
 
+  const isInsertable = (name: string) =>
+    pgCodecAttributeMatches([remoteResource.codec, name], 'attribute:insert');
+
   const prepareAttrs = (
     $object: __InputObjectStep
   ): Record<string, ExecutableStep> => {
-    return Object.fromEntries(
-      Object.entries(remoteResource.codec.attributes)
-        .filter(([name, {notNull}]) => {
-          const isInsertable = pgCodecAttributeMatches(
-            [remoteResource.codec, name],
-            'attribute:insert'
-          );
+    return Object.entries(remoteResource.codec.attributes).reduce(
+      (memo, [attributeName, {notNull}]) => {
+        const inflectedName = inflection.attribute({
+          attributeName,
+          codec: remoteResource.codec,
+        });
+        if (!isInsertable(attributeName)) return memo;
 
-          if (!isInsertable) return false;
+        if (notNull && inflectedName === 'rowId') return memo;
+        // WARNING!! We have to eval the argument here
+        // and omit the value if it's not present to avoid
+        // inserting null values
+        if (notNull && !$object.evalHas(inflectedName)) return memo;
 
-          const inflectedName = inflection.attribute({
-            attributeName: name,
-            codec: remoteResource.codec,
-          });
-
-          if (notNull) {
-            if (inflectedName === 'rowId') {
-              return false;
-            }
-            // WARNING!! We have to eval the argument here
-            // and omit the value if it's not present
-            // otherwise, we won't be able to set it down the line
-            // because of the attribute check on PgInsertSingleStep
-            // and PgUpdateSingleStep
-            if (!$object.evalHas(inflectedName)) {
-              return false;
-            }
-          }
-          return true;
-        })
-        .map(([name, _]) => [
-          name,
-          $object.get(
-            inflection.attribute({
-              attributeName: name,
-              codec: remoteResource.codec,
-            })
-          ),
-        ])
+        memo[attributeName] = $object.get(inflectedName);
+        return memo;
+      },
+      {} as Record<string, ExecutableStep>
     );
   };
 

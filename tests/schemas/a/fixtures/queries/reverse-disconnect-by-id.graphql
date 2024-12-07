@@ -1,0 +1,23 @@
+mutation forwardDisconnectById {
+  updateParentByEmail(
+    input: {
+      email: "martha@washington.com"
+      patch: {
+        parentName: "Martha Washington"
+        childrenByMomParentId: {disconnectById: [{id: "WyJDaGlsZCIsMV0="}]}
+      }
+    }
+  ) {
+    parent {
+      id
+      email
+      parentName
+      childrenByMomParentId {
+        nodes {
+          id
+          name
+        }
+      }
+    }
+  }
+}
