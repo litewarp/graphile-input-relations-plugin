@@ -55,7 +55,13 @@ export const getRelationships = (
         };
       });
 
-      memo.push({...relation, relationName, fieldName, matchedAttributes});
+      memo.push({
+        ...relation,
+        relationName,
+        fieldName,
+        matchedAttributes,
+        localResource,
+      });
       return memo;
     },
     [] as PgRelationInputData[]

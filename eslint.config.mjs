@@ -2,6 +2,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {fixupConfigRules, includeIgnoreFile} from '@eslint/compat';
 import {FlatCompat} from '@eslint/eslintrc';
+import biome from 'eslint-config-biome';
 import tseslint from 'typescript-eslint';
 
 // mimic CommonJS variables -- not needed if using CommonJS
@@ -18,7 +19,8 @@ export default tseslint.config(
     files: ['src/**/*.ts', 'tests/*.ts'],
   },
   ...fixupConfigRules(compat.extends('plugin:graphile-export/recommended')),
-  tseslint.configs.recommendedTypeCheckedOnly,
+  tseslint.configs.base,
+  biome,
   {
     languageOptions: {
       parserOptions: {
@@ -26,21 +28,6 @@ export default tseslint.config(
           allowDefaultProject: ['*.mjs'],
         },
       },
-    },
-    rules: {
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        {
-          args: 'all',
-          argsIgnorePattern: '^_',
-          caughtErrors: 'all',
-          caughtErrorsIgnorePattern: '^_',
-          destructuredArrayIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-          ignoreRestSiblings: true,
-        },
-      ],
-      '@typescript-eslint/no-for-in-array': 'off',
     },
   }
 );

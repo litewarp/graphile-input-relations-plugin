@@ -43,34 +43,110 @@ export interface PgRelationInputData
   extends PgCodecRelation<PgCodecWithAttributes, PgTableResource> {
   relationName: string;
   fieldName: string;
+  localResource: PgTableResource;
   matchedAttributes: {
     local: PgCodecAttributeWithName;
     remote: PgCodecAttributeWithName;
   }[];
 }
 
-export type RelationInputTypeInfo =
-  | {
-      fieldName: string;
-      typeName: string;
-      relationName: string;
-      method: 'create';
-      mode?: undefined;
-      unique?: undefined;
-    }
-  | {
-      fieldName: string;
-      typeName: string;
-      relationName: string;
-      method: 'connect' | 'update' | 'delete' | 'disconnect';
-      mode: 'node';
-      unique: PgResourceUnique;
-    }
-  | {
-      fieldName: string;
-      typeName: string;
-      relationName: string;
-      method: 'connect' | 'update' | 'delete' | 'disconnect';
-      mode: 'keys';
-      unique: PgResourceUnique;
-    };
+export interface RelationFieldInfo<TMethod, TMode, TUnique> {
+  fieldName: string;
+  typeName: string;
+  relationName: string;
+  method: TMethod;
+  mode: TMode;
+  unique: TUnique;
+}
+
+export type CreateFieldInfo = RelationFieldInfo<'create', undefined, undefined>;
+
+export type ConnectNodeFieldInfo = RelationFieldInfo<
+  'connect',
+  'node',
+  PgResourceUnique
+>;
+
+export type ConnectKeysFieldInfo = RelationFieldInfo<
+  'connect',
+  'keys',
+  PgResourceUnique
+>;
+
+export type DisconnectNodeFieldInfo = RelationFieldInfo<
+  'disconnect',
+  'node',
+  PgResourceUnique
+>;
+
+export type DisconnectKeysFieldInfo = RelationFieldInfo<
+  'disconnect',
+  'keys',
+  PgResourceUnique
+>;
+
+export type UpdateNodeFieldInfo = RelationFieldInfo<
+  'update',
+  'node',
+  PgResourceUnique
+>;
+export type UpdateKeysFieldInfo = RelationFieldInfo<
+  'update',
+  'keys',
+  PgResourceUnique
+>;
+
+export type DeleteKeysFieldInfo = RelationFieldInfo<
+  'delete',
+  'keys',
+  PgResourceUnique
+>;
+
+export type DeleteNodeFieldInfo = RelationFieldInfo<
+  'delete',
+  'node',
+  PgResourceUnique
+>;
+
+export type RelationFieldTypeInfo =
+  | ConnectKeysFieldInfo
+  | ConnectNodeFieldInfo
+  | DeleteKeysFieldInfo
+  | DeleteNodeFieldInfo
+  | DisconnectKeysFieldInfo
+  | DisconnectNodeFieldInfo
+  | UpdateKeysFieldInfo
+  | UpdateNodeFieldInfo;
+
+export type RelationInputMethods =
+  | 'create'
+  | 'connect'
+  | 'update'
+  | 'disconnect'
+  | 'delete';
+
+export type RelationInputUniqueModes = 'node' | 'keys';
+
+export type RelationInputTypeInfo<
+  TMethod extends RelationInputMethods = RelationInputMethods,
+  TMode extends RelationInputUniqueModes = RelationInputUniqueModes,
+  TUnion = RelationFieldTypeInfo,
+> = TMethod extends 'create'
+  ? CreateFieldInfo
+  : TMethod extends 'connect'
+    ? TMode extends 'node'
+      ? ConnectNodeFieldInfo
+      : ConnectKeysFieldInfo
+    : TMethod extends 'disconnect'
+      ? TMode extends 'node'
+        ? DisconnectNodeFieldInfo
+        : DisconnectKeysFieldInfo
+      : TMethod extends 'update'
+        ? TMode extends 'node'
+          ? UpdateNodeFieldInfo
+          : UpdateKeysFieldInfo
+        : TMethod extends 'delete'
+          ? TMode extends 'node'
+            ? DeleteNodeFieldInfo
+            : DeleteKeysFieldInfo
+          : TUnion;
