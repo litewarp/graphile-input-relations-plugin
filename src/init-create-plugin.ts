@@ -1,4 +1,4 @@
-import type {} from '@dataplan/pg';
+import type {PgClient} from '@dataplan/pg';
 import {ObjectStep} from 'grafast';
 import type {GraphQLInputObjectType} from 'graphql';
 import type {
@@ -20,6 +20,14 @@ declare global {
       pgRootFieldNamesToCodec: Map<string, PgTableResource>;
       pgRelationInputsFields: Record<string, RelationInputTypeInfo[]>;
       pgRelationInputsTypes: Record<string, PgRelationInputData[]>;
+      pgRelationSqlPlans: Record<
+        string,
+        (
+          parent: Record<string, unknown>,
+          input: {input: Record<string, unknown>},
+          client: PgClient
+        ) => Promise<Record<string, unknown>>
+      >;
     }
     interface Inflection {
       relationCreateField(
@@ -80,7 +88,6 @@ export const PgRelationInputsInitCreatePlugin: GraphileConfig.Plugin = {
         const tableResources = Object.values(
           build.input.pgRegistry.pgResources
         ).filter(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           (resource) => isPgTableResource(resource)
         );
 

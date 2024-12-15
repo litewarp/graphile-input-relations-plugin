@@ -1,6 +1,6 @@
 # test creation of a related table that does not contain the foreign keys for the relationship
 mutation AddParentFromChild {
-  createChild(
+  createChildExtra(
     input: {
       child: {
         name: "Johnny Q. Constraint"

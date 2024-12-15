@@ -1,30 +1,25 @@
-import {PgInsertSingleStep, PgUpdateSingleStep} from '@dataplan/pg';
 import {
+  type ExecutableStep,
   type FieldArgs,
   ObjectStep,
-  type SetterStep,
-  type __TrackedValueStep,
+  type __InputObjectStep,
+  constant,
+  object,
 } from 'grafast';
 import {EXPORTABLE} from 'graphile-build';
 import {
   type GraphQLInputFieldConfigMap,
   type GraphQLInputType,
   GraphQLList,
-  GraphQLNonNull,
+  isObjectType,
 } from 'graphql';
 import type {PgRelationInputData, PgTableResource} from './interfaces.ts';
+import {} from './plans/index.ts';
 import {
-  connectResolver,
-  createResolver,
-  disconnectResolver,
-  updateResolver,
-} from './plans/index.ts';
-import {
-  getSpecs,
-  isInsertable,
-  isPgTableResource,
-  isUpdatable,
-} from './utils/resource.ts';
+  PgInsertSingleWithRelationInputsStep,
+  pgInsertSingleWithRelationInputsStep,
+} from './steps/the-step.ts';
+import {isInsertable, isPgTableResource} from './utils/resource.ts';
 
 declare global {
   namespace GraphileBuild {
@@ -93,18 +88,159 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
   schema: {
     hooks: {
       init(_, build) {
-        const {inflection} = build;
-
-        const duplicateTypes = new Set<string>();
-
-        const tableResources = Object.values(
+        const {
+          inflection,
+          graphql: {GraphQLString, GraphQLNonNull},
+        } = build;
+        const insertableResources = Object.values(
           build.input.pgRegistry.pgResources
         ).filter(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          (resource) => isPgTableResource(resource)
+          (resource) =>
+            isPgTableResource(resource) && isInsertable(build, resource)
         );
+        // TODO: REMOVE!!
+        const duplicateTypes = new Set<string>();
+        for (const resource of insertableResources) {
+          build.recoverable(null, () => {
+            const tableTypeName = inflection.tableType(resource.codec);
+            const inputTypeName = `${inflection.createInputType(resource)}Extra`;
+            const tableFieldName = inflection.tableFieldName(resource);
+            build.registerInputObjectType(
+              inputTypeName,
+              {isMutationInput: true},
+              () => ({
+                description: `All input for the create \`${tableTypeName}\` mutation.`,
+                fields: ({fieldWithHooks}) => {
+                  const TableInput = build.getGraphQLTypeByPgCodec(
+                    resource.codec,
+                    'input'
+                  );
+                  return {
+                    clientMutationId: {
+                      type: GraphQLString,
+                      autoApplyAfterParentApplyPlan: true,
+                      applyPlan: EXPORTABLE(
+                        () =>
+                          function plan(
+                            $input: ObjectStep<{
+                              clientMutationId: ExecutableStep;
+                            }>,
+                            val
+                          ) {
+                            $input.set('clientMutationId', val.get());
+                          },
+                        []
+                      ),
+                    },
+                    ...(TableInput
+                      ? {
+                          [tableFieldName]: fieldWithHooks(
+                            {
+                              fieldName: tableFieldName,
+                              fieldBehaviorScope:
+                                'insert:relation:input:record',
+                            },
+                            () => ({
+                              description: build.wrapDescription(
+                                `The \`${tableTypeName}\` to be created by this mutation.`,
+                                'field'
+                              ),
+                              type: new GraphQLNonNull(TableInput),
+                              autoApplyAfterParentApplyPlan: true,
+                              applyPlan: EXPORTABLE(
+                                () =>
+                                  function plan(
+                                    $object: ObjectStep<{
+                                      result: PgInsertSingleWithRelationInputsStep;
+                                    }>
+                                  ) {
+                                    const $record =
+                                      $object.getStepForKey('result');
+                                    return $record.setPlan();
+                                  },
+                                []
+                              ),
+                            })
+                          ),
+                        }
+                      : null),
+                  };
+                },
+              }),
+              `PgMutationCreatePlugin input for ${resource.name}`
+            );
 
-        for (const resource of tableResources) {
+            // payload
+            const payloadTypeName = `${inflection.createPayloadType(resource)}Extra`;
+            build.registerObjectType(
+              payloadTypeName,
+              {
+                isMutationPayload: true,
+                isPgCreatePayloadType: true,
+                pgTypeResource: resource,
+              },
+              () => ({
+                fields: ({fieldWithHooks}) => {
+                  const TableType = build.getGraphQLTypeByPgCodec(
+                    resource.codec,
+                    'output'
+                  );
+                  if (!isObjectType(TableType)) {
+                    throw new Error(
+                      `Could not determine type for table '${resource.name}'`
+                    );
+                  }
+
+                  return {
+                    clientMutationId: {
+                      type: GraphQLString,
+                      plan: EXPORTABLE(
+                        (constant) =>
+                          function plan(
+                            $mutation: ObjectStep<{
+                              clientMutationId: ExecutableStep;
+                            }>
+                          ) {
+                            return (
+                              $mutation.getStepForKey(
+                                'clientMutationId',
+                                true
+                              ) ?? constant(null)
+                            );
+                          },
+                        [constant]
+                      ),
+                    },
+                    ...(TableType
+                      ? {
+                          [tableFieldName]: fieldWithHooks(
+                            {fieldName: tableFieldName},
+                            {
+                              type: TableType,
+                              plan: EXPORTABLE(
+                                (resource) =>
+                                  function plan(
+                                    $object: ObjectStep<{
+                                      result: PgInsertSingleWithRelationInputsStep;
+                                    }>
+                                  ) {
+                                    const $result =
+                                      $object.getStepForKey('result');
+                                    const $id = $result.get('id');
+                                    return resource.find({id: $id}).single();
+                                  },
+                                [resource]
+                              ),
+                            }
+                          ),
+                        }
+                      : {}),
+                  };
+                },
+              }),
+              `PgMutationCreatePlugin payload for ${resource.name}`
+            );
+          });
           const relations = build.pgRelationInputsTypes[resource.name] ?? [];
           const relationFields =
             build.pgRelationInputsFields[resource.name] ?? [];
@@ -151,36 +287,6 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
                       return Object.fromEntries(
                         inputFields.map(
                           ({fieldName, typeName, method, mode, unique}) => {
-                            const resolver = (() => {
-                              switch (method) {
-                                case 'create':
-                                  return createResolver(build, relation);
-                                case 'connect':
-                                  return connectResolver(
-                                    build,
-                                    relation,
-                                    mode,
-                                    unique
-                                  );
-                                case 'update':
-                                  return updateResolver(
-                                    build,
-                                    relation,
-                                    mode,
-                                    unique
-                                  );
-                                case 'disconnect':
-                                  return disconnectResolver(
-                                    build,
-                                    relation,
-                                    mode,
-                                    unique
-                                  );
-                                default:
-                                  return null;
-                              }
-                            })();
-
                             return [
                               fieldName,
                               fieldWithHooks(
@@ -218,41 +324,15 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
                                   type: getType(
                                     build.getInputTypeByName(typeName)
                                   ),
-                                  ...(resolver
-                                    ? {
-                                        autoApplyAfterParentApplyPlan: true,
-                                        applyPlan: EXPORTABLE(
-                                          (
-                                            PgInsertSingleStep,
-                                            PgUpdateSingleStep,
-                                            resolver
-                                          ) =>
-                                            function plan(
-                                              $parent,
-                                              fieldArgs,
-                                              info
-                                            ) {
-                                              if (
-                                                $parent instanceof
-                                                  PgInsertSingleStep ||
-                                                $parent instanceof
-                                                  PgUpdateSingleStep
-                                              ) {
-                                                resolver(
-                                                  $parent,
-                                                  fieldArgs,
-                                                  info
-                                                );
-                                              }
-                                            },
-                                          [
-                                            PgInsertSingleStep,
-                                            PgUpdateSingleStep,
-                                            resolver,
-                                          ]
-                                        ),
-                                      }
-                                    : {}),
+
+                                  autoApplyAfterParentApplyPlan: true,
+                                  applyPlan: EXPORTABLE(
+                                    () =>
+                                      function plan($parent, fieldArgs, info) {
+                                        console.log($parent);
+                                      },
+                                    []
+                                  ),
                                 }
                               ),
                             ];
@@ -278,7 +358,7 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
 
         if (isPgRowType && pgCodec && (isInputType || isPgPatch)) {
           const resource = build.input.pgRegistry.pgResources[pgCodec.name];
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+
           if (resource && isPgTableResource(resource)) {
             const relations = build.pgRelationInputsTypes[resource.name] ?? [];
             const inputFields: GraphQLInputFieldConfigMap = {};
@@ -300,22 +380,18 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
                   type: InputType,
                   autoApplyAfterParentApplyPlan: true,
                   applyPlan: EXPORTABLE(
-                    (PgInsertSingleStep, PgUpdateSingleStep) =>
+                    (PgInsertSingleWithRelationInputsStep) =>
                       function plan(
-                        $obj:
-                          | SetterStep
-                          | PgInsertSingleStep
-                          | PgUpdateSingleStep,
+                        $obj: PgInsertSingleWithRelationInputsStep,
                         fieldArgs: FieldArgs
                       ) {
                         if (
-                          $obj instanceof PgInsertSingleStep ||
-                          $obj instanceof PgUpdateSingleStep
+                          $obj instanceof PgInsertSingleWithRelationInputsStep
                         ) {
                           fieldArgs.apply($obj);
                         }
                       },
-                    [PgInsertSingleStep, PgUpdateSingleStep]
+                    [PgInsertSingleWithRelationInputsStep]
                   ),
                 })
               );
@@ -341,65 +417,90 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
         return fields;
       },
 
-      GraphQLInputObjectType_fields_field(field, _build, context) {
-        const {isPgUpdateInputType, fieldName} = context.scope;
-
-        if (isPgUpdateInputType && fieldName === 'patch') {
-          return {
-            ...field,
-            autoApplyAfterParentApplyPlan: true,
-            applyPlan: EXPORTABLE(
-              () =>
-                function plan($object: PgUpdateSingleStep, args: FieldArgs) {
-                  const $item = $object.get('result');
-                  args.apply($item);
-                },
-              []
-            ),
-          };
-        }
-
-        return field;
-      },
-
-      GraphQLObjectType_fields_field(field, build, context) {
+      GraphQLObjectType_fields(fields, build, context) {
         const {
-          scope: {isRootMutation, fieldName},
+          inflection,
+          graphql: {GraphQLNonNull},
+        } = build;
+        const {
+          scope: {isRootMutation},
+          fieldWithHooks,
         } = context;
 
-        if (isRootMutation) {
-          const codec = build.pgRootFieldNamesToCodec.get(fieldName);
-          if (!codec) return field;
-          const inputTypes = build.pgRelationInputsTypes[codec.name] ?? [];
-          const rootFields =
-            build.pgRelationshipMutationRootFields.get(fieldName);
-          if (!rootFields || !inputTypes) return field;
-          return {
-            ...field,
-            plan: EXPORTABLE(
-              (field, rootFields) =>
-                function plan($parent: __TrackedValueStep, fieldArgs, info) {
-                  if (!field.plan) return $parent;
-
-                  const $object = field.plan(
-                    $parent,
-                    fieldArgs,
-                    info
-                  ) as ObjectStep;
-                  const $item = $object.get('result');
-
-                  for (const path of rootFields) {
-                    fieldArgs.apply($item, path);
-                  }
-
-                  return $object;
-                },
-              [field, rootFields]
-            ),
-          };
+        if (!isRootMutation) {
+          return fields;
         }
 
-        return field;
+        const insertableSources = Object.values(
+          build.input.pgRegistry.pgResources
+        ).filter(
+          (resource) =>
+            isPgTableResource(resource) && isInsertable(build, resource)
+        );
+
+        return insertableSources.reduce((memo, resource) => {
+          return build.recoverable(memo, () => {
+            const createFieldName = `${inflection.createField(resource)}Extra`;
+            const payloadTypeName = `${inflection.createPayloadType(resource)}Extra`;
+            const payloadType = build.getOutputTypeByName(payloadTypeName);
+            const mutationInputType = build.getInputTypeByName(
+              `${inflection.createInputType(resource)}Extra`
+            );
+
+            return build.extend(
+              memo,
+              {
+                [createFieldName]: fieldWithHooks(
+                  {fieldName: createFieldName},
+                  {
+                    args: {
+                      input: {
+                        type: new GraphQLNonNull(mutationInputType),
+                        autoApplyAfterParentPlan: true,
+                        applyPlan: EXPORTABLE(
+                          () =>
+                            function plan(
+                              _: ExecutableStep,
+                              $object: ObjectStep<{
+                                result: PgInsertSingleWithRelationInputsStep;
+                              }>
+                            ) {
+                              return $object;
+                            },
+                          []
+                        ),
+                      },
+                    },
+                    description: `Creates a single \`${inflection.tableType(resource.codec)}\` relation input.`,
+                    type: payloadType,
+                    plan: EXPORTABLE(
+                      (
+                        object,
+                        pgInsertSingleWithRelationInputsStep,
+                        resource
+                      ) =>
+                        function plan(
+                          _$parent: ExecutableStep,
+                          args: FieldArgs
+                        ) {
+                          const plan = object({
+                            result: pgInsertSingleWithRelationInputsStep(
+                              resource as PgTableResource,
+                              args.getRaw('input') as __InputObjectStep
+                            ),
+                          });
+
+                          return plan;
+                        },
+                      [object, pgInsertSingleWithRelationInputsStep, resource]
+                    ),
+                  }
+                ),
+              },
+              `Adding create mutation field for ${resource.name}`
+            );
+          });
+        }, fields);
       },
     },
   },
@@ -428,24 +529,24 @@ const mapPgRelationshipRootFields = <
     );
     paths.push(['input', build.inflection.tableFieldName(resource)]);
   }
-  if (isUpdatable(build, resource)) {
-    // get the localResource specs to determine the root fields
-    // to apply the arguments through
-    const updateSpecs = getSpecs(build, resource, 'resource:update');
-    for (const {uniqueMode, unique} of updateSpecs) {
-      if (uniqueMode === 'node') {
-        build.pgRootFieldNamesToCodec.set(
-          build.inflection.updateNodeField({resource, unique}),
-          resource
-        );
-      } else {
-        build.pgRootFieldNamesToCodec.set(
-          build.inflection.updateByKeysField({resource, unique}),
-          resource
-        );
-      }
-    }
-  }
+  // if (isUpdatable(build, resource)) {
+  //   // get the localResource specs to determine the root fields
+  //   // to apply the arguments through
+  //   const updateSpecs = getSpecs(build, resource, 'resource:update');
+  //   for (const {uniqueMode, unique} of updateSpecs) {
+  //     if (uniqueMode === 'node') {
+  //       build.pgRootFieldNamesToCodec.set(
+  //         build.inflection.updateNodeField({resource, unique}),
+  //         resource
+  //       );
+  //     } else {
+  //       build.pgRootFieldNamesToCodec.set(
+  //         build.inflection.updateByKeysField({resource, unique}),
+  //         resource
+  //       );
+  //     }
+  //   }
+  // }
 
   const allPaths = connectorFields.reduce((memo, connectorFieldName) => {
     memo.push(...paths.map((path) => [...path, connectorFieldName]));
