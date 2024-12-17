@@ -12,13 +12,13 @@ import {
   GraphQLList,
   GraphQLNonNull,
 } from 'graphql';
-import type {PgRelationInputData, PgTableResource} from './interfaces.ts';
 import {
   connectResolver,
   createResolver,
   disconnectResolver,
   updateResolver,
-} from './plans/index.ts';
+} from './__no-transaction/index.ts';
+import type {PgRelationInputData, PgTableResource} from './interfaces.ts';
 import {
   getSpecs,
   isInsertable,
@@ -99,10 +99,7 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
 
         const tableResources = Object.values(
           build.input.pgRegistry.pgResources
-        ).filter(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          (resource) => isPgTableResource(resource)
-        );
+        ).filter((resource) => isPgTableResource(resource));
 
         for (const resource of tableResources) {
           const relations = build.pgRelationInputsTypes[resource.name] ?? [];
@@ -278,7 +275,7 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
 
         if (isPgRowType && pgCodec && (isInputType || isPgPatch)) {
           const resource = build.input.pgRegistry.pgResources[pgCodec.name];
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+
           if (resource && isPgTableResource(resource)) {
             const relations = build.pgRelationInputsTypes[resource.name] ?? [];
             const inputFields: GraphQLInputFieldConfigMap = {};

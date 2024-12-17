@@ -1,0 +1,28 @@
+diff --git a/dist/interfaces.d.ts b/dist/interfaces.d.ts
+index 91171e941f2b27925146b91427f6379679c11976..b5299502b5e3a2b37d7f5cd3a0e8a2a816ed55d2 100644
+--- a/dist/interfaces.d.ts
++++ b/dist/interfaces.d.ts
+@@ -11,7 +11,9 @@ import type { PgUpdateSingleStep } from "./steps/pgUpdateSingle.js";
+  * A class-like source of information - could be from `SELECT`-ing a row, or
+  * `INSERT...RETURNING` or similar. *ALWAYS* represents a single row (or null).
+  */
+-export type PgClassSingleStep<TResource extends PgResource<any, any, any, any, any> = PgResource> = PgSelectSingleStep<TResource> | PgInsertSingleStep<TResource> | PgUpdateSingleStep<TResource> | PgDeleteSingleStep<TResource>;
++export type PgClassSingleStep<TResource extends PgResource<any, any, any, any, any> = PgResource> = PgSelectSingleStep<TResource> | PgInsertSingleStep<TResource> | PgUpdateSingleStep<TResource> | PgDeleteSingleStep<TResource> | 
++// OVERRIDE!
++ExecutableStep
+ /**
+  * Given a value of type TInput, returns an `SQL` value to insert into an SQL
+  * statement.
+diff --git a/dist/steps/pgClassExpression.js b/dist/steps/pgClassExpression.js
+index eaaa9d95e02e3aa3347e7304fdfdcd189ffaefcf..2ee3d93b6198f068027274d388978e2d8375f325 100644
+--- a/dist/steps/pgClassExpression.js
++++ b/dist/steps/pgClassExpression.js
+@@ -147,7 +147,7 @@ class PgClassExpressionStep extends grafast_1.UnbatchedExecutableStep {
+             !(step instanceof pgUpdateSingle_js_1.PgUpdateSingleStep) &&
+             !(step instanceof pgDeleteSingle_js_1.PgDeleteSingleStep) &&
+             !(step instanceof pgUnionAll_js_1.PgUnionAllSingleStep)) {
+-            throw new Error(`Expected ${step} to be a PgSelectSingleStep | PgInsertSingleStep | PgUpdateSingleStep | PgDeleteSingleStep | PgUnionAllSingleStep`);
++            console.warn(`Expected ${step} to be a PgSelectSingleStep | PgInsertSingleStep | PgUpdateSingleStep | PgDeleteSingleStep | PgUnionAllSingleStep - use at your own peril`);
+         }
+         return step;
+     }

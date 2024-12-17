@@ -1,11 +1,12 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`a > query=forward-create.graphql 1`] = `
+exports[`a > query=triple-nested-create.graphql 1`] = `
 {
   "data": {
-    "createChildExtra": {
-      "child": null,
-    },
+    "createChildExtra": null,
   },
+  "errors": [
+    [GraphQLError: Cannot read properties of undefined (reading 'type')],
+  ],
 }
 `;

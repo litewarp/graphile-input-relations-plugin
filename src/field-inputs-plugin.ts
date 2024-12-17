@@ -1,9 +1,13 @@
 import {
   type ExecutableStep,
   type FieldArgs,
+  type InputStep,
   ObjectStep,
-  type __InputObjectStep,
+  type SetterStep,
+  __InputListStep,
+  __InputObjectStep,
   constant,
+  lambda,
   object,
 } from 'grafast';
 import {EXPORTABLE} from 'graphile-build';
@@ -13,10 +17,10 @@ import {
   GraphQLList,
   isObjectType,
 } from 'graphql';
+import {} from './__no-transaction/index.ts';
 import type {PgRelationInputData, PgTableResource} from './interfaces.ts';
-import {} from './plans/index.ts';
 import {
-  PgInsertSingleWithRelationInputsStep,
+  type PgInsertSingleWithRelationInputsStep,
   pgInsertSingleWithRelationInputsStep,
 } from './steps/the-step.ts';
 import {isInsertable, isPgTableResource} from './utils/resource.ts';
@@ -89,6 +93,7 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
     hooks: {
       init(_, build) {
         const {
+          behavior,
           inflection,
           graphql: {GraphQLString, GraphQLNonNull},
         } = build;
@@ -98,12 +103,23 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
           (resource) =>
             isPgTableResource(resource) && isInsertable(build, resource)
         );
+        // check to see if the foreign key is on the local resource
+        // if so, we need to make sure that the local resource is updatable
+        // if (!isReferencee && !isUpdatable(build, resource)) {
+        //   throw new Error(
+        //     `Can't add create field for ${relationName} relation because ${resource.name} is not updatable`
+        //   );
+        // }
         // TODO: REMOVE!!
-        const duplicateTypes = new Set<string>();
+        // Let's not do this by the local resource but instead by the remote
+        // that we ensure we are doing it once per resource
+        // creating updateById for each resource, e.g.,
         for (const resource of insertableResources) {
           build.recoverable(null, () => {
             const tableTypeName = inflection.tableType(resource.codec);
-            const inputTypeName = `${inflection.createInputType(resource)}Extra`;
+            const inputTypeName = `${inflection.createInputType(
+              resource
+            )}Extra`;
             const tableFieldName = inflection.tableFieldName(resource);
             build.registerInputObjectType(
               inputTypeName,
@@ -171,7 +187,9 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
             );
 
             // payload
-            const payloadTypeName = `${inflection.createPayloadType(resource)}Extra`;
+            const payloadTypeName = `${inflection.createPayloadType(
+              resource
+            )}Extra`;
             build.registerObjectType(
               payloadTypeName,
               {
@@ -271,6 +289,29 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
                     ? type
                     : new GraphQLList(new GraphQLNonNull(type));
                 };
+                const isInsertable = (attr: string) =>
+                  behavior.pgCodecAttributeMatches(
+                    [remoteResource.codec, attr],
+                    'attribute:insert'
+                  );
+                const getGqlField = (attributeName: string) =>
+                  inflection.attribute({
+                    attributeName,
+                    codec: remoteResource.codec,
+                  });
+
+                const prepareArgs = ($step: InputStep) =>
+                  lambda($step, (args) =>
+                    Object.fromEntries(
+                      Object.keys(remoteResource.codec.attributes)
+                        .filter(isInsertable)
+                        .map((attr) => [attr, args[getGqlField(attr)]])
+                    )
+                  );
+
+                const remoteRelationFields = (
+                  build.pgRelationInputsTypes[remoteResource.name] ?? []
+                ).map(({fieldName}) => fieldName);
 
                 build.registerInputObjectType(
                   typeName,
@@ -317,8 +358,14 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
                                     method === 'create'
                                       ? `A ${remoteResource.name} created and linked to this object`
                                       : mode === 'node'
-                                        ? `${inflection.upperCamelCase(method)} a ${remoteResource.name} by node Id linked to this object`
-                                        : `${inflection.upperCamelCase(method)} a ${remoteResource.name} by keys (${remoteAttributes.join(', ')}) linked to this object`,
+                                        ? `${inflection.upperCamelCase(
+                                            method
+                                          )} a ${remoteResource.name} by node Id linked to this object`
+                                        : `${inflection.upperCamelCase(
+                                            method
+                                          )} a ${remoteResource.name} by keys (${remoteAttributes.join(
+                                            ', '
+                                          )}) linked to this object`,
                                     'field'
                                   ),
                                   type: getType(
@@ -327,11 +374,57 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
 
                                   autoApplyAfterParentApplyPlan: true,
                                   applyPlan: EXPORTABLE(
-                                    () =>
-                                      function plan($parent, fieldArgs, info) {
-                                        console.log($parent);
+                                    (
+                                      __InputListStep,
+                                      __InputObjectStep,
+                                      prepareArgs,
+                                      relationName,
+                                      remoteRelationFields
+                                    ) =>
+                                      function plan(
+                                        $parent: SetterStep,
+                                        fieldArgs
+                                      ) {
+                                        const $input = fieldArgs.getRaw();
+                                        if (
+                                          $input instanceof __InputObjectStep
+                                        ) {
+                                          $parent.set(
+                                            relationName,
+                                            prepareArgs(fieldArgs.getRaw())
+                                          );
+                                          fieldArgs.apply($parent);
+                                        } else if (
+                                          $input instanceof __InputListStep
+                                        ) {
+                                          const length = $input.evalLength();
+
+                                          for (
+                                            let i = 0;
+                                            i < (length ?? 0);
+                                            i++
+                                          ) {
+                                            const $obj = $input.at(i);
+                                            $parent.set(
+                                              relationName,
+                                              prepareArgs($obj)
+                                            );
+                                            for (const field of remoteRelationFields) {
+                                              fieldArgs.apply($parent, [
+                                                i,
+                                                field,
+                                              ]);
+                                            }
+                                          }
+                                        }
                                       },
-                                    []
+                                    [
+                                      __InputListStep,
+                                      __InputObjectStep,
+                                      prepareArgs,
+                                      relationName,
+                                      remoteRelationFields,
+                                    ]
                                   ),
                                 }
                               ),
@@ -380,18 +473,14 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
                   type: InputType,
                   autoApplyAfterParentApplyPlan: true,
                   applyPlan: EXPORTABLE(
-                    (PgInsertSingleWithRelationInputsStep) =>
+                    () =>
                       function plan(
                         $obj: PgInsertSingleWithRelationInputsStep,
                         fieldArgs: FieldArgs
                       ) {
-                        if (
-                          $obj instanceof PgInsertSingleWithRelationInputsStep
-                        ) {
-                          fieldArgs.apply($obj);
-                        }
+                        fieldArgs.apply($obj);
                       },
-                    [PgInsertSingleWithRelationInputsStep]
+                    []
                   ),
                 })
               );
@@ -410,7 +499,7 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
             return build.extend(
               fields,
               inputFields,
-              `Adding nested relationships to ${pgCodec.name}`
+              'Adding nested relationships to $pgCodec.name'
             );
           }
         }
@@ -441,7 +530,9 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
         return insertableSources.reduce((memo, resource) => {
           return build.recoverable(memo, () => {
             const createFieldName = `${inflection.createField(resource)}Extra`;
-            const payloadTypeName = `${inflection.createPayloadType(resource)}Extra`;
+            const payloadTypeName = `${inflection.createPayloadType(
+              resource
+            )}Extra`;
             const payloadType = build.getOutputTypeByName(payloadTypeName);
             const mutationInputType = build.getInputTypeByName(
               `${inflection.createInputType(resource)}Extra`
@@ -471,7 +562,9 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
                         ),
                       },
                     },
-                    description: `Creates a single \`${inflection.tableType(resource.codec)}\` relation input.`,
+                    description: `Creates a single \`$inflection.tableType(
+                      resource.codec
+                    )\` relation input.`,
                     type: payloadType,
                     plan: EXPORTABLE(
                       (
@@ -483,14 +576,13 @@ export const PgRelationInputsPlugin: GraphileConfig.Plugin = {
                           _$parent: ExecutableStep,
                           args: FieldArgs
                         ) {
-                          const plan = object({
+                          const $plan = object({
                             result: pgInsertSingleWithRelationInputsStep(
-                              resource as PgTableResource,
-                              args.getRaw('input') as __InputObjectStep
+                              resource as PgTableResource
                             ),
                           });
-
-                          return plan;
+                          args.apply($plan);
+                          return $plan;
                         },
                       [object, pgInsertSingleWithRelationInputsStep, resource]
                     ),
@@ -522,9 +614,9 @@ const mapPgRelationshipRootFields = <
   const paths: string[][] = [];
 
   if (isInsertable(build, resource)) {
-    fieldNames.add(build.inflection.createField(resource));
+    fieldNames.add(`${build.inflection.createField(resource)}Extra`);
     build.pgRootFieldNamesToCodec.set(
-      build.inflection.createField(resource),
+      `${build.inflection.createField(resource)}Extra`,
       resource
     );
     paths.push(['input', build.inflection.tableFieldName(resource)]);

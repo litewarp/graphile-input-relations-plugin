@@ -1,4 +1,12 @@
-import type {GetPgResourceAttributes} from 'postgraphile/@dataplan/pg';
+import {
+  type GetPgResourceAttributes,
+  type GetPgResourceCodec,
+  type GetPgResourceRelations,
+  type PgClassExpressionStep,
+  type PgCodecRelation,
+  type PgCodecWithAttributes,
+  pgClassExpression,
+} from 'postgraphile/@dataplan/pg';
 import {
   ExecutableStep,
   type ExecutionDetails,
@@ -6,14 +14,12 @@ import {
   type PromiseOrDirect,
   type SetterCapableStep,
   type SetterStep,
-  type UnbatchedExecutionExtra,
-  type __InputObjectStep,
-  access,
   setter,
 } from 'postgraphile/grafast';
 import {$$toSQL, type SQL, type SQLable, sql} from 'postgraphile/pg-sql2';
 import {inspect} from '../inspect.ts';
 import type {PgTableResource} from '../interfaces.ts';
+import {isPgTableResource} from '../utils/resource.ts';
 
 export class PgInsertSingleWithRelationInputsStep<
     TResource extends PgTableResource = PgTableResource,
@@ -38,19 +44,25 @@ export class PgInsertSingleWithRelationInputsStep<
 
   private contextId: number;
 
-  private argId: number;
-
   private locked = false;
 
-  private relationInputs: {
-    relationName: string;
-    depId: number;
-    path: string;
-  }[] = [];
+  private _allFields: Array<
+    PgCodecRelation<PgCodecWithAttributes, PgTableResource> & {
+      relationName: string;
+    }
+  > = [];
 
   private selects: Array<SQL> = [];
 
-  constructor(resource: TResource, $object: __InputObjectStep) {
+  private attributes: Array<{
+    name:
+      | keyof GetPgResourceAttributes<TResource>
+      | keyof GetPgResourceRelations<TResource>;
+    depId: number;
+    pgCodec?: PgCodecWithAttributes | PgTableResource['codec'];
+  }> = [];
+
+  constructor(resource: TResource) {
     super();
     this.hasSideEffects = true;
     this.resource = resource;
@@ -58,20 +70,50 @@ export class PgInsertSingleWithRelationInputsStep<
     this.symbol = Symbol(this.name);
     this.alias = sql.identifier(this.symbol);
     this.contextId = this.addDependency(this.resource.executor.context());
-    this.argId = this.addDependency($object);
+
+    const relationships = Object.values(
+      this.resource.registry.pgResources
+    ).reduce(
+      (memo, resource) => {
+        if (!isPgTableResource(resource)) {
+          return memo;
+        }
+        const rels = resource.getRelations();
+
+        for (const [relationName, rel] of Object.entries(rels)) {
+          memo.push({relationName, ...rel});
+        }
+        return memo;
+      },
+      [] as Array<
+        PgCodecRelation<PgCodecWithAttributes, PgTableResource> & {
+          relationName: string;
+        }
+      >
+    );
+
+    for (const relationship of relationships) {
+      this._allFields.push(relationship);
+    }
+  }
+
+  private _isValidPath(name: string): boolean {
+    return Boolean(
+      this._allFields.find(({relationName}) => relationName === name)
+    );
   }
 
   get<TAttr extends keyof GetPgResourceAttributes<TResource>>(
-    attribute: TAttr & string
+    attr: TAttr & string
   ): ExecutableStep {
     if (!this.resource.codec.attributes) {
       throw new Error('Cannot call .get() when there are no attributes');
     }
-    const resourceAttribute = this.resource.codec.attributes[attribute];
+    const resourceAttribute = this.resource.codec.attributes[attr];
 
     if (!resourceAttribute) {
       throw new Error(
-        `${this.resource} does not define an attribute named '${String(attribute)}'`
+        `${this.resource} does not define an attribute named '${String(attr)}'`
       );
     }
 
@@ -80,17 +122,52 @@ export class PgInsertSingleWithRelationInputsStep<
         `Cannot select a 'via' attribute from PgInsertSingleWithRelationInputsStep`
       );
     }
-    return access(this, attribute);
+    /*
+     * Only cast to `::text` during select; we want to use it uncasted in
+     * conditions/etc. The reasons we cast to ::text include:
+     *
+     * - to make return values consistent whether they're direct or in nested
+     *   arrays
+     * - to make sure that that various PostgreSQL clients we support do not
+     *   mangle the data in unexpected ways - we take responsibility for
+     *   decoding these string values.
+     */
+
+    const sqlExpr = pgClassExpression(
+      this,
+      resourceAttribute.codec,
+      resourceAttribute.notNull
+    );
+    const colPlan = resourceAttribute.expression
+      ? sqlExpr`${sql.parens(resourceAttribute.expression(this.alias))}`
+      : sqlExpr`${this.alias}.${sql.identifier(String(attr))}`;
+    return colPlan as any;
   }
 
-  set(path: string, value: ExecutableStep): void {
+  public record(): PgClassExpressionStep<
+    GetPgResourceCodec<TResource>,
+    TResource
+  > {
+    return pgClassExpression<GetPgResourceCodec<TResource>, TResource>(
+      this,
+      this.resource.codec as GetPgResourceCodec<TResource>,
+      false
+    )`${this.alias}`;
+  }
+
+  paths: string[] = [];
+
+  set(name: string, value: ExecutableStep): void {
     if (this.locked) {
       throw new Error('Cannot set after lock');
     }
-    const relationName = path.split('.').pop() ?? '';
     const depId = this.addDependency(value);
 
-    this.relationInputs.push({relationName, depId, path});
+    if (this._isValidPath(name)) {
+      this.attributes.push({name, depId});
+    } else {
+      this.attributes.push({name, depId});
+    }
   }
 
   setPlan(): SetterStep<Record<string, ExecutableStep>, this> {
@@ -100,22 +177,19 @@ export class PgInsertSingleWithRelationInputsStep<
     return setter(this);
   }
 
-  unbatchedExecute = (extra: UnbatchedExecutionExtra, ...values: unknown[]) => {
-    console.log(extra, values);
-    return values;
-  };
-
   async execute({
     indexMap,
     values,
   }: ExecutionDetails): Promise<GrafastResultsList<unknown>> {
-    return indexMap<PromiseOrDirect<unknown>>(async (i) => {
+    return indexMap<PromiseOrDirect<unknown>>((i) => {
       const value = values.map((v) => v.at(i));
 
-      const rawArgs = value[this.argId];
-      const context = value[this.contextId];
+      const _context = value[this.contextId];
 
-      console.log(rawArgs);
+      for (const attribute of this.attributes.toReversed()) {
+        console.log('rooooot', attribute, value[attribute.depId]);
+      }
+      // reorder leaves
     });
   }
 
@@ -141,9 +215,9 @@ export class PgInsertSingleWithRelationInputsStep<
       const resourceSource = this.resource.from;
       if (!sql.isSQL(resourceSource)) {
         throw new Error(
-          `Error in ${this}: can only insert into sources defined as SQL, however ${
-            this.resource
-          } has ${inspect(this.resource.from)}`
+          `Error in ${this}: can only insert into sources defined as SQL, however ${this.resource} has ${inspect(
+            this.resource.from
+          )}`
         );
       }
 
@@ -168,6 +242,6 @@ export class PgInsertSingleWithRelationInputsStep<
 
 export function pgInsertSingleWithRelationInputsStep<
   TResource extends PgTableResource,
->(resource: TResource, $object: __InputObjectStep) {
-  return new PgInsertSingleWithRelationInputsStep(resource, $object);
+>(resource: TResource) {
+  return new PgInsertSingleWithRelationInputsStep(resource);
 }

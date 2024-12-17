@@ -4,13 +4,13 @@ mutation TripleNestedRelationship {
       child: {
         name: "Hugo Black"
         momParent: {
-          create: {
+          createParent: {
             parentName: "Sandra Day O'Connor"
             childrenByMomParentId: {
-              create: [
+              createChild: [
                 {
                   name: "John Roberts"
-                  studentsByStudentId: {create: [{schoolId: 2}]}
+                  studentsByStudentId: {createStudent: [{schoolId: 2}]}
                 }
               ]
             }

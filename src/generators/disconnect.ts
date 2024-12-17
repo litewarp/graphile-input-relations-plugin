@@ -111,7 +111,7 @@ export function connectOne(obj: ConnectOneArgs): SQL {
         );
       }
     } else if (mode === 'keys') {
-      for (const attr in unique.attributes) {
+      for (const attr of unique.attributes) {
         const codec = remoteResource.codec.attributes[attr].codec;
         const inflected = inflection.attribute({
           attributeName: attr,

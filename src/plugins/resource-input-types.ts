@@ -1,14 +1,14 @@
 import {ObjectStep} from 'grafast';
 import {GraphQLID, type GraphQLInputObjectType, GraphQLNonNull} from 'graphql';
 import type {PgResourceUnique} from 'postgraphile/@dataplan/pg';
-import type {PgRelationInputData, PgTableResource} from './interfaces.ts';
-import {getRelationships} from './relationships.ts';
+import type {PgRelationInputData, PgTableResource} from '../interfaces.ts';
+import {getRelationships} from '../relationships.ts';
 import {
   getSpecs,
   isInsertable,
   isPgTableResource,
   isUpdatable,
-} from './utils/resource.ts';
+} from '../utils/resource.ts';
 
 const inputMethods = [
   'create',
@@ -97,10 +97,9 @@ declare global {
   }
 }
 
-export const PgRelationInputsInitCreatePlugin: GraphileConfig.Plugin = {
-  name: 'PgRelationInputsInitCreatePlugin',
-  description:
-    'Gathers the context data for the nested mutations plugin and adds a create field if needed',
+export const PgRelationInputsResourceFieldsPlugin: GraphileConfig.Plugin = {
+  name: 'PgRelationInputsResourceFieldsPlugin',
+  description: 'Creates relation mutation types for resource',
   version: '0.0.1',
   after: [
     'smart-tags',
@@ -123,8 +122,10 @@ export const PgRelationInputsInitCreatePlugin: GraphileConfig.Plugin = {
       relationNodeInputField(_options, {method}) {
         return this.camelCase(`${method}-by-node-id`);
       },
-      relationNodeInputType(_options, {method}) {
-        return this.upperCamelCase(`${method}-by-node-id-input`);
+      relationNodeInputType(_options, {method, resource}) {
+        return this.upperCamelCase(
+          `${method}-${this.tableType(resource.codec)}-by-node-id-input`
+        );
       },
       relationKeysInputField(_options, {method, resource, unique}) {
         return this.camelCase(
@@ -133,7 +134,7 @@ export const PgRelationInputsInitCreatePlugin: GraphileConfig.Plugin = {
       },
       relationKeysInputType(_options, {method, resource, unique}) {
         return this.upperCamelCase(
-          `${method}-by-${this._joinAttributeNames(resource.codec, unique.attributes)}-input`
+          `${method}-${this.tableType(resource.codec)}-relation-by-${this._joinAttributeNames(resource.codec, unique.attributes)}-input`
         );
       },
     },
@@ -167,6 +168,7 @@ export const PgRelationInputsInitCreatePlugin: GraphileConfig.Plugin = {
           if (isInsertable(build, resource)) {
             const fieldName = inflection.relationCreateField(resource);
             const typeName = inflection.relationCreateInputType(resource);
+            build.pgRootFieldNamesToCodec.set(fieldName, resource);
             build.recoverable(null, () => {
               build.registerInputObjectType(
                 typeName,
@@ -208,7 +210,15 @@ export const PgRelationInputsInitCreatePlugin: GraphileConfig.Plugin = {
 
                         return [
                           name,
-                          fieldWithHooks({fieldName: name}, {...field, type}),
+                          fieldWithHooks(
+                            {fieldName: name},
+                            // remove existing grafast plans
+                            {
+                              ...field,
+                              type,
+                              extensions: {},
+                            }
+                          ),
                         ];
                       })
                     );
@@ -227,7 +237,6 @@ export const PgRelationInputsInitCreatePlugin: GraphileConfig.Plugin = {
             // create the update / connect / disconnect fields if possible
             if (isUpdatable(build, resource)) {
               const specs = getSpecs(build, resource, 'resource:update');
-
               for (const spec of specs) {
                 const {unique, uniqueMode} = spec;
                 for (const method of [
@@ -274,22 +283,22 @@ export const PgRelationInputsInitCreatePlugin: GraphileConfig.Plugin = {
                       },
                       () => ({
                         fields: ({fieldWithHooks}) => {
-                          if (!nodeField)
-                            throw new Error('No nodeId field defined');
                           let fields =
                             uniqueMode === 'node'
-                              ? {
-                                  [nodeField]: fieldWithHooks(
-                                    {fieldName: nodeField},
-                                    {
-                                      type: new GraphQLNonNull(GraphQLID),
-                                      description: build.wrapDescription(
-                                        `The globally unique \`ID\` which will identify a single \`${inflection.tableType(resource.codec)}\` to be ${method}ed.`,
-                                        'field'
-                                      ),
-                                    }
-                                  ),
-                                }
+                              ? nodeField
+                                ? {
+                                    [nodeField]: fieldWithHooks(
+                                      {fieldName: nodeField},
+                                      {
+                                        type: new GraphQLNonNull(GraphQLID),
+                                        description: build.wrapDescription(
+                                          `The globally unique \`ID\` which will identify a single \`${inflection.tableType(resource.codec)}\` to be ${method}ed.`,
+                                          'field'
+                                        ),
+                                      }
+                                    ),
+                                  }
+                                : {}
                               : Object.fromEntries(
                                   unique.attributes.map((attributeName) => {
                                     const fieldName = inflection.attribute({
